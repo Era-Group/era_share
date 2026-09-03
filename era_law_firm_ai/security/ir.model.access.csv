@@ -13,3 +13,6 @@ attempt_user,attempt user,model_legal_ai_attempt,group_legal_ai_user,1,0,0,0
 attempt_manager,attempt manager,model_legal_ai_attempt,era_law_firm.group_legal_manager,1,0,0,0
 moj_law_user,moj law user,model_moj_law,group_legal_ai_user,1,0,0,0
 moj_law_manager,moj law manager,model_moj_law,era_law_firm.group_legal_manager,1,1,1,1
+ai_playbook_user,ai playbook user,model_legal_ai_playbook,group_legal_ai_user,1,0,0,0
+ai_playbook_manager,ai playbook manager,model_legal_ai_playbook,era_law_firm.group_legal_manager,1,1,1,1
+ai_playbook_wizard_user,ai playbook wizard user,model_legal_ai_playbook_wizard,group_legal_ai_user,1,1,1,1

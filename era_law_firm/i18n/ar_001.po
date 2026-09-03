@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 08:39+0000\n"
-"PO-Revision-Date: 2026-09-03 08:39+0000\n"
+"POT-Creation-Date: 2026-09-03 10:24+0000\n"
+"PO-Revision-Date: 2026-09-03 10:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -32,32 +32,6 @@ msgstr ""
 "<div class=\"text-danger\"><strong>%(count)s ملف قائم يشارك طرفاً مع هذا "
 "الملف.</strong> ستُفتح القضية، لكنها لا تُؤكَّد حتى يسجّل مدير "
 "سبباً.</div><ul>%(rows)s</ul>"
-
-#. module: era_law_firm
-#: model:legal.guide.topic,body:era_law_firm.guide_ai
-msgid ""
-"<div>\n"
-"                <h4>Before anything leaves</h4>\n"
-"                <p>Every send passes a consent screen that shows <b>the actual text</b> going out, with explicit ticks for what is included. Nothing is sent because a default was left alone. Agents do not work at all until the firm approves them — a decision, not a setup step.</p>\n"
-"                <h4>After the answer</h4>\n"
-"                <p>Answers cite articles of Saudi statutes from the indexed corpus. Each request is flagged when it cites a <b>repealed</b> statute or cites <b>nothing at all</b>. Review those from <b>AI &gt; AI Requests</b>, filter <i>Needs Review</i>; the same count sits on the manager's dashboard.</p>\n"
-"                <h4>Worked example</h4>\n"
-"                <p>You ask for a memorandum on a labour dispute. The answer cites three articles. One flag appears: a cited article belongs to a statute repealed in 2021. You open the corpus, find the article that replaced it, and correct the draft before it goes anywhere near a client.</p>\n"
-"                <h4>Good practice</h4>\n"
-"                <p>Treat every answer as a sourced draft by a capable junior: read the cited article itself, not the sentence summarising it. An AI answer is not a legal opinion and the module never presents it as one.</p>\n"
-"            </div>\n"
-"        "
-msgstr ""
-"<div>\n"
-"<h4>قبل أن يخرج شيء</h4>\n"
-"<p>كل إرسال يمرّ بشاشة موافقة تعرض <b>النص الحقيقي</b> الذي سيخرج، وتأشيرات صريحة لما يُضمَّن. ولا يُرسل شيء لأن خياراً افتراضياً تُرك على حاله. والوكلاء لا يعملون أصلاً حتى <b>يعتمدهم المكتب</b> — قرار لا خطوة تركيب.</p>\n"
-"<h4>بعد الإجابة</h4>\n"
-"<p>تستشهد الإجابات بمواد الأنظمة السعودية من المدوّنة المفهرسة. ويُؤشَّر كل طلب استشهد بنظام <b>ملغي</b> أو لم يستشهد <b>بشيء</b>. راجعها من <b>الذكاء ← طلبات الذكاء</b> بمرشِّح <i>تحتاج مراجعة</i>؛ والعدد نفسه على لوحة المدير.</p>\n"
-"<h4>مثال عملي</h4>\n"
-"<p>تطلب مذكرة في نزاع عمالي. تستشهد الإجابة بثلاث مواد. ويظهر تنبيه واحد: مادة مستشهَد بها تتبع نظاماً أُلغي عام ٢٠٢١. فتفتح المدوّنة، وتجد المادة التي حلّت محلها، وتصحّح المسودة قبل أن تقترب من موكِّل.</p>\n"
-"<h4>أفضل ممارسة</h4>\n"
-"<p>عامِل كل إجابة كمسوّدة مُسنَدة كتبها مساعد كفء: اقرأ المادة المستشهَد بها نفسها، لا الجملة التي تلخّصها. فإجابة الذكاء ليست رأياً قانونياً، والنظام لا يقدّمها كذلك أبداً.</p>\n"
-"</div>"
 
 #. module: era_law_firm
 #: model:legal.guide.topic,body:era_law_firm.guide_routines
@@ -151,6 +125,36 @@ msgstr ""
 "<p>صدر الحكم في ١٢ رجب. تقترح القاعدة مهلة اعتراض بعد ٣٠ يوماً. تراجع تبليغ المحكمة فتجد المدة تسري من التبليغ لا من الصدور، فتضبط التاريخ الملزم وفقاً لذلك وتكتب المصدر في الحقل. عندها تعدّها اللوحة، ويُرفع التذكير عليك.</p>\n"
 "<h4>أفضل ممارسة</h4>\n"
 "<p>وثّق مصدر كل تاريخ ملزم في الجلسة نفسها. فبعد ستة أشهر يصير سؤال «لماذا هذا التاريخ» سؤالاً له أثر حقيقي، وجوابه يجب أن يكون في السجل لا في ذاكرة أحد.</p>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_ai
+msgid ""
+"<div>\n"
+"                <h4>Start from the case, not from a blank form</h4>\n"
+"                <p>On any case, <b>Ask the AI</b> offers the tasks a firm actually asks for — a full report to the client of the proceedings to date, a brief with follow-up recommendations, preparation for the next hearing, the missing evidence, a deadline audit, a draft pleading, a research question, a document summary, a handover note, a closing report. Pick one and the request is assembled for you: the right agent, the right data ticked, the instructions already written. Sensitive extras — party names, internal notes, money — are offered by name and never added on their own. A legal manager can add the firm's own tasks under Configuration &gt; AI &gt; AI Playbooks.</p>\n"
+"                <h4>Before anything leaves</h4>\n"
+"                <p>Every send passes a consent screen that shows <b>the actual text</b> going out, with explicit ticks for what is included. Nothing is sent because a default was left alone. Agents do not work at all until the firm approves them — a decision, not a setup step.</p>\n"
+"                <h4>After the answer</h4>\n"
+"                <p>Answers cite articles of Saudi statutes from the indexed corpus. Each request is flagged when it cites a <b>repealed</b> statute or cites <b>nothing at all</b>. Review those from <b>AI &gt; AI Requests</b>, filter <i>Needs Review</i>; the same count sits on the manager's dashboard.</p>\n"
+"                <h4>Worked example</h4>\n"
+"                <p>You ask for a memorandum on a labour dispute. The answer cites three articles. One flag appears: a cited article belongs to a statute repealed in 2021. You open the corpus, find the article that replaced it, and correct the draft before it goes anywhere near a client.</p>\n"
+"                <h4>Good practice</h4>\n"
+"                <p>Treat every answer as a sourced draft by a capable junior: read the cited article itself, not the sentence summarising it. An AI answer is not a legal opinion and the module never presents it as one.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"&lt;h4&gt;ابدأ من القضية لا من نموذج فارغ&lt;/h4&gt;\n"
+"&lt;p&gt;على أي قضية، زر &lt;b&gt;اسأل الذكاء&lt;/b&gt; يعرض المهام التي يطلبها المكتب فعلاً — تقرير شامل للموكِّل بمجريات القضية حتى تاريخه، وموجز مع توصيات المتابعة، والتحضير للجلسة القادمة، والأدلة الناقصة، ومراجعة المواعيد، ومسودة لائحة، وبحث نظامي، وتلخيص مستند، ومذكرة تسليم، وتقرير إغلاق. اختر واحداً فيُبنى الطلب لك: الوكيل الصحيح، والبيانات الصحيحة مؤشَّرة، والتعليمات مكتوبة. والإضافات الحسّاسة — أسماء الأطراف والملاحظات الداخلية والمال — تُعرض بالاسم ولا تُضاف من تلقاء نفسها أبداً. ويستطيع المدير القانوني إضافة مهام المكتب من الإعدادات ← الذكاء ← أوامر الذكاء الجاهزة.&lt;/p&gt;\n"
+"<h4>قبل أن يخرج شيء</h4>\n"
+"<p>كل إرسال يمرّ بشاشة موافقة تعرض <b>النص الحقيقي</b> الذي سيخرج، وتأشيرات صريحة لما يُضمَّن. ولا يُرسل شيء لأن خياراً افتراضياً تُرك على حاله. والوكلاء لا يعملون أصلاً حتى <b>يعتمدهم المكتب</b> — قرار لا خطوة تركيب.</p>\n"
+"<h4>بعد الإجابة</h4>\n"
+"<p>تستشهد الإجابات بمواد الأنظمة السعودية من المدوّنة المفهرسة. ويُؤشَّر كل طلب استشهد بنظام <b>ملغي</b> أو لم يستشهد <b>بشيء</b>. راجعها من <b>الذكاء ← طلبات الذكاء</b> بمرشِّح <i>تحتاج مراجعة</i>؛ والعدد نفسه على لوحة المدير.</p>\n"
+"<h4>مثال عملي</h4>\n"
+"<p>تطلب مذكرة في نزاع عمالي. تستشهد الإجابة بثلاث مواد. ويظهر تنبيه واحد: مادة مستشهَد بها تتبع نظاماً أُلغي عام ٢٠٢١. فتفتح المدوّنة، وتجد المادة التي حلّت محلها، وتصحّح المسودة قبل أن تقترب من موكِّل.</p>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<p>عامِل كل إجابة كمسوّدة مُسنَدة كتبها مساعد كفء: اقرأ المادة المستشهَد بها نفسها، لا الجملة التي تلخّصها. فإجابة الذكاء ليست رأياً قانونياً، والنظام لا يقدّمها كذلك أبداً.</p>\n"
 "</div>"
 
 #. module: era_law_firm
@@ -2473,6 +2477,7 @@ msgstr "المتابعون (جهات الاتصال)"
 #: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__icon
 msgid "Font Awesome class shown on the card."
 msgstr "صنف Font Awesome الظاهر على البطاقة."
+
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__activity_type_icon
 #: model:ir.model.fields,help:era_law_firm.field_legal_consultation__activity_type_icon
@@ -3912,6 +3917,7 @@ msgstr "سطر واحد للبطاقة"
 #: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__summary
 msgid "One line, shown on the card."
 msgstr "سطر واحد يظهر على البطاقة."
+
 #. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_dashboard__scope__mine
 msgid "Only Mine"
@@ -4664,6 +4670,7 @@ msgstr "يجب تسوية رصيد أمانة الموكل قبل إغلاق ا�
 msgid ""
 "Shipped with the module. A firm's own topics are left alone by upgrades."
 msgstr "مرفق مع الموديول. ومواضيع المكتب نفسه لا تمسّها الترقيات."
+
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_jurisdiction__code
 msgid "Short code used in reports and reference lists."
@@ -5297,6 +5304,7 @@ msgstr ""
 #: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__name
 msgid "The question this topic answers."
 msgstr "السؤال الذي يجيب عنه هذا الموضوع."
+
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__reversal_move_id
 msgid ""
@@ -5362,6 +5370,7 @@ msgid ""
 "The topic itself: steps, a worked example, and what good practice looks "
 "like."
 msgstr "الموضوع نفسه: الخطوات، ومثال عملي، وكيف تبدو أفضل ممارسة."
+
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_finance.py:0
@@ -5741,6 +5750,11 @@ msgid "Website communication history"
 msgstr "سجل مراسلات الموقع"
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__outcome
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_form
+msgid "What Happened"
+msgstr "ما جرى"
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_intake_wizard__conflict_preview
 msgid ""
 "What a conflict check would find with the parties named so far, shown before"
@@ -5778,6 +5792,12 @@ msgstr "ما السؤال الذي يجيب عنه هذا؟"
 msgid "What the client sees"
 msgstr "ما يراه الموكِّل"
 
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_form
+msgid ""
+"What the court decided or asked for, what was submitted, what was adjourned "
+"to when..."
+msgstr "ما قررته المحكمة أو طلبته، وما قُدِّم، وإلى متى أُجِّل..."
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_deadline_rule__start_point
 msgid ""
@@ -5819,6 +5839,13 @@ msgstr "ما لا يفعله هذا النظام"
 msgid "What to check daily, weekly and monthly"
 msgstr "ما تراجعه يومياً وأسبوعياً وشهرياً"
 
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__outcome
+msgid ""
+"What took place in the hearing and what the court decided or asked for. "
+"Written after the hearing; this is what case reports and briefs are built "
+"from."
+msgstr "ما جرى في الجلسة وما قررته المحكمة أو طلبته. يُكتب بعد الجلسة؛ ومنه تُبنى تقارير القضية وموجزاتها."
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_consultation__notes
 msgid "What was discussed. Visible to lawyers and legal managers only."
@@ -5908,6 +5935,7 @@ msgstr "مصدر هذا التاريخ"
 #: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__category
 msgid "Where this topic sits in the guide."
 msgstr "موضع هذا الموضوع في الدليل."
+
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_document__portal_published
 msgid ""
@@ -5932,6 +5960,7 @@ msgstr "من اعتمد المستند أو رفضه. يُملأ تلقائيا�
 #: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__audience
 msgid "Who most needs this topic. It stays readable by all staff."
 msgstr "من يحتاجه أكثر. ويبقى مقروءاً لكل الطاقم."
+
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_deadline__user_id
 msgid ""

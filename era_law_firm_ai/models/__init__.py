@@ -9,3 +9,7 @@ from . import ai_help
 from . import legal_corpus
 from . import ai_source_citation
 from . import ai_citation_audit
+# after ai_agent_bridge: the composite renderers extend the request the bridge
+# declared, and the allowed-field set must be the last one registered.
+from . import ai_case_context
+from . import ai_playbook

@@ -7,3 +7,5 @@ No legal content leaves the system until a provider has been explicitly approved
 This module provides the governance envelope. It does not itself claim any particular model or provider.
 
 License: LGPL-3. Maintained by Era Group (`info@era.net.sa`).
+
+From any case, **Ask the AI** offers eighteen ready tasks — a report to the client of the proceedings to date, a brief with follow-up recommendations, hearing preparation, the missing evidence, a deadline audit, draft pleadings, a research question, document summaries, a handover note, a closing report — each assembling the request with the right agent, the right catalogue entries and the instructions already written. A fifth agent, the Case Assistant, reads the file's own logs (hearings and what happened in them, deadlines, documents, the stage history) for that work. Sensitive extras are offered by name and never ticked by a task on its own; consent, redaction and audit are unchanged. Managers add the firm's own tasks under Configuration > AI > AI Playbooks.

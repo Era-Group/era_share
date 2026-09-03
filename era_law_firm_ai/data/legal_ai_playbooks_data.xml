@@ -1,0 +1,316 @@
+<odoo>
+    <!-- The tasks a Saudi firm asks of an assistant, written down once each.
+         Not noupdate: an upgrade should refresh what the module teaches, while a
+         firm's own playbooks (is_shipped false) are never touched.
+
+         Every playbook names its agent, the catalogue entries it shares, the
+         sensitive extras it may use but never ticks on its own, and the
+         instructions that shape the answer. The instructions are Arabic
+         because that is what the agents read and what the answer must be in. -->
+
+    <!-- ===================== للموكِّل ===================== -->
+
+    <record id="playbook_client_report" model="legal.ai.playbook">
+        <field name="name">تقرير شامل للموكِّل بمجريات القضية</field>
+        <field name="summary">تقرير رسمي موجَّه إلى الموكِّل بكل ما جرى على القضية حتى تاريخه: الموقف الحالي، والجلسات وما جرى فيها، والمواعيد القادمة، وما نحتاجه منه.</field>
+        <field name="category">client</field>
+        <field name="sequence">10</field>
+        <field name="icon">fa-file-text</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_najiz'), ref('field_case_type'), ref('field_case_court'), ref('field_case_circuit'), ref('field_case_city'), ref('field_case_timeline'), ref('field_case_hearings'), ref('field_case_deadlines'), ref('field_case_documents')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_parties'), ref('field_case_financials')])]"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">اكتب تقريراً رسمياً موجَّهاً إلى الموكِّل عن مجريات القضية حتى تاريخه، بالبناء التالي:
+١. ملخص الموقف الحالي في خمسة أسطر على الأكثر.
+٢. مجريات القضية مرتبةً زمنياً: كل جلسة بتاريخها وما جرى فيها، وكل إجراء جوهري.
+٣. أين تقف القضية الآن وما المرحلة التالية المتوقعة.
+٤. المواعيد القادمة التي تهم الموكِّل، بتواريخها.
+٥. ما نحتاجه من الموكِّل، إن وُجد، بصيغة قائمة واضحة.
+٦. خاتمة مهذّبة تدعوه للتواصل عند أي استفسار.
+اكتب بصيغة مخاطبة رسمية لغير المتخصص، بلا مصطلحات غير ضرورية، وبلا وعد بنتيجة أو تقدير لفرص الكسب. لا تذكر الملاحظات الداخلية للمكتب ولا أي تقدير داخلي. اترك ما لم يرد في المعطيات بين قوسين هكذا [يُستكمل].</field>
+    </record>
+
+    <record id="playbook_client_hearing_update" model="legal.ai.playbook">
+        <field name="name">تحديث للموكِّل بعد الجلسة</field>
+        <field name="summary">رسالة قصيرة إلى الموكِّل تشرح ما جرى في آخر جلسة وما الخطوة التالية ومتى.</field>
+        <field name="category">client</field>
+        <field name="sequence">20</field>
+        <field name="icon">fa-envelope-o</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_type'), ref('field_case_court'), ref('field_case_hearings'), ref('field_case_deadlines')])]"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">اكتب رسالة قصيرة موجَّهة إلى الموكِّل عن آخر جلسة عُقدت (آخر جلسة في سجل الجلسات بحالة «منعقدة» أو «مؤكدة» مضى موعدها). اذكر: تاريخ الجلسة، وما جرى فيها كما سُجّل، وما قررته المحكمة أو طلبته، والخطوة التالية وموعدها إن كان معلوماً، وما نحتاجه من الموكِّل قبل ذلك الموعد. لا تتجاوز خمس عشرة سطراً. صيغة رسمية واضحة، بلا تقدير لنتيجة الدعوى. إن لم يكن في سجل الجلسات ما جرى في الجلسة، فقل ذلك واترك الموضع [يُستكمل].</field>
+    </record>
+
+    <record id="playbook_client_requirements" model="legal.ai.playbook">
+        <field name="name">طلب المستندات والمعلومات من الموكِّل</field>
+        <field name="summary">قائمة بما يحتاجه المكتب من الموكِّل في هذه المرحلة — مستندات ومعلومات — بصيغة رسالة جاهزة للإرسال.</field>
+        <field name="category">client</field>
+        <field name="sequence">30</field>
+        <field name="icon">fa-list-ul</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_type'), ref('field_case_jurisdiction'), ref('field_case_timeline'), ref('field_case_deadlines'), ref('field_case_documents')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_internal_notes')])]"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">بناءً على نوع القضية والاختصاص والمرحلة الحالية وقائمة المستندات الموجودة في الملف، اكتب رسالة إلى الموكِّل تطلب منه ما يلزم المكتب في هذه المرحلة ولم يرد بعد في قائمة المستندات: المستندات، والمعلومات، والتواريخ. رتّبها قائمةً مرقّمة، واذكر مع كل بند لماذا يلزم وبأي شكل يُقدَّم (أصل، صورة، مصدَّق). حدّد موعداً للتزويد إن كان في المواعيد النظامية ما يفرضه. صيغة رسمية مهذّبة. لا تطلب شيئاً موجوداً أصلاً في قائمة المستندات.</field>
+    </record>
+
+    <!-- ===================== موجز وتقييم ===================== -->
+
+    <record id="playbook_case_brief" model="legal.ai.playbook">
+        <field name="name">موجز القضية وتوصيات المتابعة</field>
+        <field name="summary">إحاطة داخلية في صفحة: الوقائع، والموقف الإجرائي، والمخاطر، وما ينبغي فعله في الأسبوعين القادمين.</field>
+        <field name="category">brief</field>
+        <field name="sequence">40</field>
+        <field name="icon">fa-lightbulb-o</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_type'), ref('field_case_jurisdiction'), ref('field_case_court'), ref('field_case_timeline'), ref('field_case_hearings'), ref('field_case_deadlines'), ref('field_case_documents')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_parties'), ref('field_case_claim'), ref('field_case_internal_notes'), ref('field_case_log')])]"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">اكتب موجزاً داخلياً للمكتب عن هذه القضية في صفحة واحدة:
+١. الملخص: ما القضية وأين تقف، في ثلاثة أسطر.
+٢. الوقائع والإجراءات الجوهرية مرتبةً زمنياً.
+٣. الموقف الإجرائي الحالي: المرحلة، وآخر ما جرى، وما ينتظره الملف.
+٤. نقاط القوة ونقاط الضعف كما تظهر من المعطيات، مع الإشارة إلى ما يسند كلاً منها.
+٥. المخاطر الإجرائية: مواعيد تقترب، مستندات ناقصة، إجراءات لم تُتَّخذ.
+٦. توصيات المتابعة: ما ينبغي فعله في الأسبوعين القادمين، مرتباً بالأولوية، وكل توصية بسطر واحد يبدأ بفعل.
+إيجاز مهني مباشر. لا تقدّر فرص الكسب بالأرقام ولا تصدر رأياً في النتيجة.</field>
+    </record>
+
+    <record id="playbook_chronology" model="legal.ai.playbook">
+        <field name="name">التسلسل الزمني للوقائع والإجراءات</field>
+        <field name="summary">جدول زمني واحد يجمع كل ما جرى على الملف: الفتح، والمراحل، والجلسات، والمواعيد، والمستندات.</field>
+        <field name="category">brief</field>
+        <field name="sequence">50</field>
+        <field name="icon">fa-clock-o</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_timeline'), ref('field_case_hearings'), ref('field_case_deadlines'), ref('field_case_documents')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_log')])]"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">ادمج كل المعطيات في تسلسل زمني واحد مرتب من الأقدم إلى الأحدث. أخرجه جدولاً بثلاثة أعمدة: التاريخ، الحدث، المصدر (مسار الملف / جلسة / موعد / مستند / سجل). لا تحذف حدثاً ولا تدمج حدثين. حيث يتعارض تاريخان لحدث واحد فأظهر الاثنين وأشّر على التعارض. اختم بقائمة الثغرات: فترات طويلة بلا حدث مسجَّل، وإجراءات يُتوقع وجودها في مثل هذه القضية ولا أثر لها في المعطيات.</field>
+    </record>
+
+    <record id="playbook_risk_assessment" model="legal.ai.playbook">
+        <field name="name">تقييم الموقف والمخاطر وفرص التسوية</field>
+        <field name="summary">تحليل داخلي لنقاط القوة والضعف والسيناريوهات المحتملة واعتبارات التسوية — بناءً على الوقائع التي تقدمها.</field>
+        <field name="category">brief</field>
+        <field name="sequence">60</field>
+        <field name="icon">fa-balance-scale</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_type'), ref('field_case_jurisdiction'), ref('field_case_court'), ref('field_case_hearings'), ref('field_case_documents')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_claim'), ref('field_case_outcome'), ref('field_case_parties'), ref('field_case_internal_notes')])]"/>
+        <field name="needs_question" eval="True"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">بناءً على الوقائع التي يقدمها المحامي أدناه وعلى معطيات الملف، اكتب تقييماً داخلياً للموقف:
+١. المسائل محل النزاع، كل مسألة في سطر.
+٢. نقاط القوة في موقف الموكِّل وما يسند كلاً منها من المعطيات.
+٣. نقاط الضعف والثغرات، وما يمكن فعله لمعالجة كل منها.
+٤. السيناريوهات المحتملة لمسار الدعوى (بلا نسب مئوية ولا وعود): ماذا يحدث في كل سيناريو وما يترتب عليه.
+٥. اعتبارات التسوية: هل تبدو التسوية خياراً معقولاً وفق المعطيات، وما العناصر التي ينبغي أن تُبحث فيها، وما الذي يجب التحقق منه قبل أي عرض.
+٦. ما يجب على المحامي التحقق منه قبل الاعتماد على هذا التقييم.
+لا تقرر النتيجة ولا تقدّر فرص الكسب رقمياً. حيث تلزم الإشارة إلى نظام فلا تذكر رقم مادة إلا إن ورد نصها في المصادر المرفقة.</field>
+    </record>
+
+    <!-- ===================== التحضير ===================== -->
+
+    <record id="playbook_hearing_prep" model="legal.ai.playbook">
+        <field name="name">التحضير للجلسة القادمة</field>
+        <field name="summary">مذكرة تحضير: ما سيُطرح، وما يُتوقع من الطرف الآخر، وما يجب إحضاره، وما يجب التحقق منه قبل الموعد.</field>
+        <field name="category">preparation</field>
+        <field name="sequence">70</field>
+        <field name="icon">fa-university</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_type'), ref('field_case_court'), ref('field_case_circuit'), ref('field_case_hearings'), ref('field_case_deadlines'), ref('field_case_documents')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_parties'), ref('field_case_internal_notes'), ref('field_case_log')])]"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">حدّد الجلسة القادمة من سجل الجلسات (أقرب جلسة لم تنعقد بعد). ثم اكتب مذكرة تحضير لها:
+١. الجلسة: تاريخها والمحكمة والدائرة وموضوعها.
+٢. ما جرى في الجلسات السابقة وما طلبته المحكمة وما لم يُقدَّم بعد.
+٣. جدول أعمال الجلسة: ما ينبغي أن يطرحه المحامي، مرتباً.
+٤. ما يُتوقع من الطرف الآخر وكيف يُرد عليه.
+٥. ما يجب إحضاره: المستندات من قائمة الملف، وما ينقص منها.
+٦. المواعيد النظامية التي تمسّ هذه الجلسة أو تليها.
+٧. قائمة تحقق قبل الموعد بيوم.
+حيث تلزم الإشارة إلى إجراء نظامي فاذكر النظام، ولا تذكر رقم مادة إلا إن ورد نصها في المصادر المرفقة. إن لم توجد جلسة قادمة في السجل فقل ذلك.</field>
+    </record>
+
+    <record id="playbook_evidence_gap" model="legal.ai.playbook">
+        <field name="name">المستندات والأدلة الناقصة</field>
+        <field name="summary">مقارنة بين ما في الملف وما تحتاجه دعوى من هذا النوع عادةً — والقائمة الناتجة هي ما ينقص.</field>
+        <field name="category">preparation</field>
+        <field name="sequence">80</field>
+        <field name="icon">fa-search</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_type'), ref('field_case_jurisdiction'), ref('field_case_documents')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_internal_notes')])]"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">بناءً على نوع القضية والاختصاص، اذكر المستندات والأدلة التي تحتاجها دعوى من هذا النوع عادةً أمام المحاكم السعودية، ثم قارنها بقائمة المستندات الموجودة في الملف. أخرج جدولاً: المستند أو الدليل، هل هو موجود في الملف، لماذا يلزم، ومن يوفّره (الموكِّل / المكتب / جهة أخرى). ثم قائمة مختصرة بالناقص مرتبةً بالأهمية. لا تفترض وجود مستند لمجرد أن عنواناً قريباً منه في القائمة؛ إن لم يكن واضحاً فأشّر عليه «يُتحقق منه».</field>
+    </record>
+
+    <record id="playbook_deadline_audit" model="legal.ai.playbook">
+        <field name="name">مراجعة المواعيد والمدد النظامية</field>
+        <field name="summary">تدقيق في مواعيد الملف: هل تتسق مع مساره، وهل يوجد ميعاد نظامي متوقع لم يُسجَّل.</field>
+        <field name="category">preparation</field>
+        <field name="sequence">90</field>
+        <field name="icon">fa-exclamation-triangle</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_type'), ref('field_case_jurisdiction'), ref('field_case_court'), ref('field_case_timeline'), ref('field_case_hearings'), ref('field_case_deadlines')])]"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">راجع المواعيد النظامية المسجَّلة على الملف في ضوء مساره وجلساته:
+١. لكل موعد مسجَّل: هل يتسق مع الحدث الذي يُفترض أن ينشأ عنه (حكم، تبليغ، جلسة)؟ أشّر على ما يبدو غير متسق.
+٢. المواعيد التي يُتوقع وجودها في مثل هذه القضية وبهذه المرحلة ولا أثر لها في السجل (مثل مدة الاعتراض بعد حكم ورد في سجل الجلسات)، مع بيان ما يستوجب التحقق منه.
+٣. المواعيد التي اقتربت أو فاتت وحالتها ما زالت مفتوحة.
+اذكر النظام الذي يحكم كل مدة، ولا تذكر رقم مادة أو عدد أيام إلا إن ورد في المصادر المرفقة؛ وإلا فاكتب «يُتحقق من نص النظام». هذه مراجعة مساعِدة: التاريخ الملزم يعتمده المحامي.</field>
+    </record>
+
+    <record id="playbook_execution_plan" model="legal.ai.playbook">
+        <field name="name">خطة التنفيذ</field>
+        <field name="summary">لقضايا التنفيذ: الخطوات والمستندات والإجراءات المتاحة ضد المنفَّذ ضده، مرتبةً كخطة عمل.</field>
+        <field name="category">preparation</field>
+        <field name="sequence">100</field>
+        <field name="icon">fa-gavel</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="applies_to">execution</field>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_najiz'), ref('field_case_type'), ref('field_case_jurisdiction'), ref('field_case_court'), ref('field_case_documents'), ref('field_case_deadlines')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_claim'), ref('field_case_outcome'), ref('field_case_parties')])]"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">اكتب خطة عمل لقضية التنفيذ هذه:
+١. السند التنفيذي كما يظهر من المعطيات وما يجب التحقق منه في صحته وقابليته للتنفيذ.
+٢. المستندات اللازمة لطلب التنفيذ ومقارنتها بما في الملف.
+٣. خطوات التنفيذ أمام محكمة التنفيذ بالترتيب المعتاد، وما يُتوقع في كل خطوة.
+٤. الإجراءات المتاحة ضد المنفَّذ ضده عند الامتناع، بترتيب التدرج المعتاد.
+٥. المواعيد التي تنشأ عن كل خطوة وما ينبغي مراقبته.
+٦. ما نحتاجه من الموكِّل.
+اذكر نظام التنفيذ ولائحته حيث يلزم، ولا تذكر رقم مادة إلا إن ورد نصها في المصادر المرفقة. المخرج خطة إجرائية يراجعها المحامي.</field>
+    </record>
+
+    <!-- ===================== صياغة ===================== -->
+
+    <record id="playbook_draft_claim" model="legal.ai.playbook">
+        <field name="name">مسودة لائحة دعوى</field>
+        <field name="summary">لائحة دعوى بالبناء المعتاد أمام المحاكم السعودية، من الوقائع التي تقدمها ومعطيات الملف.</field>
+        <field name="category">drafting</field>
+        <field name="sequence">110</field>
+        <field name="icon">fa-pencil</field>
+        <field name="agent_id" ref="agent_drafting"/>
+        <field name="applies_to">litigation</field>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_najiz'), ref('field_case_type'), ref('field_case_jurisdiction'), ref('field_case_court'), ref('field_case_circuit'), ref('field_case_city')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_parties'), ref('field_case_claim')])]"/>
+        <field name="needs_question" eval="True"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">اصغ مسودة لائحة دعوى بناءً على الوقائع التي يقدمها المحامي أدناه: بيانات الأطراف كما وردت (وإلا [يُستكمل])، ثم الوقائع مرتبةً زمنياً بلا تكييف، ثم الأساس النظامي، ثم الطلبات محددةً وقابلة للتنفيذ. لا تذكر رقم مادة إلا إن ورد نصها في المصادر المرفقة. المخرج مسودة أولية للمراجعة.</field>
+    </record>
+
+    <record id="playbook_draft_reply" model="legal.ai.playbook">
+        <field name="name">مسودة مذكرة جوابية</field>
+        <field name="summary">رد على لائحة الخصم أو مذكرته: دفوع شكلية وموضوعية، وردٌّ على كل ادعاء، وطلبات.</field>
+        <field name="category">drafting</field>
+        <field name="sequence">120</field>
+        <field name="icon">fa-reply</field>
+        <field name="agent_id" ref="agent_drafting"/>
+        <field name="applies_to">litigation</field>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_najiz'), ref('field_case_type'), ref('field_case_jurisdiction'), ref('field_case_court'), ref('field_case_circuit'), ref('field_case_hearings')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_parties')])]"/>
+        <field name="needs_question" eval="True"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">اصغ مسودة مذكرة جوابية. يقدم المحامي أدناه ما ادعاه الخصم ووقائع الرد. رتّب المذكرة: تمهيد، الدفوع الشكلية إن وُجدت، الرد على كل ادعاء على حدة بترتيب ورودها، الأساس النظامي، الطلبات. لا تذكر رقم مادة إلا إن ورد نصها في المصادر المرفقة. المخرج مسودة أولية للمراجعة.</field>
+    </record>
+
+    <record id="playbook_draft_appeal" model="legal.ai.playbook">
+        <field name="name">مسودة لائحة اعتراض</field>
+        <field name="summary">اعتراض على حكم: أوجه الاعتراض على أسباب الحكم، والأساس النظامي، والطلبات أمام محكمة الاستئناف.</field>
+        <field name="category">drafting</field>
+        <field name="sequence">130</field>
+        <field name="icon">fa-level-up</field>
+        <field name="agent_id" ref="agent_drafting"/>
+        <field name="applies_to">litigation</field>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_najiz'), ref('field_case_type'), ref('field_case_jurisdiction'), ref('field_case_court'), ref('field_case_circuit'), ref('field_case_hearings'), ref('field_case_deadlines')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_parties'), ref('field_case_outcome')])]"/>
+        <field name="needs_question" eval="True"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">اصغ مسودة لائحة اعتراض على الحكم الذي يصفه المحامي أدناه (منطوقه وأسبابه وأوجه الاعتراض التي يراها). رتّبها: بيانات الحكم المعترض عليه، الوقائع الموجزة، أوجه الاعتراض كل وجه في بند مستقل يبدأ بأسباب الحكم المعترض عليها ثم وجه الخطأ فيها، الأساس النظامي، الطلبات. نبّه في أول اللائحة على ميعاد الاعتراض إن ورد في المواعيد النظامية، وإلا فاكتب [يُتحقق من الميعاد]. لا تذكر رقم مادة إلا إن ورد نصها في المصادر المرفقة. المخرج مسودة أولية للمراجعة.</field>
+    </record>
+
+    <!-- ===================== بحث ومستندات ===================== -->
+
+    <record id="playbook_research_question" model="legal.ai.playbook">
+        <field name="name">بحث نظامي في مسألة من القضية</field>
+        <field name="summary">جواب مُسنَد من الأنظمة المفهرسة على مسألة نظامية تكتبها أنت، مع المادة والنظام والقيود.</field>
+        <field name="category">research</field>
+        <field name="sequence">140</field>
+        <field name="icon">fa-book</field>
+        <field name="agent_id" ref="agent_research"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_type'), ref('field_case_jurisdiction')])]"/>
+        <field name="needs_question" eval="True"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">أجب عن المسألة النظامية التي يطرحها المحامي أدناه من المصادر المرفوعة وحدها. ابدأ بالجواب المباشر في سطرين، ثم السند: النظام والمادة كما وردت في المصدر، ثم القيود والاستثناءات، ثم ما ينبغي التحقق منه. إن لم يكن في المصادر ما يجيب فقل ذلك واقترح ما ينبغي رفعه.</field>
+    </record>
+
+    <record id="playbook_summarise_document" model="legal.ai.playbook">
+        <field name="name">تلخيص مستند أو حكم</field>
+        <field name="summary">إحاطة في دقيقة بمستند من الملف: إن كان حكماً فالمنطوق والأسباب وقابلية الاعتراض، وإلا فالغرض والالتزامات والتواريخ.</field>
+        <field name="category">research</field>
+        <field name="sequence">150</field>
+        <field name="icon">fa-compress</field>
+        <field name="agent_id" ref="agent_summary"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_type')])]"/>
+        <field name="needs_document" eval="True"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">لخّص المستند المرفق. ابدأ بثلاثة أسطر تغني عن قراءته، ثم فصّل بحسب نوعه: إن كان حكماً فالمحكمة والدائرة والأطراف بصفاتهم وموضوع النزاع والمنطوق والأسباب وقابلية الاعتراض ومدته إن ذُكرت؛ وإلا فالغرض والالتزامات والحقوق والتواريخ والمبالغ المؤثرة وما يستوجب انتباه المحامي. التزم بما في النص.</field>
+    </record>
+
+    <record id="playbook_contract_review" model="legal.ai.playbook">
+        <field name="name">مراجعة عقد من الملف</field>
+        <field name="summary">الالتزامات والمخاطر والبنود الناقصة في عقد مرفق بالملف، مرتبةً بالأثر.</field>
+        <field name="category">research</field>
+        <field name="sequence">160</field>
+        <field name="icon">fa-file-o</field>
+        <field name="agent_id" ref="agent_contract_review"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_type')])]"/>
+        <field name="needs_document" eval="True"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">راجع العقد المرفق: الالتزامات الجوهرية على كل طرف، والمخاطر مرتبةً من الأعلى أثراً مع البند الذي نشأ عنه كل خطر، والبنود الناقصة أو المبهمة، ومدى الاتساق مع الأنظمة ذات الصلة دون ذكر رقم مادة لم يرد نصها في المصادر المرفقة. ابدأ بملخص تنفيذي في خمسة أسطر.</field>
+    </record>
+
+    <!-- ===================== تسليم وإغلاق ===================== -->
+
+    <record id="playbook_handover" model="legal.ai.playbook">
+        <field name="name">مذكرة تسليم القضية لمحامٍ آخر</field>
+        <field name="summary">كل ما يحتاجه محامٍ يتسلم الملف اليوم: الموقف، والتاريخ، والمواعيد، والمستندات، وما هو معلَّق ولماذا.</field>
+        <field name="category">closing</field>
+        <field name="sequence">170</field>
+        <field name="icon">fa-exchange</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_najiz'), ref('field_case_type'), ref('field_case_court'), ref('field_case_circuit'), ref('field_case_timeline'), ref('field_case_hearings'), ref('field_case_deadlines'), ref('field_case_documents')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_parties'), ref('field_case_internal_notes'), ref('field_case_log'), ref('field_case_financials')])]"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">اكتب مذكرة تسليم للملف يقرؤها محامٍ يتسلمه اليوم ولا يعرف عنه شيئاً:
+١. الملف في خمسة أسطر: من، ضد من، عن ماذا، أين يقف.
+٢. تاريخ الملف مرتباً زمنياً: كل جلسة وما جرى فيها وكل إجراء جوهري.
+٣. المواعيد القادمة، أقربها أولاً، مع ما يجب فعله قبل كل موعد.
+٤. المستندات: ما هو موجود، وما هو معلَّق، وما ينقص.
+٥. ما هو معلَّق الآن ولماذا، وما يحتاج قراراً.
+٦. ما يجب على المتسلم فعله في أول أسبوع.
+إيجاز مهني مباشر. لا تفترض شيئاً لم يرد.</field>
+    </record>
+
+    <record id="playbook_closing_report" model="legal.ai.playbook">
+        <field name="name">تقرير إغلاق القضية والدروس المستفادة</field>
+        <field name="summary">تقرير ختامي داخلي: كيف سارت القضية، وكيف انتهت، وما الذي يُحسن فعله في القضايا المشابهة.</field>
+        <field name="category">closing</field>
+        <field name="sequence">180</field>
+        <field name="icon">fa-check-circle</field>
+        <field name="agent_id" ref="agent_case_assistant"/>
+        <field name="field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_type'), ref('field_case_court'), ref('field_case_timeline'), ref('field_case_hearings'), ref('field_case_documents')])]"/>
+        <field name="optional_field_ids" eval="[(6, 0, [ref('field_case_outcome'), ref('field_case_financials'), ref('field_case_internal_notes')])]"/>
+        <field name="is_shipped" eval="True"/>
+        <field name="instructions">اكتب تقرير إغلاق داخلياً لهذه القضية:
+١. ملخص القضية ونتيجتها كما وردت في المعطيات.
+٢. المسار: كم استغرقت، وكم جلسة، وأين طالت أو تعثرت وفق التواريخ.
+٣. ما نجح وما لم ينجح إجرائياً، بحسب ما تُظهره المعطيات.
+٤. الدروس المستفادة لقضايا مشابهة، كل درس في سطر يبدأ بفعل.
+٥. ما يجب التأكد من استكماله قبل الإغلاق النهائي: مستندات تُعاد، أرصدة تُسوّى، ملفات تُؤرشف.
+إيجاز مهني. لا تقيّم أداء أشخاص بالاسم.</field>
+    </record>
+
+</odoo>

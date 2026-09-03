@@ -91,4 +91,71 @@
         <field name="legal_field_ids" eval="[(6, 0, [ref('field_case_type'), ref('field_case_jurisdiction')])]"/>
     </record>
 
+    <!-- Composite entries: one tick sends a rendered log rather than one value.
+         Still whitelisted, still redacted, still shown in the preview. -->
+    <record id="field_case_parties" model="legal.ai.field">
+        <field name="name">الأطراف وأدوارهم</field>
+        <field name="technical_name">parties_roles</field>
+        <field name="source">case</field>
+        <field name="sequence">110</field>
+        <field name="description">كل طرف بدوره: موكِّل، خصم، ممثل. أسماء أشخاص — لا تُشارك إلا حين تحتاجها الصياغة.</field>
+        <field name="sensitive" eval="True"/>
+    </record>
+    <record id="field_case_hearings" model="legal.ai.field">
+        <field name="name">سجل الجلسات</field>
+        <field name="technical_name">hearings_log</field>
+        <field name="source">case</field>
+        <field name="sequence">120</field>
+        <field name="description">كل جلسة بتاريخها وحالتها وما جرى فيها كما سجّله المحامي.</field>
+    </record>
+    <record id="field_case_deadlines" model="legal.ai.field">
+        <field name="name">المواعيد النظامية</field>
+        <field name="technical_name">deadlines_log</field>
+        <field name="source">case</field>
+        <field name="sequence">130</field>
+        <field name="description">كل موعد بتاريخه وحالته ومصدره.</field>
+    </record>
+    <record id="field_case_documents" model="legal.ai.field">
+        <field name="name">قائمة المستندات</field>
+        <field name="technical_name">documents_list</field>
+        <field name="source">case</field>
+        <field name="sequence">140</field>
+        <field name="description">عناوين المستندات وأنواعها وحالاتها — لا نصوصها. المستندات المقيَّدة تظهر لمن يحق له فقط.</field>
+    </record>
+    <record id="field_case_timeline" model="legal.ai.field">
+        <field name="name">مسار الملف</field>
+        <field name="technical_name">stage_timeline</field>
+        <field name="source">case</field>
+        <field name="sequence">150</field>
+        <field name="description">تاريخ فتح الملف وكل انتقال بين المراحل والحالات حتى الإغلاق.</field>
+    </record>
+    <record id="field_case_log" model="legal.ai.field">
+        <field name="name">ملاحظات وسجل القضية</field>
+        <field name="technical_name">case_log</field>
+        <field name="source">case</field>
+        <field name="sequence">160</field>
+        <field name="description">آخر عشرين تعليقاً في سجل القضية بنصّها. نص سردي داخلي قد يحوي تفاصيل حساسة.</field>
+        <field name="sensitive" eval="True"/>
+    </record>
+    <record id="field_case_financials" model="legal.ai.field">
+        <field name="name">الملخص المالي</field>
+        <field name="technical_name">financial_summary</field>
+        <field name="source">case</field>
+        <field name="sequence">170</field>
+        <field name="description">الساعات والمفوتر والمسدد والمتبقي والمصروفات وأمانة الموكِّل. مالي — لا يُشارك إلا لتقرير يخصّه.</field>
+        <field name="sensitive" eval="True"/>
+    </record>
+    <record id="field_case_internal_notes" model="legal.ai.field">
+        <field name="name">الملاحظات الداخلية</field>
+        <field name="technical_name">internal_notes</field>
+        <field name="source">case</field>
+        <field name="sequence">180</field>
+        <field name="description">ملاحظات المكتب الداخلية على القضية. لا تخرج إلى الموكِّل أبداً، وتُشارك مع الوكيل بقرار صريح.</field>
+        <field name="sensitive" eval="True"/>
+    </record>
+
+    <record id="agent_case_assistant" model="ai.agent">
+        <field name="legal_field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_type'), ref('field_case_court'), ref('field_case_timeline'), ref('field_case_hearings'), ref('field_case_deadlines')])]"/>
+    </record>
+
 </odoo>

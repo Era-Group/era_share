@@ -381,6 +381,10 @@
                             <field name="reminder_scheduled" readonly="1"/>
                         </group>
                     </group>
+                    <group string="What Happened" invisible="state == 'draft'">
+                        <field name="outcome" nolabel="1"
+                               placeholder="What the court decided or asked for, what was submitted, what was adjourned to when..."/>
+                    </group>
                 </sheet>
                 <chatter/>
             </form>

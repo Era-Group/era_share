@@ -489,4 +489,164 @@
     <menuitem id="menu_ai_templates" name="Document Templates" parent="era_law_firm.menu_legal_config_ai"
               action="action_legal_document_template" sequence="40" groups="group_legal_ai_user"/>
 
+    <!-- ==================== PLAYBOOKS ==================== -->
+
+    <record id="view_ai_playbook_list" model="ir.ui.view">
+        <field name="name">legal.ai.playbook.list</field>
+        <field name="model">legal.ai.playbook</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="not agent_ready">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="agent_id"/>
+                <field name="applies_to" optional="show"/>
+                <field name="needs_document" optional="hide"/>
+                <field name="needs_question" optional="hide"/>
+                <field name="agent_ready" string="Agent Approved" widget="boolean"/>
+                <field name="is_shipped" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ai_playbook_form" model="ir.ui.view">
+        <field name="name">legal.ai.playbook.form</field>
+        <field name="model">legal.ai.playbook</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="alert alert-warning" role="alert" invisible="agent_ready">
+                        The agent behind this task is not approved for legal work yet, so requests
+                        built from it will be refused on dispatch. A legal manager approves agents
+                        under Configuration &gt; AI &gt; AI Agents.
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="The task as a lawyer names it"/></h1>
+                    </div>
+                    <field name="summary" placeholder="What comes back, in one or two lines"/>
+                    <group>
+                        <group>
+                            <field name="category"/>
+                            <field name="agent_id" options="{'no_create': True}"/>
+                            <field name="applies_to"/>
+                            <field name="agent_ready" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="needs_document"/>
+                            <field name="needs_question"/>
+                            <field name="sequence"/>
+                            <field name="icon"/>
+                            <field name="is_shipped"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Instructions" name="instructions">
+                            <field name="instructions" nolabel="1"
+                                   placeholder="What the agent is asked to produce: structure, tone, limits..."/>
+                        </page>
+                        <page string="Data Shared" name="data">
+                            <group>
+                                <field name="field_ids" widget="many2many_checkboxes"
+                                       domain="[('sensitive', '=', False)]"/>
+                            </group>
+                            <group string="Sensitive Extras (never ticked by the playbook itself)">
+                                <field name="optional_field_ids" nolabel="1" widget="many2many_checkboxes"
+                                       domain="[('sensitive', '=', True)]"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ai_playbook" model="ir.actions.act_window">
+        <field name="name">AI Playbooks</field>
+        <field name="res_model">legal.ai.playbook</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No playbooks yet</p>
+            <p>Upgrade the module to load the shipped tasks, or write your firm's own:
+               which agent, which data, what to ask for.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_ai_playbooks" name="AI Playbooks" parent="era_law_firm.menu_legal_config_ai"
+              action="action_ai_playbook" sequence="38" groups="era_law_firm.group_legal_manager"/>
+
+    <!-- The wizard: pick the task, read what it shares, land on the request. -->
+    <record id="view_ai_playbook_wizard_form" model="ir.ui.view">
+        <field name="name">legal.ai.playbook.wizard.form</field>
+        <field name="model">legal.ai.playbook.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="case_id" invisible="1"/>
+                <field name="case_type" invisible="1"/>
+                <field name="needs_document" invisible="1"/>
+                <field name="needs_question" invisible="1"/>
+                <field name="agent_ready" invisible="1"/>
+                <group>
+                    <field name="playbook_id" options="{'no_create': True, 'no_open': True}"
+                           domain="[('applies_to', 'in', ('all', case_type))]"/>
+                    <field name="agent_name" invisible="not playbook_id"/>
+                </group>
+                <div class="alert alert-warning" role="alert" invisible="not playbook_id or agent_ready">
+                    The agent behind this task is not approved for legal work yet. The request
+                    will be created but cannot be sent until a legal manager approves the agent.
+                </div>
+                <field name="briefing" nolabel="1" readonly="1" invisible="not playbook_id"/>
+                <group>
+                    <field name="document_id" invisible="not needs_document" required="needs_document"
+                           domain="[('case_id', '=', case_id)]" options="{'no_create': True}"/>
+                    <field name="include_extras" invisible="not playbook_id"/>
+                    <field name="question" invisible="not playbook_id"
+                           placeholder="The facts as you know them, or the question to answer. Redacted like everything else."/>
+                </group>
+                <footer>
+                    <button name="action_run" type="object" string="Build the Request" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- The case: one button, all the tasks. -->
+    <record id="view_legal_case_form_ask_ai" model="ir.ui.view">
+        <field name="name">legal.case.form.ask.ai</field>
+        <field name="model">legal.case</field>
+        <field name="inherit_id" ref="era_law_firm.view_legal_case_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='state']" position="before">
+                <button name="action_ask_ai" type="object" string="Ask the AI"
+                        class="btn-secondary" icon="fa-magic"
+                        groups="era_law_firm_ai.group_legal_ai_user"
+                        invisible="state == 'cancelled'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- The request remembers which task built it. -->
+    <record id="view_ai_request_form_playbook" model="ir.ui.view">
+        <field name="name">legal.ai.request.form.playbook</field>
+        <field name="model">legal.ai.request</field>
+        <field name="inherit_id" ref="view_ai_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='agent_id']" position="before">
+                <field name="playbook_id" invisible="not playbook_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_ai_request_list_playbook" model="ir.ui.view">
+        <field name="name">legal.ai.request.list.playbook</field>
+        <field name="model">legal.ai.request</field>
+        <field name="inherit_id" ref="view_ai_request_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='agent_id']" position="before">
+                <field name="playbook_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

@@ -21,4 +21,10 @@
     <record id="agent_contract_review" model="ai.agent">
         <field name="moj_corpus_target" eval="True"/>
     </record>
+    <!-- Preparation notes and deadline audits point at procedure — the
+         Law of Procedure, the Enforcement Law — and the rule that no article
+         is cited unless its text was attached needs the texts to be there. -->
+    <record id="agent_case_assistant" model="ai.agent">
+        <field name="moj_corpus_target" eval="True"/>
+    </record>
 </odoo>

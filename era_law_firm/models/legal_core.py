@@ -310,6 +310,12 @@ class LegalHearing(models.Model):
     state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('done','Done'),('cancelled','Cancelled')], default='draft')
     calendar_event_id = fields.Many2one('calendar.event', copy=False, ondelete='set null')
     reminder_scheduled = fields.Boolean(copy=False)
+    # What actually happened. A hearing without it is a calendar entry, and a
+    # client report or a handover note has nothing to say about it.
+    outcome = fields.Text(
+        string='What Happened',
+        help="What took place in the hearing and what the court decided or asked for. "
+             "Written after the hearing; this is what case reports and briefs are built from.")
 
     @api.constrains('start_datetime','stop_datetime')
     def _check_dates(self):

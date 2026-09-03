@@ -1,59 +1,50 @@
-// The mashrabiya: an interlacing lattice of diamonds fading out of the top
-// corner opposite the one reading starts from — top-left in Arabic, top-right
-// in English — so it never crowds a title or a breadcrumb.
+// The house pattern in the top corner of every screen the module owns.
 //
-// Painted as the sheet's own background image, so page content always sits
-// above it without any z-index arrangement, and no pointer ever meets it.
+// This is the firm's own artwork — a field of green and gold dots, already
+// carrying its 10% opacity inside the file — rather than something invented
+// for the module, so the screens read as one identity with everything else
+// Era publishes.
 //
-// Two bakes per theme rather than one masked layer: the fade runs diagonally
-// out of its corner, so the image is mirrored for the other writing
-// direction, and the green lightens on a dark ground. Each is about a
-// kilobyte of inline SVG and costs no network request. The names say which
-// corner the lattice is dense in, not which language uses it.
+// It rides as the sheet's own background image, so page content always paints
+// above it and no pointer ever meets it. A static file rather than a data URI:
+// at 93KB it belongs in the browser's cache, fetched once, not inlined into
+// every stylesheet the backend serves.
 //
-// Every placement below is wrapped in rtl:ignore. Odoo rebuilds the stylesheet
-// for Arabic through rtlcss, which flips `background-position` on its own — and
-// it flipped the rule written for Arabic too, so the mirrored image landed in
-// the un-mirrored corner. The direction belongs to the [dir] selectors here,
-// because only they can pick the matching image; an automatic flip can move a
-// background but cannot mirror one.
+// It is deliberately NOT mirrored for Arabic. The lattice this replaced was a
+// fade that had to run out of its corner, but a composition is not a fade:
+// flipping a mark built from the house logo would be a change to the artwork,
+// and only the corner it sits in belongs to the reading direction.
 
 :root {
-  --era-ornament-left: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='250'%20height='150'%20viewBox='0%200%20250%20150'><defs><pattern%20id='p'%20width='34'%20height='34'%20patternUnits='userSpaceOnUse'><g%20fill='none'%20stroke='%230b5d3b'%20stroke-width='1'><path%20d='M17%201%2033%2017%2017%2033%201%2017Z'/><path%20d='M17%206.6%2027.4%2017%2017%2027.4%206.6%2017Z'/></g></pattern><linearGradient%20id='f'%20x1='0'%20y1='0'%20x2='1'%20y2='1'><stop%20offset='0'%20stop-color='%23fff'%20stop-opacity='.5'/><stop%20offset='.62'%20stop-color='%23fff'%20stop-opacity='0'/></linearGradient><mask%20id='m'><rect%20width='250'%20height='150'%20fill='url%28%23f%29'/></mask></defs><rect%20width='250'%20height='150'%20fill='url%28%23p%29'%20mask='url%28%23m%29'/></svg>");
-  --era-ornament-right: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='250'%20height='150'%20viewBox='0%200%20250%20150'><defs><pattern%20id='p'%20width='34'%20height='34'%20patternUnits='userSpaceOnUse'><g%20fill='none'%20stroke='%230b5d3b'%20stroke-width='1'><path%20d='M17%201%2033%2017%2017%2033%201%2017Z'/><path%20d='M17%206.6%2027.4%2017%2017%2027.4%206.6%2017Z'/></g></pattern><linearGradient%20id='f'%20x1='1'%20y1='0'%20x2='0'%20y2='1'><stop%20offset='0'%20stop-color='%23fff'%20stop-opacity='.5'/><stop%20offset='.62'%20stop-color='%23fff'%20stop-opacity='0'/></linearGradient><mask%20id='m'><rect%20width='250'%20height='150'%20fill='url%28%23f%29'/></mask></defs><rect%20width='250'%20height='150'%20fill='url%28%23p%29'%20mask='url%28%23m%29'/></svg>");
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --era-ornament-left: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='250'%20height='150'%20viewBox='0%200%20250%20150'><defs><pattern%20id='p'%20width='34'%20height='34'%20patternUnits='userSpaceOnUse'><g%20fill='none'%20stroke='%234fbe8c'%20stroke-width='1'><path%20d='M17%201%2033%2017%2017%2033%201%2017Z'/><path%20d='M17%206.6%2027.4%2017%2017%2027.4%206.6%2017Z'/></g></pattern><linearGradient%20id='f'%20x1='0'%20y1='0'%20x2='1'%20y2='1'><stop%20offset='0'%20stop-color='%23fff'%20stop-opacity='.42'/><stop%20offset='.62'%20stop-color='%23fff'%20stop-opacity='0'/></linearGradient><mask%20id='m'><rect%20width='250'%20height='150'%20fill='url%28%23f%29'/></mask></defs><rect%20width='250'%20height='150'%20fill='url%28%23p%29'%20mask='url%28%23m%29'/></svg>");
-    --era-ornament-right: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='250'%20height='150'%20viewBox='0%200%20250%20150'><defs><pattern%20id='p'%20width='34'%20height='34'%20patternUnits='userSpaceOnUse'><g%20fill='none'%20stroke='%234fbe8c'%20stroke-width='1'><path%20d='M17%201%2033%2017%2017%2033%201%2017Z'/><path%20d='M17%206.6%2027.4%2017%2017%2027.4%206.6%2017Z'/></g></pattern><linearGradient%20id='f'%20x1='1'%20y1='0'%20x2='0'%20y2='1'><stop%20offset='0'%20stop-color='%23fff'%20stop-opacity='.42'/><stop%20offset='.62'%20stop-color='%23fff'%20stop-opacity='0'/></linearGradient><mask%20id='m'><rect%20width='250'%20height='150'%20fill='url%28%23f%29'/></mask></defs><rect%20width='250'%20height='150'%20fill='url%28%23p%29'%20mask='url%28%23m%29'/></svg>");
-  }
+  --era-ornament: url("/era_law_firm/static/src/img/era_ornament.svg");
 }
 
 .o_era_legal {
   .o_form_sheet,
   .o_content > .o_kanban_renderer {
-    background-image: var(--era-ornament-right);
+    background-image: var(--era-ornament);
     background-repeat: no-repeat;
+    // rtlcss rewrites this on its own for the Arabic bundle, including inside
+    // the [dir="rtl"] rule written for Arabic — which lands the corner back
+    // where it started. The direction belongs to the selectors below.
     /*rtl:begin:ignore*/
     background-position: top right;
     /*rtl:end:ignore*/
-    background-size: 15.6rem 9.4rem;
+    background-size: 16rem auto;
   }
 }
 
 [dir="rtl"] .o_era_legal {
   .o_form_sheet,
   .o_content > .o_kanban_renderer {
-    background-image: var(--era-ornament-left);
     /*rtl:begin:ignore*/
     background-position: top left;
     /*rtl:end:ignore*/
   }
 }
 
-// The dashboard's sheet is transparent by design, so the lattice reads
-// against the page ground; keep it clear of the first row of tiles.
+// The dashboard's sheet is transparent by design, so the pattern reads against
+// the page ground; keep it clear of the first row of tiles.
 .o_legal_dashboard.o_era_legal .o_form_sheet {
-  background-size: 14rem 8.4rem;
+  background-size: 14rem auto;
 }

@@ -395,8 +395,9 @@ class WebTourTour(models.Model):
     def _assistant_candidates(self):
         """Enabled tours the current user may be offered.
 
-        Narrowed to the agent's own work unless the answer source is widened
-        — see ``tour.assistant.request._answer_source``.
+        Every enabled tour by default; narrowed to the agent's own work only
+        where the answer source is set to ``agent`` — see
+        ``tour.assistant.request._answer_source``.
         """
         domain = [("assistant_enabled", "=", True)]
         if self.env["tour.assistant.request"]._answer_source() == "agent":

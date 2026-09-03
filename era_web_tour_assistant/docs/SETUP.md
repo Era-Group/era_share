@@ -6,24 +6,31 @@ of each part.
 
 ## What answers what
 
-**The agent is the only thing that writes a walkthrough.** By default this
-module ignores tours a person recorded by hand and will not assemble one from
-the menu tree — half an answer from a menu tree undercuts the promise that the
-user asks and the system works it out.
+**Out of the box, every source may answer.** A freshly installed database
+has no agent output and no worker running, so a module that admitted only the
+agent would answer nothing at all on its first day. So `answer_source`
+defaults to `all`: tours a person recorded by hand answer, and a walkthrough
+is assembled from the menu tree this user can reach when nothing else does.
 
-Matching still runs, over the agent's own output. That is the agent
-remembering its work, not a competing source: without it the same question
-would pay for a fresh multi-minute run every time anyone asked it.
+Matching also runs over the agent's own output, which is the agent
+remembering its work rather than a competing source: without it the same
+question would pay for a fresh multi-minute run every time anyone asked it.
+
+Set `answer_source` to `agent` once a worker runs and has built up answers. A
+menu tree says where something is but never how the work is done, and once
+real walkthroughs exist, half an answer competing with one of them is worse
+than the wait.
 
 | | Answers | Speed |
 | --- | --- | --- |
 | The agent, first time | Anything | Minutes, once |
 | The agent's stored answer | The same question, forever after | Instant |
 
-**Nothing is answered until a worker runs.** With no API key the module
-collects questions and answers none of them — that is the direct consequence
-of the agent being the only source. See `era_web_tour_assistant.answer_source`
-below to widen it.
+**Without a worker, answers come from the menu tree.** With no API key the
+module still answers: it reads the menus and views the asker can reach and
+assembles a route to the right screen. That is a real answer to "where is
+this" and no answer at all to "how is this done" — for the second you need a
+worker.
 
 **There is no arrangement where an unseen workflow is explained instantly.**
 The steps do not exist until something performs the task. What you can remove
@@ -53,11 +60,11 @@ Drop the module on the addons path, then **Apps → clear the "Apps" filter →
 search "Tour Assistant" → Install**. Clearing the filter is the part people
 miss: this is a technical module, and the Apps list hides those by default.
 
-### 2. Only if you set `answer_source` to `all`
+### 2. Optional: teach it about tours you recorded by hand
 
-Tours already recorded on the database are ignored by default. To let them
-answer as well, set `answer_source` to `all`, then for each tour open
-**Settings → Technical → Tours** and set:
+Recorded tours answer as soon as they are marked for the assistant — nothing
+else has to be switched on. For each one open **Settings → Technical → Tours**
+and set:
 
 - **Offered by the Assistant** — on
 - **Answers the Question** — what it teaches, in the words a user would ask
@@ -73,13 +80,13 @@ Two system parameters (**Settings → Technical → System Parameters**):
 
 | Parameter | Default | What it does |
 | --- | --- | --- |
-| `era_web_tour_assistant.answer_source` | `agent` | `agent` — only what the agent built may answer. `all` — hand-recorded tours and the menu builder answer too |
+| `era_web_tour_assistant.answer_source` | `all` | `all` — hand-recorded tours and the menu builder answer too. `agent` — only what the agent built may answer |
 | `era_web_tour_assistant.match_threshold` | 0.5 | How close a stored answer must be before it is started |
-| `era_web_tour_assistant.build_threshold` | 0.6 | `all` only: how sure the menu builder must be before it builds |
-| `era_web_tour_assistant.generate_tours` | True | `all` only: turn the menu builder off entirely |
+| `era_web_tour_assistant.build_threshold` | 0.6 | How sure the menu builder must be before it builds. Ignored where `answer_source` is `agent` |
+| `era_web_tour_assistant.generate_tours` | True | Turn the menu builder off entirely. Ignored where `answer_source` is `agent` |
 | `era_web_tour_assistant.worker_running` | False | Set to True once a worker watches the queue — it only changes what a waiting user is told |
 
-`build_threshold` only applies with `answer_source` set to `all`. Lower it to 0.5 and more questions get a built walkthrough; some of
+`build_threshold` has no effect where `answer_source` is `agent`. Lower it to 0.5 and more questions get a built walkthrough; some of
 those will point at the wrong screen, because a one-word menu name agrees with
 any question containing that word. Raise it and it stays quiet more often. The
 completion counters tell you which way you have gone too far.

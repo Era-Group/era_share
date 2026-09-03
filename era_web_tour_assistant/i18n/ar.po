@@ -10,12 +10,11 @@ msgstr ""
 "PO-Revision-Date: 2026-07-31 21:44+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;
-"
-"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 
 #. module: era_web_tour_assistant
 #. odoo-python
@@ -51,7 +50,7 @@ msgstr "الجولة يجب أن تبدأ من مسار داخل أودو."
 #. odoo-python
 #: code:addons/era_web_tour_assistant/models/tour_request.py:0
 msgid "A walkthrough of %s steps is too long to be useful."
-msgstr "جولة من %s خطوة أطول من أن تكون مفيدة."
+msgstr "شرح من %s خطوة أطول من أن يكون مفيدًا."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,field_description:era_web_tour_assistant.field_web_tour_tour__assistant_keywords
@@ -66,7 +65,7 @@ msgstr "الإجابة"
 #. module: era_web_tour_assistant
 #: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.tour_request_search
 msgid "Answered"
-msgstr "الإجابة"
+msgstr "مُجاب عنه"
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields.selection,name:era_web_tour_assistant.selection__tour_assistant_request__state__matched
@@ -180,7 +179,10 @@ msgid ""
 "                The ones no tour answers sit at the top, ordered by how often\n"
 "                they were asked, so the walkthrough worth recording next is\n"
 "                always the first row."
-msgstr "كل سؤال يكتبه مستخدم في المساعد يصل إلى هنا. الأسئلة التي لا تجيب عنها أي جولة تقف في الأعلى، مرتبة حسب عدد مرات السؤال، فتكون الجولة التي تستحق التسجيل التالية دائمًا في الصف الأول."
+msgstr ""
+"كل سؤال يكتبه مستخدم في المساعد يصل إلى هنا. الأسئلة التي لا تجيب عنها أي "
+"جولة تقف في الأعلى، مرتبة حسب عدد مرات السؤال، فيكون الشرح الذي يستحق "
+"التسجيل التالي دائمًا في الصف الأول."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_web_tour_tour__assistant_keywords
@@ -188,7 +190,9 @@ msgid ""
 "Extra words that should reach this tour, separated by spaces or commas. Use "
 "it for the wording staff actually use, including synonyms and the other "
 "language."
-msgstr "كلمات إضافية توصل لهذه الجولة، مفصولة بمسافات أو فواصل. استخدمها للألفاظ التي يستعملها الموظفون فعلًا، بما فيها المرادفات واللغة الأخرى."
+msgstr ""
+"كلمات إضافية توصل لهذه الجولة، مفصولة بمسافات أو فواصل. استخدمها للألفاظ "
+"التي يستعملها الموظفون فعلًا، بما فيها المرادفات واللغة الأخرى."
 
 #. module: era_web_tour_assistant
 #. odoo-python
@@ -201,21 +205,24 @@ msgstr "املأ %s."
 msgid ""
 "Folded form of the question. Two people asking the same thing differently "
 "land on the same record, so the count means demand."
-msgstr "الصيغة المطبَّعة للسؤال. شخصان يسألان الشيء نفسه بصياغتين مختلفتين يقعان على السجل نفسه، فيصير العدّاد معبّرًا عن الطلب الحقيقي."
+msgstr ""
+"الصيغة المطبَّعة للسؤال. شخصان يسألان الشيء نفسه بصياغتين مختلفتين يقعان على"
+" السجل نفسه، فيصير العدّاد معبّرًا عن الطلب الحقيقي."
 
 #. module: era_web_tour_assistant
 #: model:res.groups,comment:era_web_tour_assistant.group_tour_assistant_worker
 msgid ""
 "For the automated account that builds walkthroughs. Do not give this to a "
 "person."
-msgstr "للحساب الآلي الذي يبني الجولات. لا تعطه لشخص."
+msgstr "للحساب الآلي الذي يبني الشروح. لا تعطه لشخص."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_tour_assistant_request__build_attempts
 msgid ""
 "How many times an agent has tried and failed to work this out. After a few "
 "it stops trying and leaves the question for a person to record."
-msgstr "كم مرة حاول الوكيل وفشل. بعد عدة محاولات يتوقف ويترك السؤال لإنسان يسجّله."
+msgstr ""
+"كم مرة حاول الوكيل وفشل. بعد عدة محاولات يتوقف ويترك السؤال لإنسان يسجّله."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_tour_assistant_request__match_score
@@ -228,14 +235,18 @@ msgid ""
 "How often the matched tour was actually run to the end. A question asked far"
 " more often than its tour is completed is a sign the tour does not answer "
 "it."
-msgstr "كم مرة شُغّلت الجولة المطابقة حتى نهايتها. سؤال يُسأل أكثر بكثير مما تُكمل جولته علامة على أن الجولة لا تجيب عنه."
+msgstr ""
+"كم مرة شُغّلت الجولة المطابقة حتى نهايتها. سؤال يُسأل أكثر بكثير مما تُكمل "
+"جولته علامة على أن الجولة لا تجيب عنه."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_tour_assistant_request__ask_count
 msgid ""
 "How often this was asked. The queue is ordered by it, so the tour worth "
 "building next is at the top."
-msgstr "كم مرة سُئل هذا. الطابور مرتب حسبه، فالجولة التي تستحق البناء التالية تكون في الأعلى."
+msgstr ""
+"كم مرة سُئل هذا. الطابور مرتب حسبه، فالجولة التي تستحق البناء التالية تكون "
+"في الأعلى."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__last_asked
@@ -247,14 +258,18 @@ msgstr "آخر سؤال"
 msgid ""
 "Leave empty to offer this tour to everyone. Otherwise only members of these "
 "groups are shown it."
-msgstr "اتركها فارغة لعرض الجولة على الجميع. وإلا فلن تُعرض إلا لأعضاء هذه المجموعات."
+msgstr ""
+"اتركها فارغة لعرض الجولة على الجميع. وإلا فلن تُعرض إلا لأعضاء هذه "
+"المجموعات."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_web_tour_tour__assistant_enabled
 msgid ""
 "Let the assistant start this tour when a question matches it. Tours that are"
 " still being written should stay off."
-msgstr "اسمح للمساعد ببدء هذه الجولة عند مطابقة سؤال لها. الجولات التي ما زالت قيد الكتابة يُفضَّل إبقاؤها مغلقة."
+msgstr ""
+"اسمح للمساعد ببدء هذه الجولة عند مطابقة سؤال لها. الجولات التي ما زالت قيد "
+"الكتابة يُفضَّل إبقاؤها مغلقة."
 
 #. module: era_web_tour_assistant
 #. odoo-python
@@ -295,7 +310,9 @@ msgstr "لا يوجد سؤال بهذا المعرّف."
 msgid ""
 "No walkthrough covers that yet. Your question has been recorded — it has now"
 " been asked %(count)s time(s)."
-msgstr "ما فيه جولة تغطي هذا بعد. سؤالك تسجّل — سُئل الآن %(count)s مرة."
+msgstr ""
+"لا يوجد شرح يغطي هذا بعد. سُجِّل سؤالك، وبلغ عدد مرات طرحه حتى الآن "
+"%(count)s."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__question_key
@@ -308,7 +325,8 @@ msgstr "السؤال بعد التطبيع"
 msgid ""
 "Nothing covers that yet, so one is being put together for you now. Ask again"
 " in a few minutes."
-msgstr "ما فيه شرح يغطي هذا بعد، وجارٍ تجهيز واحد لك الآن. جرّب بعد دقائق."
+msgstr ""
+"لا يوجد شرح يغطي هذا بعد، وجارٍ تجهيز واحد لك الآن. اسأل مرة أخرى بعد دقائق."
 
 #. module: era_web_tour_assistant
 #: model_terms:ir.actions.act_window,help:era_web_tour_assistant.tour_request_action
@@ -388,7 +406,7 @@ msgstr "السؤال"
 #: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.tour_request_list
 #: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.tour_request_search
 msgid "Questions"
-msgstr "السؤال"
+msgstr "الأسئلة"
 
 #. module: era_web_tour_assistant
 #: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.tour_request_form
@@ -448,7 +466,9 @@ msgid ""
 "The answer was assembled from the menus rather than recorded by a person. "
 "Worth reviewing: it gets the user to the right screen, but it cannot explain"
 " the work itself."
-msgstr "الإجابة جُمّعت من القوائم لا سجّلها إنسان. تستحق المراجعة: توصل المستخدم للشاشة الصحيحة، لكنها لا تشرح العمل نفسه."
+msgstr ""
+"الإجابة جُمّعت من القوائم لا سجّلها إنسان. تستحق المراجعة: توصل المستخدم "
+"للشاشة الصحيحة، لكنها لا تشرح العمل نفسه."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_tour_assistant_request__name
@@ -459,7 +479,7 @@ msgstr "السؤال كما سُئل أول مرة."
 #. odoo-python
 #: code:addons/era_web_tour_assistant/models/tour_request.py:0
 msgid "The tour for %s has no steps yet."
-msgstr "جولة %s ما فيها خطوات بعد."
+msgstr "جولة %s لا تحتوي على خطوات بعد."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_tour_assistant_request__tour_id
@@ -472,7 +492,9 @@ msgid ""
 "The tour the user asked the assistant for and has not finished. While it is "
 "set, Odoo's own onboarding tours stay out of the way so they cannot "
 "interrupt it."
-msgstr "الجولة التي طلبها المستخدم من المساعد ولم يُنهها. ما دامت محددة تبقى جولات التهيئة الخاصة بأودو بعيدة عن الطريق حتى لا تقاطعها."
+msgstr ""
+"الجولة التي طلبها المستخدم من المساعد ولم يُنهها. ما دامت محددة تبقى جولات "
+"التهيئة الخاصة بأودو بعيدة عن الطريق حتى لا تقاطعها."
 
 #. module: era_web_tour_assistant
 #. odoo-python
@@ -492,14 +514,16 @@ msgid ""
 "This tour was assembled from the menus and views rather than recorded by "
 "hand. It gets someone to the right screen; a recorded tour will usually "
 "explain the work better."
-msgstr "هذه الجولة جُمّعت من القوائم والواجهات لا سُجّلت بيد إنسان. توصل المستخدم إلى الشاشة الصحيحة، لكن جولة مسجّلة تشرح العمل نفسه أفضل."
+msgstr ""
+"هذه الجولة جُمّعت من القوائم والواجهات لا سُجّلت بيد إنسان. توصل المستخدم "
+"إلى الشاشة الصحيحة، لكن جولة مسجّلة تشرح العمل نفسه أفضل."
 
 #. module: era_web_tour_assistant
 #. odoo-javascript
 #: code:addons/era_web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
 msgid ""
 "This walkthrough could not be started. Someone will need to look at it."
-msgstr "ما قدرنا نبدأ هذي الجولة. تحتاج من يراجعها."
+msgstr "تعذّر بدء هذا الشرح. يحتاج إلى من يراجعه."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__ask_count
@@ -547,7 +571,7 @@ msgstr "عامل مساعد الجولات"
 #. module: era_web_tour_assistant
 #: model:ir.model.fields.selection,name:era_web_tour_assistant.selection__tour_assistant_request__state__ready
 msgid "Tour Published"
-msgstr "الجولة"
+msgstr "الجولة منشورة"
 
 #. module: era_web_tour_assistant
 #: model:ir.model,name:era_web_tour_assistant.model_web_tour_tour
@@ -557,14 +581,16 @@ msgstr "الجولات"
 #. module: era_web_tour_assistant
 #: model:ir.module.category,description:era_web_tour_assistant.module_category_tour_assistant
 msgid "Walkthroughs built from what users ask for"
-msgstr "جولات تُبنى مما يسأل عنه المستخدمون"
+msgstr "شروح تُبنى مما يسأل عنه المستخدمون"
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_res_users__assistant_onboarding_restore
 msgid ""
 "What the Onboarding setting was before the assistant had to turn it on. It "
 "is put back when the tour finishes."
-msgstr "ما كان عليه إعداد التهيئة قبل أن يضطر المساعد لتشغيله. يُعاد عند انتهاء الجولة."
+msgstr ""
+"ما كان عليه إعداد التهيئة قبل أن يضطر المساعد لتشغيله. يُعاد عند انتهاء "
+"الجولة."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_tour_assistant_request__build_error
@@ -576,14 +602,18 @@ msgstr "ما أبلغ عنه الوكيل في محاولته الأخيرة."
 msgid ""
 "What this tour teaches, in the words a user would use to ask for it — for "
 "example 'how do I add a new contact?'."
-msgstr "ما تعلّمه هذه الجولة، بالكلمات التي يستخدمها المستخدم ليطلبها — مثل «كيف أضيف جهة اتصال جديدة؟»."
+msgstr ""
+"ما تعلّمه هذه الجولة، بالكلمات التي يستخدمها المستخدم ليطلبها — مثل «كيف "
+"أضيف جهة اتصال جديدة؟»."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_tour_assistant_request__match_detail
 msgid ""
 "Which words of the question reached the tour. Use it to work out what to add"
 " to the tour's keywords."
-msgstr "أي كلمات من السؤال وصلت إلى الجولة. استخدمها لمعرفة ما يجب إضافته إلى كلمات الجولة."
+msgstr ""
+"أي كلمات من السؤال وصلت إلى الجولة. استخدمها لمعرفة ما يجب إضافته إلى كلمات "
+"الجولة."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__build_error
@@ -607,12 +637,12 @@ msgstr "جارٍ إعداد الشرح."
 #. odoo-javascript
 #: code:addons/era_web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
 msgid "Usually about %(middle)s seconds, rarely more than %(upper)s."
-msgstr "عادةً %(middle)s ثوانٍ، ونادراً أكثر من %(upper)s."
+msgstr "عادةً نحو %(middle)s ثانية، ونادرًا أكثر من %(upper)s."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__build_seconds
 msgid "Seconds to Build"
-msgstr "ثوانِ البناء"
+msgstr "ثواني البناء"
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__step_count
@@ -774,11 +804,11 @@ msgstr "تبلّغ عن هذا الشرح؟"
 #. odoo-javascript
 #: code:addons/era_web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
 msgid ""
-"You are about to tell us that “%(label)s” did not help. It will be looked at "
-"and rebuilt. Nothing you typed is sent."
+"You are about to tell us that “%(label)s” did not help. It will be looked at"
+" and rebuilt. Nothing you typed is sent."
 msgstr ""
-"أنت على وشك إبلاغنا أن «%(label)s» لم يفِ بالغرض. سنراجعه ونعيد بناءه. ولا يُرسل "
-"شيء مما كتبته."
+"أنت على وشك إبلاغنا أن «%(label)s» لم يفِ بالغرض. سنراجعه ونعيد بناءه. ولا "
+"يُرسل شيء مما كتبته."
 
 #. module: era_web_tour_assistant
 #. odoo-javascript
@@ -802,24 +832,22 @@ msgstr "أبلِغنا أن هذا الشرح لم يفِ بالغرض. سيُط
 #. odoo-javascript
 #: code:addons/era_web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
 msgid "%(count)s steps"
-msgstr "%(count)s خطوة"
+msgstr "الخطوات: %(count)s"
 
 #. module: era_web_tour_assistant
 #. odoo-javascript
 #: code:addons/era_web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
 msgid "%(count)s screens"
-msgstr "%(count)s شاشات"
+msgstr "الشاشات: %(count)s"
 
+#. module: era_web_tour_assistant
+#. odoo-python
+#. module: era_web_tour_assistant
+#. odoo-python
 #. module: era_web_tour_assistant
 #. odoo-python
 #: code:addons/era_web_tour_assistant/models/tour_builder.py:0
-
-#. module: era_web_tour_assistant
-#. odoo-python
 #: code:addons/era_web_tour_assistant/models/tour_builder.py:0
-
-#. module: era_web_tour_assistant
-#. odoo-python
 #: code:addons/era_web_tour_assistant/models/tour_builder.py:0
 msgid "Press %s to complete the step."
 msgstr "اضغط «%s» لإتمام الخطوة."
@@ -839,11 +867,341 @@ msgstr "بحث"
 #. module: era_web_tour_assistant
 #. odoo-python
 #: code:addons/era_web_tour_assistant/models/res_config_settings.py:0
-msgid "Build %(current)s — %(stale)s of %(total)s walkthroughs were written by an older one and will be rebuilt."
-msgstr "البناء %(current)s — و%(stale)s من %(total)s جولة كتبها بناء أقدم وستُعاد كتابتها."
+msgid ""
+"Build %(current)s — %(stale)s of %(total)s walkthroughs were written by an "
+"older one and will be rebuilt."
+msgstr ""
+"البناء %(current)s — %(stale)s من أصل %(total)s من الشروح كتبها بناء أقدم "
+"وستُعاد كتابتها."
 
 #. module: era_web_tour_assistant
 #. odoo-python
 #: code:addons/era_web_tour_assistant/models/res_config_settings.py:0
 msgid "Build %(current)s — all %(total)s walkthroughs were written by it."
-msgstr "البناء %(current)s — وكل الجولات الـ%(total)s مكتوبة به."
+msgstr "البناء %(current)s — جميع الشروح وعددها %(total)s مكتوبة به."
+
+#. module: era_web_tour_assistant
+#. odoo-python
+#: code:addons/era_web_tour_assistant/models/tour_builder.py:0
+msgid ""
+"%(reason)s\n"
+"The screen for this does exist in your Odoo — it is your access that does not reach it. Ask whoever administers it for the permission rather than for the app."
+msgstr ""
+"%(reason)s\n"
+"الشاشة الخاصة بهذا موجودة فعلاً في أودو لديك — الصلاحية هي التي لا تصل إليها. اطلب الإذن ممن يدير النظام، لا التطبيق نفسه."
+
+#. module: era_web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
+msgid ""
+"<b>Sent:</b> how many questions were asked and\n"
+"                                answered, how many walkthroughs were finished,\n"
+"                                how long working one out took, and — only for a\n"
+"                                walkthrough somebody reported as unhelpful — the\n"
+"                                technical names of the menus it crosses.\n"
+"                                <br/>\n"
+"                                <b>Never sent:</b> the questions your staff\n"
+"                                type, any record, any name, any amount. Nothing\n"
+"                                a person wrote leaves this database.\n"
+"                                <br/>\n"
+"                                Nothing is sent at all until both the switch and\n"
+"                                the address are filled in."
+msgstr ""
+"<b>ما يُرسل:</b> عدد الأسئلة المطروحة وعدد ما أُجيب عنه، وعدد الشروح التي "
+"أُكملت، والزمن الذي استغرقه إعداد الشرح، و— فقط في حالة شرح أبلغ أحدهم أنه "
+"لم يفِ بالغرض — الأسماء التقنية للقوائم التي يمر بها.<br/><b>ما لا يُرسل "
+"أبدًا:</b> الأسئلة التي يكتبها موظفوك، وأي سجل، وأي اسم، وأي مبلغ. لا يغادر "
+"هذه القاعدة شيء مما كتبه إنسان.<br/>ولا يُرسل شيء إطلاقًا حتى يُملأ المفتاح "
+"والعنوان معًا."
+
+#. module: era_web_tour_assistant
+#: model:ir.model,name:era_web_tour_assistant.model_res_config_settings
+msgid "Config Settings"
+msgstr "إعدادات التهيئة"
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__create_uid
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__create_date
+msgid "Created on"
+msgstr "أُنشئ في"
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_res_users__display_name
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_builder__display_name
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_planner__display_name
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__display_name
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_telemetry__display_name
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_web_tour_tour__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_web_tour_tour__assistant_menu_ids
+msgid ""
+"Every menu this walkthrough visits. It is only offered to someone who can "
+"reach all of them."
+msgstr ""
+"كل قائمة يمر بها هذا الشرح. ولا يُعرض إلا لمن يستطيع الوصول إليها جميعًا."
+
+#. module: era_web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
+msgid ""
+"Faults in a walkthrough come from the shape of your screens, and screens "
+"differ from one database to the next. Shared counts are what let those be "
+"found and fixed."
+msgstr ""
+"عيوب الشرح تنشأ من شكل شاشاتك، والشاشات تختلف من قاعدة بيانات إلى أخرى. "
+"والأعداد المشتركة هي ما يتيح اكتشاف تلك العيوب وإصلاحها."
+
+#. module: era_web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
+msgid ""
+"How closely a question must agree with a walkthrough before it is answered "
+"with it. Higher asks for more agreement, and queues a question rather than "
+"risk sending somebody to the wrong screen."
+msgstr ""
+"مدى التوافق المطلوب بين السؤال والشرح قبل الإجابة به. القيمة الأعلى تطلب "
+"توافقًا أكبر، وتضع السؤال في الطابور بدل المخاطرة بإرسال أحدهم إلى الشاشة "
+"الخطأ."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_tour_assistant_request__build_seconds
+msgid ""
+"How long the answer took to work out. Recorded so the wait a user is told to"
+" expect comes from what building actually costs here, rather than a number "
+"somebody guessed."
+msgstr ""
+"كم استغرق التوصل إلى الإجابة. يُسجَّل ليكون الانتظار الذي يُخبَر به المستخدم"
+" مبنيًا على التكلفة الفعلية للبناء هنا، لا على رقم خمّنه أحد."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_tour_assistant_request__step_count
+msgid "How many steps the walkthrough ended up with."
+msgstr "عدد الخطوات التي انتهى إليها الشرح."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_tour_assistant_request__reported_count
+msgid ""
+"How often somebody running this walkthrough said it did not help. Views and "
+"menus differ from one database to the next, so the people using it are the "
+"only instrument that covers them all."
+msgstr ""
+"كم مرة قال من شغّل هذا الشرح إنه لم يفِ بالغرض. الواجهات والقوائم تختلف من "
+"قاعدة بيانات إلى أخرى، فيكون مستخدموه هم الأداة الوحيدة التي تغطيها جميعًا."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_res_config_settings__tour_assistant_match_threshold
+msgid ""
+"How well a question must agree with a walkthrough before it is answered with"
+" it. Higher asks for more agreement and queues more questions instead of "
+"risking a wrong answer."
+msgstr ""
+"مدى التوافق المطلوب بين السؤال والشرح قبل الإجابة به. القيمة الأعلى تطلب "
+"توافقًا أكبر وتضع مزيدًا من الأسئلة في الطابور بدل المخاطرة بإجابة خاطئة."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_res_config_settings__id
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_res_users__id
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_builder__id
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_planner__id
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__id
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_telemetry__id
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_web_tour_tour__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_tour_assistant_request__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_web_tour_tour__assistant_menu_ids
+msgid "Menus It Walks Through"
+msgstr "القوائم التي يمر بها"
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_res_users__assistant_onboarding_suspended
+msgid "Onboarding Suspended By The Assistant"
+msgstr "التهيئة معلَّقة بواسطة المساعد"
+
+#. module: era_web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.tour_request_list
+msgid "Seconds"
+msgstr "الثواني"
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_res_config_settings__tour_assistant_telemetry
+msgid ""
+"Send counts of how the assistant is doing, so faults that only appear on "
+"some databases can be found and fixed. Questions your staff type are never "
+"sent."
+msgstr ""
+"إرسال أعداد تبيّن أداء المساعد، ليتسنى اكتشاف العيوب التي لا تظهر إلا في بعض"
+" قواعد البيانات وإصلاحها. أما الأسئلة التي يكتبها موظفوك فلا تُرسل أبدًا."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_res_users__assistant_onboarding_suspended
+msgid ""
+"Set while the assistant has turned Odoo's onboarding tours on so a "
+"walkthrough survives a redirect. It is what says the stored preference is "
+"owed back — without it, a user whose walkthrough vanished mid-way could not "
+"be told apart from one who wants onboarding on."
+msgstr ""
+"يُضبط ما دام المساعد قد شغّل جولات التهيئة في أودو ليصمد الشرح أمام إعادة "
+"التوجيه. وهو ما يدل على أن التفضيل المحفوظ واجب الإرجاع — فبدونه لا يمكن "
+"تمييز مستخدم اختفى شرحه في منتصف الطريق عن مستخدم يريد التهيئة مفعّلة."
+
+#. module: era_web_tour_assistant
+#. odoo-python
+#: code:addons/era_web_tour_assistant/models/tour_request.py:0
+msgid ""
+"Tell me what you are trying to do — a few words about the task, not only how"
+" or what."
+msgstr ""
+"أخبرني بما تحاول إنجازه — كلمات قليلة عن المهمة، لا أدوات استفهام فقط."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_web_tour_tour__assistant_skip_model
+msgid ""
+"The model this stage exists to create a record of. A user who opens an "
+"existing one instead has already done what the stage teaches, and is carried"
+" to the next one."
+msgstr ""
+"النموذج الذي وُجدت هذه المرحلة لإنشاء سجل منه. والمستخدم الذي يفتح سجلاً "
+"موجودًا بدل ذلك يكون قد أدى ما تعلّمه المرحلة، فيُنقل إلى التي تليها."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_web_tour_tour__assistant_next_stage_id
+msgid ""
+"The stage that follows this one. A walkthrough is cut into stages so that a "
+"user who does not need one can be moved past it without abandoning the rest."
+msgstr ""
+"المرحلة التالية لهذه. يُقسَّم الشرح إلى مراحل ليتسنى تجاوز مرحلة لا يحتاجها "
+"المستخدم دون التخلي عن بقية الشرح."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_web_tour_tour__assistant_first_stage_id
+msgid ""
+"The stage this chain starts at — the tour the question was matched to, and "
+"the one a completion is recorded against."
+msgstr ""
+"المرحلة التي تبدأ بها هذه السلسلة — وهي الجولة التي طوبق السؤال بها، والتي "
+"يُسجَّل الإكمال عليها."
+
+#. module: era_web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
+msgid "This Install"
+msgstr "هذا التثبيت"
+
+#. module: era_web_tour_assistant
+#: model:ir.model,name:era_web_tour_assistant.model_tour_assistant_planner
+msgid "Tour Assistant Planner"
+msgstr "مخطِّط مساعد الجولات"
+
+#. module: era_web_tour_assistant
+#: model:ir.actions.server,name:era_web_tour_assistant.ir_cron_check_ai_account_ir_actions_server
+msgid "Tour Assistant: check the AI account still answers"
+msgstr "مساعد الجولات: التحقق من أن حساب الذكاء الاصطناعي ما زال يستجيب"
+
+#. module: era_web_tour_assistant
+#: model:ir.actions.server,name:era_web_tour_assistant.ir_cron_drop_stale_walkthroughs_ir_actions_server
+msgid "Tour Assistant: remove walkthroughs an older builder wrote"
+msgstr "مساعد الجولات: حذف الشروح التي كتبها بنّاء أقدم"
+
+#. module: era_web_tour_assistant
+#: model:ir.actions.server,name:era_web_tour_assistant.ir_cron_report_usage_ir_actions_server
+msgid "Tour Assistant: report how it is doing, if allowed"
+msgstr "مساعد الجولات: إرسال تقرير عن أدائه، إن كان مسموحًا"
+
+#. module: era_web_tour_assistant
+#: model:ir.model,name:era_web_tour_assistant.model_res_users
+msgid "User"
+msgstr "المستخدم"
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,field_description:era_web_tour_assistant.field_res_config_settings__tour_assistant_build
+msgid "Walkthrough Builder"
+msgstr "بنّاء الشروح"
+
+#. module: era_web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
+msgid "Walkthrough builder"
+msgstr "بنّاء الشروح"
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_res_config_settings__tour_assistant_telemetry_url
+msgid ""
+"Where the report is posted. Nothing is sent until both this and the switch "
+"above are set."
+msgstr ""
+"العنوان الذي يُرسل إليه التقرير. لا يُرسل شيء حتى يُضبط هذا والمفتاح أعلاه "
+"معًا."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_res_config_settings__tour_assistant_build
+msgid ""
+"Which build of the walkthrough builder this database is running, and how "
+"many stored walkthroughs an older one wrote. Anything older is rebuilt on "
+"its next use."
+msgstr ""
+"أي إصدار من بنّاء الشروح تشغّله قاعدة البيانات هذه، وكم شرحًا مخزّنًا كتبه "
+"إصدار أقدم. وكل ما هو أقدم يُعاد بناؤه عند أول استخدام له."
+
+#. module: era_web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
+msgid ""
+"Which build wrote the walkthroughs on this database. A container running an "
+"older one looks identical until somebody meets a fault that was fixed "
+"elsewhere weeks ago."
+msgstr ""
+"أي إصدار كتب الشروح الموجودة على قاعدة البيانات هذه. الحاوية التي تشغّل "
+"إصدارًا أقدم تبدو مطابقة تمامًا، إلى أن يصادف أحدهم عيبًا أُصلح في مكان آخر "
+"قبل أسابيع."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_web_tour_tour__assistant_builder_version
+msgid ""
+"Which version of the builder wrote this walkthrough. One written by an older"
+" version is no longer offered, and is removed so the question is answered "
+"again by the current one."
+msgstr ""
+"أي إصدار من البنّاء كتب هذا الشرح. والشرح الذي كتبه إصدار أقدم لا يُعرض بعد "
+"ذلك، ويُحذف ليُجاب السؤال من جديد بالإصدار الحالي."
+
+#. module: era_web_tour_assistant
+#: model:ir.model.fields,help:era_web_tour_assistant.field_res_config_settings__tour_assistant_generate
+msgid ""
+"Work out a walkthrough for a question no recorded tour answers. Off, "
+"unanswered questions only collect in the queue."
+msgstr ""
+"إعداد شرح للسؤال الذي لا تجيب عنه أي جولة مسجّلة. وعند الإيقاف، تتجمع "
+"الأسئلة بلا إجابة في الطابور فقط."
+
+#. module: era_web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
+msgid ""
+"Work out a walkthrough for a question no recorded tour answers. With this "
+"off, an unanswered question only joins the queue."
+msgstr ""
+"إعداد شرح للسؤال الذي لا تجيب عنه أي جولة مسجّلة. وبإيقاف هذا الخيار، ينضم "
+"السؤال بلا إجابة إلى الطابور فقط."
+
+#. module: era_web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.tour_form_assistant
+msgid "e.g. add, new, save, إضافة, جديد, حفظ"
+msgstr "مثال: add, new, save, إضافة, جديد, حفظ"
+
+#. module: era_web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
+msgid "https://…"
+msgstr "https://…"

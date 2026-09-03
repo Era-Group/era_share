@@ -177,24 +177,24 @@ class TourAssistantRequest(models.Model):
     def _answer_source(self):
         """Where answers are allowed to come from.
 
-        ``agent`` — the default — means the agent is the only thing that
-        writes a walkthrough. Tours a person recorded by hand and tours
-        assembled from the menus are both ignored, however good they are:
-        this module's promise is that the user asks and the system works it
-        out, and half an answer from a menu tree undercuts that.
+        ``all`` — the default — lets every source answer: walkthroughs the
+        agent built, tours a person recorded by hand, and one assembled from
+        the menus this user can reach. A database on the day it is installed
+        has none of the first two and no worker running, so anything narrower
+        answers nothing at all: every question goes to the queue, and the only
+        thing a user ever sees is being told it was written down. A module
+        whose default install answers no question is not one somebody keeps
+        open, so the default is the arrangement that works untouched.
 
-        Matching still runs, but only over what the agent itself built. That
-        is the agent remembering its own work, not a second source competing
-        with it — without it, the same question would pay for a fresh
-        multi-minute run every single time it is asked.
-
-        ``all`` restores the earlier behaviour for anyone who wants recorded
-        tours and the menu builder back.
+        ``agent`` narrows it to what the agent itself built, and is the right
+        setting once a worker runs and its output has accumulated — a menu
+        tree can say where something is but never how the work is done, and
+        half an answer competing with a real one is worse than the wait.
         """
         raw = self.env["ir.config_parameter"].sudo().get_param(
-            "era_web_tour_assistant.answer_source", "agent"
+            "era_web_tour_assistant.answer_source", "all"
         )
-        return "all" if str(raw).strip().lower() == "all" else "agent"
+        return "agent" if str(raw).strip().lower() == "agent" else "all"
 
     @api.model
     def _generation_enabled(self):

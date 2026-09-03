@@ -14,6 +14,7 @@ which is also where the tests live that keep the promise true.
 from odoo import _, api, fields, models
 
 from . import tour_builder
+from .tour_request import DEFAULT_MATCH_THRESHOLD
 
 
 class ResConfigSettings(models.TransientModel):
@@ -32,8 +33,16 @@ class ResConfigSettings(models.TransientModel):
         help="Where the report is posted. Nothing is sent until both this and "
              "the switch above are set.",
     )
+    # A config_parameter field with no default reads as False on a database
+    # where the parameter was never written — which is every database on the
+    # day it is installed. The screen then shows the builder switched off
+    # while the code has it on, and the first administrator to open Settings
+    # and press Save writes that back as the truth, turning off the one thing
+    # answering anybody. These defaults are the values the models already fall
+    # back to, so the screen and the code agree from the first render.
     tour_assistant_match_threshold = fields.Float(
         string="Answer Confidence",
+        default=DEFAULT_MATCH_THRESHOLD,
         config_parameter="era_web_tour_assistant.match_threshold",
         help="How well a question must agree with a walkthrough before it is "
              "answered with it. Higher asks for more agreement and queues more "
@@ -41,6 +50,7 @@ class ResConfigSettings(models.TransientModel):
     )
     tour_assistant_generate = fields.Boolean(
         string="Build Walkthroughs Automatically",
+        default=True,
         config_parameter="era_web_tour_assistant.generate_tours",
         help="Work out a walkthrough for a question no recorded tour answers. "
              "Off, unanswered questions only collect in the queue.",

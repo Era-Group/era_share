@@ -26,10 +26,10 @@
   .o_form_sheet,
   .o_content > .o_kanban_renderer {
     background-image: var(--era-ornament);
-    // Repeated rather than stretched: a tile scaled to the viewport would grow
-    // its dots on a wide screen and shrink them on a narrow one.
-    background-repeat: repeat-x;
+    // One band across the width, drawn once. It is a run of colours, and a run
+    // that started over every few hundred pixels would read as wallpaper.
+    background-repeat: no-repeat;
     background-position: top center;
-    background-size: auto 10rem;
+    background-size: 100% auto;
   }
 }

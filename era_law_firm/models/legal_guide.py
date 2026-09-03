@@ -20,13 +20,19 @@ class LegalGuideTopic(models.Model):
     name = fields.Char(required=True, translate=True,
                        help="The question this topic answers.")
     sequence = fields.Integer(default=10)
+    # The AI is a tool in the lawyer's hand and the portal is the client's
+    # window; one section for both read as if the assistant belonged to the
+    # client. 'outside' was that section: rows still carrying it fall back to
+    # the default rather than blocking the upgrade.
     category = fields.Selection([
         ('start', 'Getting Started'),
         ('daily', 'Daily Work'),
+        ('ai', 'AI for the Lawyer'),
         ('money', 'Money'),
-        ('outside', 'Client and AI'),
+        ('portal', 'The Client'),
         ('reference', 'Reference'),
-    ], required=True, default='daily', help="Where this topic sits in the guide.")
+    ], required=True, default='daily', ondelete={'outside': 'set default'},
+        help="Where this topic sits in the guide.")
     audience = fields.Selection([
         ('all', 'Everyone'),
         ('lawyer', 'Lawyers'),

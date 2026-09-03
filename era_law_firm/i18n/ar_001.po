@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 12:07+0000\n"
-"PO-Revision-Date: 2026-09-03 12:07+0000\n"
+"POT-Creation-Date: 2026-09-03 12:09+0000\n"
+"PO-Revision-Date: 2026-09-03 12:09+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -790,6 +790,10 @@ msgid "AI Needs Review"
 msgstr "ذكاء يحتاج مراجعة"
 
 #. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__category__ai
+msgid "AI for the Lawyer"
+msgstr "الذكاء للمحامي"
+#. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
 msgid "Access Restriction"
 msgstr "تقييد الاطلاع"
@@ -1536,11 +1540,6 @@ msgstr "بنك أمانات الموكلين"
 #: model:account.account,name:era_law_firm.trust_liability_account_company_1
 msgid "Client Trust Liability"
 msgstr "التزام أمانات الموكلين"
-
-#. module: era_law_firm
-#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__category__outside
-msgid "Client and AI"
-msgstr "الموكِّل والذكاء"
 
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__trust_allocated_amount
@@ -5021,6 +5020,10 @@ msgstr ""
 "بيانات الاختبار محمَّلة مسبقاً. والتحميل مجدداً يضيف دفعة فوقها؛ استخدم "
 "«إزالة» لمسح الموجود أولاً."
 
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__category__portal
+msgid "The Client"
+msgstr "الموكِّل"
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_intake_wizard_form
 msgid "The Matter"

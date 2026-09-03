@@ -237,7 +237,7 @@
     <record id="guide_portal" model="legal.guide.topic">
         <field name="name">What the client sees</field>
         <field name="summary">The portal, and how to put something in front of a client</field>
-        <field name="category">outside</field>
+        <field name="category">portal</field>
         <field name="icon">fa-user</field>
         <field name="sequence">90</field>
         <field name="is_shipped" eval="True"/>
@@ -269,7 +269,7 @@
     <record id="guide_ask_ai" model="legal.guide.topic">
         <field name="name">Ask the AI from the case</field>
         <field name="summary">Eighteen ready tasks, what each shares, and how to run one</field>
-        <field name="category">outside</field>
+        <field name="category">ai</field>
         <field name="icon">fa-bolt</field>
         <field name="sequence">95</field>
         <field name="is_shipped" eval="True"/>
@@ -312,7 +312,7 @@
     <record id="guide_ai" model="legal.guide.topic">
         <field name="name">Using the AI, and checking it</field>
         <field name="summary">Consent before sending, citations after</field>
-        <field name="category">outside</field>
+        <field name="category">ai</field>
         <field name="icon">fa-magic</field>
         <field name="sequence">100</field>
         <field name="is_shipped" eval="True"/>

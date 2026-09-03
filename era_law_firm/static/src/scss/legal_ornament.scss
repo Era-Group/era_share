@@ -47,4 +47,15 @@
   .o_form_sheet_bg {
     @include era-band;
   }
+
+  // The button row sits inside that container but paints the page colour over
+  // it and pins itself while the page scrolls (form_controller.scss:301). The
+  // fill is what was hiding the band behind the button; the pin is what makes
+  // an opaque fill necessary, and on a page whose header holds one button it
+  // buys nothing. Both go, and the band runs behind the row as it should.
+  .o_form_statusbar {
+    background-color: transparent;
+    position: relative;
+    top: auto;
+  }
 }

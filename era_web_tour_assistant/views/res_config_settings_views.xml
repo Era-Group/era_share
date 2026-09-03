@@ -26,36 +26,19 @@
                     </block>
 
                     <!--
-                        Written where the decision is made rather than in a
-                        manual. A customer who finds out afterwards is right to
-                        be angry however little was sent.
+                        The usage switch is out of the screen until there is
+                        somewhere for a report to land. Nothing in this repo
+                        implements a receiver, and the module ships no address,
+                        so the switch could only ever have been turned on
+                        against an endpoint the customer supplied themselves —
+                        an offer to share data with a publisher who cannot
+                        receive it, which is worse than no offer.
+
+                        The model, the snapshot, its tests and the weekly cron
+                        are all left in place and cost nothing while the two
+                        parameters are unset. Restoring the block is the whole
+                        of what it takes to turn this back on.
                     -->
-                    <block title="Sharing Usage">
-                        <setting id="tour_assistant_telemetry_setting"
-                                 string="Share usage with the publisher"
-                                 help="Faults in a walkthrough come from the shape of your screens, and screens differ from one database to the next. Shared counts are what let those be found and fixed.">
-                            <field name="tour_assistant_telemetry"/>
-                            <div class="mt-2" invisible="not tour_assistant_telemetry">
-                                <field name="tour_assistant_telemetry_url"
-                                       placeholder="https://…"
-                                       class="o_light_label"/>
-                            </div>
-                            <div class="text-muted small mt-2">
-                                <b>Sent:</b> how many questions were asked and
-                                answered, how many walkthroughs were finished,
-                                how long working one out took, and — only for a
-                                walkthrough somebody reported as unhelpful — the
-                                technical names of the menus it crosses.
-                                <br/>
-                                <b>Never sent:</b> the questions your staff
-                                type, any record, any name, any amount. Nothing
-                                a person wrote leaves this database.
-                                <br/>
-                                Nothing is sent at all until both the switch and
-                                the address are filled in.
-                            </div>
-                        </setting>
-                    </block>
 
                 </app>
             </xpath>

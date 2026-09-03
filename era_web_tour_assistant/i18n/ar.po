@@ -368,12 +368,6 @@ msgstr "افتح %s."
 #. module: era_web_tour_assistant
 #. odoo-python
 #: code:addons/era_web_tour_assistant/models/tour_request.py:0
-msgid "Please describe the task in a few words, not only question words."
-msgstr "صف المهمة بكلمات قليلة، لا بأدوات استفهام فقط."
-
-#. module: era_web_tour_assistant
-#. odoo-python
-#: code:addons/era_web_tour_assistant/models/tour_request.py:0
 msgid "Please type what you are trying to do."
 msgstr "اكتب المهمة التي تريد إنجازها."
 
@@ -649,12 +643,6 @@ msgstr "الخطوات"
 #. module: era_web_tour_assistant
 #. odoo-javascript
 #: code:addons/era_web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
-msgid "Ask how to do something and be walked through it"
-msgstr "اسأل عن أي مهمة في أودو، وسنرشدك إليها خطوة بخطوة"
-
-#. module: era_web_tour_assistant
-#. odoo-javascript
-#: code:addons/era_web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
 msgid "Step by step"
 msgstr "خطوة بخطوة"
 
@@ -681,12 +669,6 @@ msgstr "اعرضه مرة أخرى"
 #: code:addons/era_web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
 msgid "Did not help"
 msgstr "لم يفِ بالغرض"
-
-#. module: era_web_tour_assistant
-#. odoo-javascript
-#: code:addons/era_web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
-msgid "Tell us this walkthrough did not help"
-msgstr "أبلِغنا أن هذا الشرح لم يفِ بالغرض"
 
 #. module: era_web_tour_assistant
 #. odoo-javascript
@@ -758,11 +740,6 @@ msgstr "الإجابة"
 
 #. module: era_web_tour_assistant
 #: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
-msgid "Sharing Usage"
-msgstr "مشاركة الاستخدام"
-
-#. module: era_web_tour_assistant
-#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
 msgid "Build walkthroughs automatically"
 msgstr "ابنِ الشروح تلقائيًا"
 
@@ -770,21 +747,6 @@ msgstr "ابنِ الشروح تلقائيًا"
 #: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
 msgid "Answer confidence"
 msgstr "درجة الثقة قبل الإجابة"
-
-#. module: era_web_tour_assistant
-#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
-msgid "Share usage with the publisher"
-msgstr "شارك بيانات الاستخدام مع الناشر"
-
-#. module: era_web_tour_assistant
-#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
-msgid "Sent:"
-msgstr "الذي يُرسل:"
-
-#. module: era_web_tour_assistant
-#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
-msgid "Never sent:"
-msgstr "الذي لا يُرسل أبدًا:"
 
 #. module: era_web_tour_assistant
 #: model:ir.model,name:era_web_tour_assistant.model_tour_assistant_telemetry
@@ -872,29 +834,6 @@ msgstr ""
 "الشاشة الخاصة بهذا موجودة فعلاً في أودو لديك — الصلاحية هي التي لا تصل إليها. اطلب الإذن ممن يدير النظام، لا التطبيق نفسه."
 
 #. module: era_web_tour_assistant
-#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
-msgid ""
-"<b>Sent:</b> how many questions were asked and\n"
-"                                answered, how many walkthroughs were finished,\n"
-"                                how long working one out took, and — only for a\n"
-"                                walkthrough somebody reported as unhelpful — the\n"
-"                                technical names of the menus it crosses.\n"
-"                                <br/>\n"
-"                                <b>Never sent:</b> the questions your staff\n"
-"                                type, any record, any name, any amount. Nothing\n"
-"                                a person wrote leaves this database.\n"
-"                                <br/>\n"
-"                                Nothing is sent at all until both the switch and\n"
-"                                the address are filled in."
-msgstr ""
-"<b>ما يُرسل:</b> عدد الأسئلة المطروحة وعدد ما أُجيب عنه، وعدد الشروح التي "
-"أُكملت، والزمن الذي استغرقه إعداد الشرح، و— فقط في حالة شرح أبلغ أحدهم أنه "
-"لم يفِ بالغرض — الأسماء التقنية للقوائم التي يمر بها.<br/><b>ما لا يُرسل "
-"أبدًا:</b> الأسئلة التي يكتبها موظفوك، وأي سجل، وأي اسم، وأي مبلغ. لا يغادر "
-"هذه القاعدة شيء مما كتبه إنسان.<br/>ولا يُرسل شيء إطلاقًا حتى يُملأ المفتاح "
-"والعنوان معًا."
-
-#. module: era_web_tour_assistant
 #: model:ir.model,name:era_web_tour_assistant.model_res_config_settings
 msgid "Config Settings"
 msgstr "إعدادات التهيئة"
@@ -927,16 +866,6 @@ msgid ""
 "reach all of them."
 msgstr ""
 "كل قائمة يمر بها هذا الشرح. ولا يُعرض إلا لمن يستطيع الوصول إليها جميعًا."
-
-#. module: era_web_tour_assistant
-#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
-msgid ""
-"Faults in a walkthrough come from the shape of your screens, and screens "
-"differ from one database to the next. Shared counts are what let those be "
-"found and fixed."
-msgstr ""
-"عيوب الشرح تنشأ من شكل شاشاتك، والشاشات تختلف من قاعدة بيانات إلى أخرى. "
-"والأعداد المشتركة هي ما يتيح اكتشاف تلك العيوب وإصلاحها."
 
 #. module: era_web_tour_assistant
 #: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
@@ -1145,8 +1074,3 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.tour_form_assistant
 msgid "e.g. add, new, save, إضافة, جديد, حفظ"
 msgstr "مثال: add, new, save, إضافة, جديد, حفظ"
-
-#. module: era_web_tour_assistant
-#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
-msgid "https://…"
-msgstr "https://…"

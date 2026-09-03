@@ -38,6 +38,17 @@ class TestUserGuide(TransactionCase):
                       'menu_legal_conflict_check', 'menu_legal_guide'):
             self.assertTrue(self.env.ref('era_law_firm.%s' % xmlid, False), xmlid)
 
+    def test_the_sections_read_in_the_order_they_were_written(self):
+        """Grouping a selection orders by the stored value, which put Getting
+        Started last — the one place a new reader starts."""
+        Topic = self.env['legal.guide.topic']
+        groups = Topic.read_group([], ['id'], ['category'])
+        order = [g['category'][0] if isinstance(g['category'], tuple) else g['category']
+                 for g in groups]
+        expected = [key for key, _label in Topic._fields['category'].selection]
+        self.assertEqual(order, expected)
+        self.assertEqual(order[0], 'start')
+
     def test_it_promises_only_states_the_models_have(self):
         document_states = dict(self.env['legal.document']._fields['state'].selection)
         for state in ('draft', 'review', 'approved', 'rejected', 'archived'):

@@ -32,7 +32,19 @@ class LegalGuideTopic(models.Model):
         ('portal', 'The Client'),
         ('reference', 'Reference'),
     ], required=True, default='daily', ondelete={'outside': 'set default'},
+        group_expand='_expand_categories',
         help="Where this topic sits in the guide.")
+
+    def _expand_categories(self, categories, domain):
+        """Read the guide in the order it was written.
+
+        Grouping a selection field orders the columns by the stored value, so
+        the sections came out alphabetical by their technical keys — Getting
+        Started last, which is the one place a new reader starts. Naming the
+        order here also keeps an empty section visible, so a firm that has not
+        written its own topics still sees where they would go.
+        """
+        return [key for key, _label in self._fields['category'].selection]
     audience = fields.Selection([
         ('all', 'Everyone'),
         ('lawyer', 'Lawyers'),

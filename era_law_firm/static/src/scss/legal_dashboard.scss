@@ -142,10 +142,24 @@
         margin-bottom: .5rem;
     }
 
+    // Both are Char inputs outside oe_title, so they inherit a narrow default
+    // width and swallow the end of a sentence. They take the reading column.
+    .o_legal_guide_title,
+    .o_legal_guide_lede {
+        .o_field_widget,
+        .o_field_widget .o_input,
+        input {
+            width: 100%;
+            max-width: 100%;
+            text-overflow: clip;
+        }
+    }
+
     .o_legal_guide_title {
         font-weight: 700;
         letter-spacing: -.01em;
         margin-bottom: .35rem;
+        input { font: inherit; }
     }
 
     .o_legal_guide_lede {
@@ -155,6 +169,10 @@
         padding-bottom: 1rem;
         margin-bottom: 1.4rem;
         border-bottom: 1px solid var(--o-gray-300, #dee2e6);
+        input { font: inherit; color: inherit; }
+        // Readonly renders as text: let a long standfirst wrap rather than
+        // run off the edge.
+        .o_field_widget > span { display: block; white-space: normal; }
     }
 
     .o_legal_guide_body {

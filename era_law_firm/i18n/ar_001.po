@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 12:09+0000\n"
-"PO-Revision-Date: 2026-09-03 12:09+0000\n"
+"POT-Creation-Date: 2026-09-03 12:14+0000\n"
+"PO-Revision-Date: 2026-09-03 12:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -793,6 +793,7 @@ msgstr "ذكاء يحتاج مراجعة"
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__category__ai
 msgid "AI for the Lawyer"
 msgstr "الذكاء للمحامي"
+
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
 msgid "Access Restriction"
@@ -4308,6 +4309,10 @@ msgid "Pick one or type a new one"
 msgstr "اختر من القائمة أو اكتب قيمة جديدة"
 
 #. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_guide_topic_form
+msgid "Placement"
+msgstr "الموضع"
+#. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__document_type__pleading
 msgid "Pleading"
 msgstr "صحيفة دعوى"
@@ -5024,6 +5029,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__category__portal
 msgid "The Client"
 msgstr "الموكِّل"
+
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_intake_wizard_form
 msgid "The Matter"

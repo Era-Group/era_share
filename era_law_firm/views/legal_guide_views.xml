@@ -13,9 +13,9 @@
                             <span class="o_legal_guide_icon">
                                 <i t-attf-class="fa #{record.icon.raw_value or 'fa-book'}" role="img"/>
                             </span>
-                            <div class="flex-grow-1">
-                                <strong class="d-block"><field name="name"/></strong>
-                                <span class="text-muted"><field name="summary"/></span>
+                            <div class="flex-grow-1 min-w-0">
+                                <strong class="o_legal_guide_card_title d-block"><field name="name"/></strong>
+                                <span class="o_legal_guide_card_summary"><field name="summary"/></span>
                             </div>
                         </div>
                     </t>
@@ -28,24 +28,42 @@
         <field name="name">legal.guide.topic.form</field>
         <field name="model">legal.guide.topic</field>
         <field name="arch" type="xml">
+            <!-- Reads like a page from a manual, not like a record being
+                 edited: the title, a standfirst, then the text in one
+                 comfortable column. The metadata a manager needs to place a
+                 topic sits at the end, out of the reader's way. -->
             <form class="o_legal_guide_form">
                 <sheet>
-                    <div class="oe_title">
-                        <h1><field name="name" placeholder="What question does this answer?"/></h1>
-                        <h3 class="text-muted"><field name="summary" placeholder="One line for the card"/></h3>
+                    <div class="o_legal_guide_doc">
+                        <div class="o_legal_guide_kicker">
+                            <field name="icon" invisible="1"/>
+                            <field name="category" widget="badge" nolabel="1" readonly="1"/>
+                            <field name="audience" widget="badge" nolabel="1" readonly="1"
+                                   invisible="audience == 'all'"/>
+                        </div>
+                        <h1 class="o_legal_guide_title">
+                            <field name="name" placeholder="What question does this answer?"/>
+                        </h1>
+                        <div class="o_legal_guide_lede">
+                            <field name="summary" placeholder="One line for the card"/>
+                        </div>
+                        <field name="body" nolabel="1" class="o_legal_guide_body"/>
                     </div>
-                    <group>
-                        <group>
-                            <field name="category"/>
-                            <field name="audience"/>
-                        </group>
-                        <group>
-                            <field name="sequence"/>
-                            <field name="icon" placeholder="fa-book"/>
-                            <field name="is_shipped"/>
-                        </group>
-                    </group>
-                    <field name="body" nolabel="1" class="o_legal_guide_body"/>
+                    <notebook class="o_legal_guide_setup mt-4" groups="era_law_firm.group_legal_manager">
+                        <page string="Placement" name="placement">
+                            <group>
+                                <group>
+                                    <field name="category"/>
+                                    <field name="audience"/>
+                                </group>
+                                <group>
+                                    <field name="sequence"/>
+                                    <field name="icon" placeholder="fa-book"/>
+                                    <field name="is_shipped"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

@@ -96,34 +96,132 @@
 .o_legal_guide_kanban {
     .o_legal_guide_icon {
         flex: 0 0 auto;
-        width: 2.2rem;
-        height: 2.2rem;
-        border-radius: .5rem;
+        width: 2.4rem;
+        height: 2.4rem;
+        border-radius: .6rem;
         display: flex;
         align-items: center;
         justify-content: center;
         color: #fff;
         background: var(--o-brand-primary, #714B67);
     }
+    .o_legal_guide_card_title {
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: .15rem;
+    }
+
+    // Two lines, so every card in a column is the same height and the
+    // section reads as a list rather than a ragged pile.
+    .o_legal_guide_card_summary {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-size: .85rem;
+        line-height: 1.5;
+        color: var(--o-main-color-muted, #6c757d);
+    }
+
+    .o_kanban_record { transition: box-shadow .15s ease, transform .15s ease; }
+    .o_kanban_record:hover {
+        box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+        transform: translateY(-2px);
+    }
 }
 
 .o_legal_guide_form {
+    .o_legal_guide_doc {
+        max-width: 47rem;
+        margin-inline: auto;
+    }
+
+    .o_legal_guide_kicker {
+        display: flex;
+        gap: .4rem;
+        margin-bottom: .5rem;
+    }
+
+    .o_legal_guide_title {
+        font-weight: 700;
+        letter-spacing: -.01em;
+        margin-bottom: .35rem;
+    }
+
+    .o_legal_guide_lede {
+        font-size: 1.02rem;
+        line-height: 1.6;
+        color: var(--o-main-color-muted, #6c757d);
+        padding-bottom: 1rem;
+        margin-bottom: 1.4rem;
+        border-bottom: 1px solid var(--o-gray-300, #dee2e6);
+    }
+
     .o_legal_guide_body {
-        max-width: 46rem;
-        line-height: 1.7;
+        line-height: 1.85;
+        font-size: .95rem;
+
+        // Each heading opens a section: a coloured rule on the reading side
+        // marks where one ends and the next begins, in either direction.
         h4 {
             font-size: .95rem;
             font-weight: 700;
-            margin-top: 1.4rem;
-            margin-bottom: .4rem;
+            color: var(--o-brand-primary, #714B67);
+            margin-top: 2rem;
+            margin-bottom: .6rem;
+            padding-inline-start: .65rem;
+            border-inline-start: 3px solid var(--o-brand-primary, #714B67);
         }
-        ul, ol { padding-inline-start: 1.3rem; }
-        li { margin-bottom: .3rem; }
-        table { margin: .6rem 0; }
+        > div > p:first-child {
+            font-size: 1rem;
+        }
+        p { margin-bottom: .9rem; }
+
+        ul, ol {
+            padding-inline-start: 1.4rem;
+            margin-bottom: 1rem;
+        }
+        li { margin-bottom: .45rem; }
+        li::marker { color: var(--o-brand-primary, #714B67); }
+
+        // Two-column tables in the guide are always term/definition, so the
+        // first column carries the weight and the rest reads as prose.
+        table {
+            width: 100%;
+            margin: .5rem 0 1.2rem;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid var(--o-gray-300, #dee2e6);
+            border-radius: .5rem;
+            overflow: hidden;
+            td {
+                padding: .55rem .8rem;
+                border-top: 1px solid var(--o-gray-200, #e9ecef);
+                vertical-align: top;
+            }
+            tr:first-child td { border-top: 0; }
+            tr:nth-child(odd) td { background: var(--o-gray-100, #f8f9fa); }
+            td:first-child {
+                width: 34%;
+                white-space: normal;
+            }
+        }
+
         code {
             background: var(--o-gray-200, #e9ecef);
-            padding: .1rem .3rem;
+            color: inherit;
+            padding: .1rem .35rem;
             border-radius: .25rem;
+            font-size: .88em;
         }
+
+        b, strong { font-weight: 600; }
+        i, em { color: var(--o-main-color-muted, #6c757d); }
+    }
+
+    .o_legal_guide_setup {
+        max-width: 47rem;
+        margin-inline: auto;
+        opacity: .85;
     }
 }

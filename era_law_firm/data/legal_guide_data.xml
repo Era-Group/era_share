@@ -132,6 +132,7 @@
             <div>
                 <h4>Hearings</h4>
                 <p>A hearing carries its date, court, circuit and the lawyer attending. Confirming it does two things: it starts the reminder, and it makes the hearing visible to the client in the portal. A draft hearing is your planning and stays private.</p>
+                <p><b>After the hearing, write what happened</b> — what the court decided or asked for, what was submitted, what it was adjourned to. Client reports, case briefs and handover notes are built from this field; a hearing without it is a calendar entry, not an event on the file.</p>
                 <h4>Deadlines</h4>
                 <p>Statutory periods are <b>proposed</b> from configurable rules, then the lawyer adopts the binding date and records where it came from. The system is assistive by design:</p>
                 <ul>
@@ -261,6 +262,49 @@
                 </ol>
                 <h4>Good practice</h4>
                 <p>Before a client meeting, open the portal as they see it. What the file contains and what the client has been shown are two different things, and only one of them is what they will ask about.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_ask_ai" model="legal.guide.topic">
+        <field name="name">Ask the AI from the case</field>
+        <field name="summary">Eighteen ready tasks, what each shares, and how to run one</field>
+        <field name="category">outside</field>
+        <field name="icon">fa-bolt</field>
+        <field name="sequence">95</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <p>On any case, <b>Ask the AI</b> opens a wizard listing the tasks that fit that type of case. A task is a request written down once — which agent, which data, what to ask for, who the output is for — so the lawyer picks it instead of assembling it.</p>
+                <h4>The tasks</h4>
+                <table class="table table-sm">
+                    <tr><td><b>For the client</b></td><td>Full report of the proceedings to date · Update after the hearing · What we need from you</td></tr>
+                    <tr><td><b>Brief and assessment</b></td><td>Case brief with follow-up recommendations · Chronology · Risk and settlement assessment</td></tr>
+                    <tr><td><b>Preparation</b></td><td>The next hearing · Missing evidence · Deadline audit · Execution plan</td></tr>
+                    <tr><td><b>Drafting</b></td><td>Statement of claim · Reply · Appeal</td></tr>
+                    <tr><td><b>Research and documents</b></td><td>A legal question · Summarise a document or judgment · Review a contract</td></tr>
+                    <tr><td><b>Handover and closing</b></td><td>Handover note · Closing report and lessons learned</td></tr>
+                </table>
+                <h4>Running one</h4>
+                <ol>
+                    <li>Open the case and click <b>Ask the AI</b>.</li>
+                    <li>Pick the task. A briefing appears under it: what comes back, what it will share from the case by name, and which sensitive extras it can use.</li>
+                    <li>If the task works on a document, choose it. If it needs your facts or question, write them.</li>
+                    <li><b>Sensitive extras</b> — party names, internal notes, the chatter, money — are never added on their own. One box adds them, and they are listed by name so you know what that means.</li>
+                    <li><b>Build the request.</b> You land on it assembled: the right agent, the data ticked, the instructions written, and the exact redacted payload in front of you.</li>
+                    <li>Read the payload, give consent, redact and send. The governance is unchanged: the task only fills the form.</li>
+                </ol>
+                <h4>What the agent can read from the file</h4>
+                <p>Composite entries, each still one line of the whitelist, redacted and shown in the preview: the hearings log with <b>what happened</b> in each, the deadlines, the document list (titles only, and a restricted document only to someone allowed to open it), the stage history — and, marked sensitive, the parties, the chatter, the financial summary and the internal notes.</p>
+                <h4>Worked example</h4>
+                <p>A litigation file with four hearings and an appeal deadline ahead. You choose <i>Full report to the client</i>. The briefing says it will share the case reference, Najiz number, type, court, circuit, city, the stage history, the hearings log, the deadlines and the document list — no party names and no money unless you tick the box. The payload shows the four hearings with their dates and what happened in each; a phone number that had been written into one hearing note appears as <code>[REDACTED-PHONE]</code>. You consent and send, and a structured report comes back — current position, chronology, where the case stands, the coming dates, what is needed from the client, a closing line — for you to review before it goes anywhere.</p>
+                <h4>Good practice</h4>
+                <ul>
+                    <li>Write <i>what happened</i> after every hearing, the same day. The client report is exactly as good as that field.</li>
+                    <li>For the assessment and the drafting tasks, give the facts in full. What you do not write the agent does not know, and it will leave it as [to be completed].</li>
+                    <li>Do not add the sensitive extras to a client-facing task without a reason; a report to the client does not need your internal notes.</li>
+                    <li>A legal manager adds the firm's own tasks under Configuration &gt; AI &gt; AI Playbooks. A new task chooses an agent and data and writes its instructions, and cannot tick anything sensitive by default.</li>
+                </ul>
             </div>
         </field>
     </record>

@@ -1,0 +1,51 @@
+<odoo>
+    <record id="module_category_tour_assistant" model="ir.module.category">
+        <field name="name">Tour Assistant</field>
+        <field name="description">Walkthroughs built from what users ask for</field>
+        <field name="sequence">45</field>
+    </record>
+
+    <record id="res_groups_privilege_tour_assistant" model="res.groups.privilege">
+        <field name="name">Tour Assistant</field>
+        <field name="sequence">45</field>
+        <field name="category_id" ref="era_web_tour_assistant.module_category_tour_assistant"/>
+    </record>
+
+    <!-- Asking is open to every internal user; only curating the queue and
+         publishing tours needs a group of its own. -->
+    <record id="group_tour_assistant_manager" model="res.groups">
+        <field name="name">Tour Assistant Manager</field>
+        <field name="privilege_id" ref="era_web_tour_assistant.res_groups_privilege_tour_assistant"/>
+        <field name="comment">Reviews the queue of unanswered questions, records tours and publishes them.</field>
+    </record>
+
+    <!-- The account an agent worker logs in as. Deliberately separate from
+         the manager group: a worker is a process outside Odoo, and it should
+         be able to take work and hand back steps, nothing else. -->
+    <record id="group_tour_assistant_worker" model="res.groups">
+        <field name="name">Tour Assistant Worker</field>
+        <field name="privilege_id" ref="era_web_tour_assistant.res_groups_privilege_tour_assistant"/>
+        <field name="comment">For the automated account that builds walkthroughs. Do not give this to a person.</field>
+    </record>
+
+    <!-- Whoever already administers tours administers the queue that feeds
+         them; without this a fresh install has no manager at all and the
+         queue menu is invisible to everybody. -->
+    <record id="base.group_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('era_web_tour_assistant.group_tour_assistant_manager'))]"/>
+    </record>
+
+    <record id="rule_tour_request_own" model="ir.rule">
+        <field name="name">Tour Assistant Request: own questions</field>
+        <field name="model_id" ref="model_tour_assistant_request"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">[('user_ids', 'in', user.id)]</field>
+    </record>
+
+    <record id="rule_tour_request_manager" model="ir.rule">
+        <field name="name">Tour Assistant Request: all questions</field>
+        <field name="model_id" ref="model_tour_assistant_request"/>
+        <field name="groups" eval="[(4, ref('era_web_tour_assistant.group_tour_assistant_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+</odoo>

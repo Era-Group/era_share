@@ -1,6 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_tour_assistant_request_user,tour.assistant.request user,model_tour_assistant_request,base.group_user,1,0,0,0
-access_tour_assistant_request_manager,tour.assistant.request manager,model_tour_assistant_request,web_tour_assistant.group_tour_assistant_manager,1,1,1,1
-access_web_tour_tour_assistant_manager,web_tour.tour assistant manager,web_tour.model_web_tour_tour,web_tour_assistant.group_tour_assistant_manager,1,1,1,1
-access_web_tour_tour_step_assistant_manager,web_tour.tour.step assistant manager,web_tour.model_web_tour_tour_step,web_tour_assistant.group_tour_assistant_manager,1,1,1,1
-access_tour_assistant_request_worker,tour.assistant.request worker,model_tour_assistant_request,web_tour_assistant.group_tour_assistant_worker,1,0,0,0

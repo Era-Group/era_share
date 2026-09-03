@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="tour_request_list" model="ir.ui.view">
+        <field name="name">tour.assistant.request.list</field>
+        <field name="model">tour.assistant.request</field>
+        <field name="arch" type="xml">
+            <list string="Questions" create="0">
+                <field name="name"/>
+                <field name="ask_count"/>
+                <field name="tour_id" optional="show"/>
+                <field name="match_score" optional="hide" digits="[3,2]"/>
+                <field name="build_seconds" optional="hide" digits="[6,1]"
+                       sum="Seconds"/>
+                <field name="step_count" optional="hide"/>
+                <field name="completed_count" optional="show" sum="Completed"/>
+                <field name="completion_rate" optional="hide" widget="percentage"/>
+                <field name="last_asked" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'ready'"
+                       decoration-info="state == 'matched'"
+                       decoration-warning="state == 'queued'"
+                       decoration-muted="state == 'dismissed'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="tour_request_form" model="ir.ui.view">
+        <field name="name">tour.assistant.request.form</field>
+        <field name="model">tour.assistant.request</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <header>
+                    <button name="action_create_tour" type="object"
+                            string="Record a Tour" class="btn-primary"
+                            invisible="tour_id or state == 'dismissed'"
+                            groups="era_web_tour_assistant.group_tour_assistant_manager"/>
+                    <button name="action_publish" type="object"
+                            string="Publish" class="btn-primary"
+                            invisible="not tour_id or state == 'ready'"
+                            groups="era_web_tour_assistant.group_tour_assistant_manager"/>
+                    <button name="action_dismiss" type="object"
+                            string="Dismiss"
+                            invisible="state == 'dismissed'"
+                            groups="era_web_tour_assistant.group_tour_assistant_manager"/>
+                    <button name="action_requeue" type="object"
+                            string="Put Back in the Queue"
+                            invisible="state != 'dismissed'"
+                            groups="era_web_tour_assistant.group_tour_assistant_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="queued,building,ready"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Question"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Demand">
+                            <field name="ask_count"/>
+                            <field name="last_asked"/>
+                            <field name="user_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="Answer">
+                            <field name="tour_id"/>
+                            <field name="match_score" digits="[3,2]"/>
+                            <field name="match_detail"/>
+                            <field name="build_seconds" digits="[6,1]"/>
+                            <field name="step_count"/>
+                        </group>
+                        <group string="Did It Work">
+                            <field name="completed_count"/>
+                            <field name="completion_rate" widget="percentage"/>
+                        </group>
+                        <group string="Technical" groups="base.group_no_one">
+                            <field name="question_key"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="tour_request_search" model="ir.ui.view">
+        <field name="name">tour.assistant.request.search</field>
+        <field name="model">tour.assistant.request</field>
+        <field name="arch" type="xml">
+            <search string="Questions">
+                <field name="name"/>
+                <field name="tour_id"/>
+                <filter name="queued" string="No Tour Yet"
+                        domain="[('state', '=', 'queued')]"/>
+                <filter name="building" string="Being Built"
+                        domain="[('state', '=', 'building')]"/>
+                <filter name="answered" string="Answered"
+                        domain="[('state', 'in', ('matched', 'ready'))]"/>
+                <separator/>
+                <filter name="never_completed" string="Never Completed"
+                        domain="[('completed_count', '=', 0), ('state', 'in', ('matched', 'ready'))]"/>
+                <group name="group_by">
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_tour" string="Tour"
+                            context="{'group_by': 'tour_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="tour_request_action" model="ir.actions.act_window">
+        <field name="name">Assistant Questions</field>
+        <field name="res_model">tour.assistant.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="tour_request_search"/>
+        <field name="context">{'search_default_queued': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Nothing has been asked yet
+            </p>
+            <p>
+                Every question a user types into the assistant lands here.
+                The ones no tour answers sit at the top, ordered by how often
+                they were asked, so the walkthrough worth recording next is
+                always the first row.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_tour_request_action"
+              action="tour_request_action"
+              parent="base.next_id_2"
+              sequence="6"
+              groups="era_web_tour_assistant.group_tour_assistant_manager"/>
+</odoo>

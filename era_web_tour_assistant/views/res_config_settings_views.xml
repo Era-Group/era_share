@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.tour.assistant</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="40"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Tour Assistant" string="Tour Assistant"
+                     name="era_web_tour_assistant"
+                     groups="era_web_tour_assistant.group_tour_assistant_manager">
+
+                    <block title="This Install">
+                        <setting id="tour_assistant_build_setting"
+                                 string="Walkthrough builder"
+                                 help="Which build wrote the walkthroughs on this database. A container running an older one looks identical until somebody meets a fault that was fixed elsewhere weeks ago.">
+                            <field name="tour_assistant_build" readonly="1"/>
+                        </setting>
+                    </block>
+
+                    <block title="Answering">
+                        <setting id="tour_assistant_generate_setting"
+                                 string="Build walkthroughs automatically"
+                                 help="Work out a walkthrough for a question no recorded tour answers. With this off, an unanswered question only joins the queue.">
+                            <field name="tour_assistant_generate"/>
+                        </setting>
+                        <setting id="tour_assistant_threshold_setting"
+                                 string="Answer confidence"
+                                 help="How closely a question must agree with a walkthrough before it is answered with it. Higher asks for more agreement, and queues a question rather than risk sending somebody to the wrong screen.">
+                            <field name="tour_assistant_match_threshold"/>
+                        </setting>
+                    </block>
+
+                    <!--
+                        Written where the decision is made rather than in a
+                        manual. A customer who finds out afterwards is right to
+                        be angry however little was sent.
+                    -->
+                    <block title="Sharing Usage">
+                        <setting id="tour_assistant_telemetry_setting"
+                                 string="Share usage with the publisher"
+                                 help="Faults in a walkthrough come from the shape of your screens, and screens differ from one database to the next. Shared counts are what let those be found and fixed.">
+                            <field name="tour_assistant_telemetry"/>
+                            <div class="mt-2" invisible="not tour_assistant_telemetry">
+                                <field name="tour_assistant_telemetry_url"
+                                       placeholder="https://…"
+                                       class="o_light_label"/>
+                            </div>
+                            <div class="text-muted small mt-2">
+                                <b>Sent:</b> how many questions were asked and
+                                answered, how many walkthroughs were finished,
+                                how long working one out took, and — only for a
+                                walkthrough somebody reported as unhelpful — the
+                                technical names of the menus it crosses.
+                                <br/>
+                                <b>Never sent:</b> the questions your staff
+                                type, any record, any name, any amount. Nothing
+                                a person wrote leaves this database.
+                                <br/>
+                                Nothing is sent at all until both the switch and
+                                the address are filled in.
+                            </div>
+                        </setting>
+                    </block>
+
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

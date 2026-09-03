@@ -3,7 +3,7 @@
         <field name="name">legal.dashboard.form</field>
         <field name="model">legal.dashboard</field>
         <field name="arch" type="xml">
-            <form string="Dashboard" create="false" edit="false" delete="false" class="o_legal_dashboard">
+            <form string="Dashboard" create="false" edit="false" delete="false" class="o_legal_dashboard o_era_legal">
                 <!-- In the header, so the web client renders it in the control
                      panel beside the breadcrumb rather than costing a row of
                      its own inside the sheet. -->

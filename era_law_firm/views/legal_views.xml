@@ -105,7 +105,7 @@
         <field name="name">legal.case.form</field>
         <field name="model">legal.case</field>
         <field name="arch" type="xml">
-            <form>
+            <form class="o_era_legal">
                 <header>
                     <button name="action_run_conflict_check" type="object" string="Run Conflict Check"
                             class="btn-secondary" invisible="state != 'draft'"
@@ -264,7 +264,7 @@
         <field name="name">legal.conflict.check.form</field>
         <field name="model">legal.conflict.check</field>
         <field name="arch" type="xml">
-            <form>
+            <form class="o_era_legal">
                 <header>
                     <button name="action_run_check" type="object" string="Run Check" class="btn-primary"/>
                     <button name="action_approve" type="object" string="Mark Clear"
@@ -356,7 +356,7 @@
         <field name="name">legal.hearing.form</field>
         <field name="model">legal.hearing</field>
         <field name="arch" type="xml">
-            <form>
+            <form class="o_era_legal">
                 <header>
                     <button name="action_confirm" type="object" string="Confirm" class="btn-primary" invisible="state != 'draft'"/>
                     <button name="action_done" type="object" string="Mark Done" invisible="state != 'confirmed'"/>
@@ -444,7 +444,7 @@
         <field name="name">legal.deadline.form</field>
         <field name="model">legal.deadline</field>
         <field name="arch" type="xml">
-            <form>
+            <form class="o_era_legal">
                 <header>
                     <button name="action_confirm" type="object" string="Confirm" class="btn-primary" invisible="state != 'draft'"/>
                     <button name="action_done" type="object" string="Mark Done" invisible="state != 'confirmed'"/>
@@ -538,7 +538,7 @@
         <field name="name">legal.document.form</field>
         <field name="model">legal.document</field>
         <field name="arch" type="xml">
-            <form>
+            <form class="o_era_legal">
                 <header>
                     <button name="action_submit_review" type="object" string="Submit for Review"
                             class="btn-primary" invisible="state != 'draft'"/>

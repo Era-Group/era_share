@@ -4,7 +4,7 @@
         <field name="name">legal.guide.topic.kanban</field>
         <field name="model">legal.guide.topic</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="category" class="o_legal_guide_kanban"
+            <kanban default_group_by="category" class="o_legal_guide_kanban o_era_legal"
                     records_draggable="false" group_create="false" quick_create="false">
                 <field name="icon"/>
                 <templates>
@@ -32,7 +32,7 @@
                  edited: the title, a standfirst, then the text in one
                  comfortable column. The metadata a manager needs to place a
                  topic sits at the end, out of the reader's way. -->
-            <form class="o_legal_guide_form">
+            <form class="o_legal_guide_form o_era_legal">
                 <sheet>
                     <div class="o_legal_guide_doc">
                         <div class="o_legal_guide_kicker">

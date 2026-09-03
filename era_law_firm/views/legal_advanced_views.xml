@@ -39,7 +39,7 @@
         <field name="name">legal.consultation.form</field>
         <field name="model">legal.consultation</field>
         <field name="arch" type="xml">
-            <form>
+            <form class="o_era_legal">
                 <header>
                     <button name="action_convert_case" type="object" string="Convert to Case"
                             class="btn-primary" invisible="case_id"/>

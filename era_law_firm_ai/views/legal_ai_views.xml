@@ -50,7 +50,7 @@
         <field name="name">legal.ai.request.form</field>
         <field name="model">legal.ai.request</field>
         <field name="arch" type="xml">
-            <form>
+            <form class="o_era_legal">
                 <header>
                     <button name="action_approve" type="object" string="Give Consent"
                             class="btn-primary" invisible="state != 'draft'"/>

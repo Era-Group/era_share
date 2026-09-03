@@ -1,0 +1,40 @@
+// The firm's own app, given the top row of the launcher to itself.
+//
+// Odoo lays the launcher out as a Bootstrap row of equal cells, so two
+// declarations do the whole job: the cell takes the full width, and a negative
+// order lifts it above the rest. Everything else keeps its size and simply
+// wraps underneath.
+//
+// The cell is selected through the app link inside it, because the link is
+// what carries the menu's xmlid — the cell itself has nothing to identify it.
+//
+// Icons here are 70px in core; ours is asked for at double that. The number is
+// written once, as a variable, so the two places that need it cannot disagree.
+
+$era-app-icon: 140px;
+
+.o_home_menu .o_apps {
+  > .o_draggable:has(> .o_app[data-menu-xmlid="era_law_firm.menu_legal_root"]) {
+    order: -1;
+    flex: 0 0 100%;
+    max-width: 100%;
+
+    .o_app {
+      // The cell is now as wide as the row, so the tile is centred in it
+      // rather than filling it; without this the caption would sit under a
+      // left-hugging icon on a very wide screen.
+      margin-inline: auto;
+      max-width: $era-app-icon * 2;
+    }
+
+    .o_app_icon {
+      width: $era-app-icon;
+      height: $era-app-icon;
+    }
+
+    .o_caption {
+      font-size: 1.05rem;
+      font-weight: 500;
+    }
+  }
+}

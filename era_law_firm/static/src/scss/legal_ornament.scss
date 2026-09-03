@@ -1,19 +1,22 @@
-// The house pattern in the top corner of every screen the module owns.
+// The house pattern across the top of every screen the module owns.
 //
-// This is the firm's own artwork — a field of green and gold dots, already
-// carrying its 10% opacity inside the file — rather than something invented
-// for the module, so the screens read as one identity with everything else
-// Era publishes.
+// This is the firm's own artwork — a field of green and gold dots carrying its
+// 10% opacity inside the file — rather than something invented for the module,
+// so the screens read as one identity with everything else Era publishes.
+//
+// The file is cropped to the band of the composition that spans its full width
+// (half the dots live there) and carries a gradient mask that thins them on the
+// way down, so the pattern arrives at the top edge and dissolves into the page
+// instead of stopping at a line.
 //
 // It rides as the sheet's own background image, so page content always paints
 // above it and no pointer ever meets it. A static file rather than a data URI:
-// at 93KB it belongs in the browser's cache, fetched once, not inlined into
-// every stylesheet the backend serves.
+// it belongs in the browser's cache, fetched once, not inlined into every
+// stylesheet the backend serves.
 //
-// It is deliberately NOT mirrored for Arabic. The lattice this replaced was a
-// fade that had to run out of its corner, but a composition is not a fade:
-// flipping a mark built from the house logo would be a change to the artwork,
-// and only the corner it sits in belongs to the reading direction.
+// Full width and centred, so nothing here belongs to the reading direction:
+// no mirrored copy, no [dir] rule, and no rtl:ignore guards — rtlcss rewrites
+// left and right, and this has neither.
 
 :root {
   --era-ornament: url("/era_law_firm/static/src/img/era_ornament.svg");
@@ -24,27 +27,7 @@
   .o_content > .o_kanban_renderer {
     background-image: var(--era-ornament);
     background-repeat: no-repeat;
-    // rtlcss rewrites this on its own for the Arabic bundle, including inside
-    // the [dir="rtl"] rule written for Arabic — which lands the corner back
-    // where it started. The direction belongs to the selectors below.
-    /*rtl:begin:ignore*/
-    background-position: top right;
-    /*rtl:end:ignore*/
-    background-size: 16rem auto;
+    background-position: top center;
+    background-size: 100% auto;
   }
-}
-
-[dir="rtl"] .o_era_legal {
-  .o_form_sheet,
-  .o_content > .o_kanban_renderer {
-    /*rtl:begin:ignore*/
-    background-position: top left;
-    /*rtl:end:ignore*/
-  }
-}
-
-// The dashboard's sheet is transparent by design, so the pattern reads against
-// the page ground; keep it clear of the first row of tiles.
-.o_legal_dashboard.o_era_legal .o_form_sheet {
-  background-size: 14rem auto;
 }

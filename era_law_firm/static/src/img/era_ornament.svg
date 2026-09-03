@@ -1,5 +1,6 @@
-<svg width="817" height="691" viewBox="0 0 817 691" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g opacity="0.1" clip-path="url(#clip0_357_9698)">
+<svg width="817" height="280" viewBox="0 70 817 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="eraFade" x1="0" y1="70" x2="0" y2="350" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".4" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><mask id="eraFadeMask" maskUnits="userSpaceOnUse" x="0" y="70" width="817" height="280"><rect x="0" y="70" width="817" height="280" fill="url(#eraFade)"/></mask></defs>
+<g opacity="0.1" clip-path="url(#clip0_357_9698)" mask="url(#eraFadeMask)">
 <path opacity="0.83" d="M576.862 258.313C576.641 267.828 568.76 274.909 559.574 274.762C550.241 274.836 542.779 266.918 543.099 257.403C543.419 247.962 550.659 240.807 560.387 241.077C569.77 241.323 577.084 248.822 576.862 258.313Z" fill="#1B8354"/>
 <path opacity="0.83" d="M612.694 293.67C612.621 303.308 604.789 310.463 595.628 310.537C586.22 310.611 578.66 302.841 578.931 293.547C578.882 283.958 586.27 276.729 595.973 276.779C605.134 276.828 612.768 284.499 612.694 293.67Z" fill="#1B8354"/>
 <path opacity="0.79" d="M648.453 151.113C648.207 160.628 640.326 167.709 631.165 167.537C621.856 167.611 614.369 159.694 614.69 150.179C615.01 140.737 622.25 133.582 632.002 133.853C641.385 134.123 648.675 141.622 648.453 151.113Z" fill="#1B8354"/>

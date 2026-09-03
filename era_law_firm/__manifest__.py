@@ -1,7 +1,7 @@
 {
     'name': 'Era Saudi Law Firm Management',
     'summary': 'Cases, hearings, billing and client trust accounting for Saudi law firms',
-    'version': '19.0.40.0.0',
+    'version': '19.0.41.0.0',
     'category': 'Services',
     'author': 'Era Group',
     'email': 'info@era.net.sa',

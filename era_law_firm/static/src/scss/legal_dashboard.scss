@@ -91,3 +91,39 @@
         }
     }
 }
+
+// The guide reads like a manual, not like a form.
+.o_legal_guide_kanban {
+    .o_legal_guide_icon {
+        flex: 0 0 auto;
+        width: 2.2rem;
+        height: 2.2rem;
+        border-radius: .5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        background: var(--o-brand-primary, #714B67);
+    }
+}
+
+.o_legal_guide_form {
+    .o_legal_guide_body {
+        max-width: 46rem;
+        line-height: 1.7;
+        h4 {
+            font-size: .95rem;
+            font-weight: 700;
+            margin-top: 1.4rem;
+            margin-bottom: .4rem;
+        }
+        ul, ol { padding-inline-start: 1.3rem; }
+        li { margin-bottom: .3rem; }
+        table { margin: .6rem 0; }
+        code {
+            background: var(--o-gray-200, #e9ecef);
+            padding: .1rem .3rem;
+            border-radius: .25rem;
+        }
+    }
+}

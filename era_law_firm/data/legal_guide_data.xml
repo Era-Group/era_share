@@ -1,0 +1,373 @@
+<odoo>
+    <!-- The shipped guide. noupdate is deliberately off: an upgrade should
+         refresh what the module teaches, while a firm's own topics (is_shipped
+         false) are never touched. -->
+
+    <record id="guide_getting_around" model="legal.guide.topic">
+        <field name="name">Where everything lives</field>
+        <field name="summary">The seven sections, and what each one answers</field>
+        <field name="category">start</field>
+        <field name="icon">fa-compass</field>
+        <field name="sequence">10</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <p>The app opens on the dashboard. Everything else sits under seven sections, grouped by the question you are asking — not by which table the data lives in. What your role does not cover is not shown to you at all.</p>
+                <table class="table table-sm">
+                    <tr><td><b>Dashboard</b></td><td>What needs you today</td></tr>
+                    <tr><td><b>Matters</b></td><td>Open a Case · Cases · Consultations · Conflict Register</td></tr>
+                    <tr><td><b>Schedule</b></td><td>Hearings · Deadlines</td></tr>
+                    <tr><td><b>Documents</b></td><td>All Documents · Document Generation · Signatures</td></tr>
+                    <tr><td><b>Billing</b></td><td>Engagements · Time Entries · Expenses · Success Fees · Client Trust</td></tr>
+                    <tr><td><b>AI</b></td><td>AI Requests</td></tr>
+                    <tr><td><b>Configuration</b></td><td>Case Setup · Judiciary · AI · Signing · Technical</td></tr>
+                </table>
+                <h4>Good practice</h4>
+                <p>Do not navigate by menu when you are working a file. Open the case and stay in it: hearings, deadlines, documents, time and invoices are all on the case itself, and the <b>Next Step</b> line at the top says what the file is waiting for.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_dashboard" model="legal.guide.topic">
+        <field name="name">Reading the dashboard</field>
+        <field name="summary">Every tile opens exactly the list its number counted</field>
+        <field name="category">start</field>
+        <field name="icon">fa-dashboard</field>
+        <field name="sequence">20</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <p>The dashboard is not a report. Each tile is a piece of work waiting for someone, and clicking it opens precisely the records it counted — never a similar list you then have to filter.</p>
+                <h4>What each section is for</h4>
+                <ul>
+                    <li><b>Work in Progress</b> — your open cases, this week's hearings, deadlines already past, cases still waiting on a screening, and time you logged but never marked billable.</li>
+                    <li><b>Team</b> (supervisors) — screenings that came back blocked, cases with no lawyer on them, and the case load per lawyer.</li>
+                    <li><b>Oversight</b> (managers) — AI answers flagged for review, and the client trust accounts.</li>
+                    <li><b>Billing</b> (accounting) — work that is billable but not invoiced, approved expenses waiting, engagements never activated.</li>
+                </ul>
+                <h4>Whole Firm or Only Mine</h4>
+                <p>The switch at the top of Work in Progress decides whose work the numbers count. A supervisor or manager opens on the whole firm — that is the practice they are answerable for — and narrows to their own files with one click. A lawyer has no switch, because their permissions already answer that question.</p>
+                <h4>Colour carries meaning</h4>
+                <p>Red is late or blocked. Amber is due this week or needs a decision. Green is money. If nothing is red, nothing is overdue.</p>
+                <h4>Good practice</h4>
+                <p>Start the day on the dashboard and empty red first. An overdue statutory deadline is the one failure on this screen that cannot be recovered by working faster tomorrow.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_intake" model="legal.guide.topic">
+        <field name="name">Opening a case</field>
+        <field name="summary">The intake wizard, step by step, with a worked example</field>
+        <field name="category">daily</field>
+        <field name="icon">fa-folder-open</field>
+        <field name="sequence">30</field>
+        <field name="audience">lawyer</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <p>Use <b>Matters &gt; Open a Case</b>, or the button at the top of the dashboard. The wizard asks for what a file cannot exist without, runs the conflict screening for you, and creates the engagement in the same pass.</p>
+                <h4>The four steps</h4>
+                <ol>
+                    <li><b>Client, case type, responsible lawyer.</b> The type decides how the file is handled — litigation, execution, consultation or other.</li>
+                    <li><b>Opponents and other parties.</b> Enter them here. The screening reads exactly this list, so a party added later means a screening that has to run again.</li>
+                    <li><b>Conflict preview.</b> Shown inside the wizard before anything is saved.</li>
+                    <li><b>Fee engagement.</b> Hourly, fixed, milestones or a success fee — or none for now.</li>
+                </ol>
+                <h4>Worked example</h4>
+                <p>A construction company asks you to sue a supplier over a delayed delivery.</p>
+                <ul>
+                    <li>Client: <i>Al-Sahel Construction</i>. Type: <i>Litigation</i>. Lawyer: you.</li>
+                    <li>Opponent: <i>Modern Supply Est.</i> — with its commercial registration number, because that is the key that catches the same company entered twice under two spellings.</li>
+                    <li>Engagement: <i>Hourly</i>, 800 SAR. Every time entry on this case will now price itself.</li>
+                </ul>
+                <p>The screening comes back clear, the case is confirmed, and the file opens on LAW/2026/00123.</p>
+                <h4>When the screening blocks</h4>
+                <p>The case is created and left in <b>Draft</b>. It cannot be confirmed until a legal manager overrides the screening with a reason recorded in their name. That is the design: a blocked file is a decision for the firm, not a form to be argued with.</p>
+                <h4>Good practice</h4>
+                <p>Enter the identity or registration number of every party, always. It is the difference between a screening that catches a conflict and one that misses it because a name was typed with a space in a different place.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_conflicts" model="legal.guide.topic">
+        <field name="name">Conflict screening and the register</field>
+        <field name="summary">Three match keys, and telling certainty from coincidence</field>
+        <field name="category">daily</field>
+        <field name="icon">fa-balance-scale</field>
+        <field name="sequence">40</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <p>Screening compares this case's parties against every confirmed and closed file <b>in the firm</b> — not only the files the lawyer running it can see. A screening limited to your own book is blind to the conflict it exists to catch: your colleague's client.</p>
+                <h4>The three keys, strongest first</h4>
+                <table class="table table-sm">
+                    <tr><td><b>Same contact record</b></td><td>Certainty. The same partner is on both files.</td></tr>
+                    <tr><td><b>Same ID or registration number</b></td><td>Two records, one person or company. Duplicate contacts are the normal state of any client list.</td></tr>
+                    <tr><td><b>Same name after normalisation</b></td><td>A question for a human: «محمد عبدالله» and «محمد عبد الله» normalise to the same name, and may or may not be the same man.</td></tr>
+                </table>
+                <p>Every hit records which key found it, so a reviewer can weigh it instead of guessing.</p>
+                <h4>The register</h4>
+                <p><b>Matters &gt; Conflict Register</b> lists every screening the firm has run: case, client, lawyer, how many matches, the strongest evidence, and when it last ran. It opens filtered on <i>Blocked</i>; clear that filter to see everything, or filter to <i>Certain Matches</i> when you want only the hits nobody needs to judge.</p>
+                <h4>Worked example</h4>
+                <p>You open a case for a new client against <i>Northern Trading</i>. The screening blocks: <i>Northern Trading</i> is a former client of a colleague, matched on <b>same ID / registration number</b> even though the name was entered differently. The register shows the earlier case reference, so the manager can read that file before deciding.</p>
+                <h4>Good practice</h4>
+                <ul>
+                    <li>Re-run the screening whenever parties change — the system voids the old result, and a stale clearance is worse than none.</li>
+                    <li>Write overrides for the next reader: <i>"Former client, matter closed 2019, unrelated subject, client consent on file"</i> — not <i>"OK"</i>.</li>
+                    <li>Review the register weekly. A blocked screening sitting untouched is a case that cannot be worked.</li>
+                </ul>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_schedule" model="legal.guide.topic">
+        <field name="name">Hearings and statutory periods</field>
+        <field name="summary">What the system computes, and what stays yours</field>
+        <field name="category">daily</field>
+        <field name="icon">fa-calendar</field>
+        <field name="sequence">50</field>
+        <field name="audience">lawyer</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <h4>Hearings</h4>
+                <p>A hearing carries its date, court, circuit and the lawyer attending. Confirming it does two things: it starts the reminder, and it makes the hearing visible to the client in the portal. A draft hearing is your planning and stays private.</p>
+                <h4>Deadlines</h4>
+                <p>Statutory periods are <b>proposed</b> from configurable rules, then the lawyer adopts the binding date and records where it came from. The system is assistive by design:</p>
+                <ul>
+                    <li>It does not calculate suspended periods.</li>
+                    <li>It does not calculate official holidays.</li>
+                    <li>It says so on the field rather than letting you assume otherwise.</li>
+                </ul>
+                <h4>Worked example</h4>
+                <p>Judgment issued 12 Rajab. The rule proposes an appeal deadline 30 days out. You check the court's own notice, find the period runs from notification rather than issue, set the binding date accordingly and write the source in the field. The dashboard now counts it, and the reminder is raised against you.</p>
+                <h4>Good practice</h4>
+                <p>Record the source of every binding date in the same sitting. Six months later, "why this date" is a question with real consequences, and the answer must be on the record, not in a memory.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_documents" model="legal.guide.topic">
+        <field name="name">Documents, review and publishing</field>
+        <field name="summary">Two independent switches decide what a client sees</field>
+        <field name="category">daily</field>
+        <field name="icon">fa-file-text-o</field>
+        <field name="sequence">60</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <p>A document moves <b>Draft → In Review → Approved</b> (or <b>Rejected</b>, and <b>Archived</b> when it is no longer live).</p>
+                <h4>What the client sees</h4>
+                <p>Two conditions, both required, checked every single time the portal is opened: the document is <b>published to the portal</b> and it is <b>currently approved</b>. Withdrawing approval hides it immediately even though it is still marked published — publishing checks approval when you publish, and files change afterwards.</p>
+                <h4>Restricted documents</h4>
+                <p>Marking a document <b>Restricted</b> limits it to the people you name, inside the firm. It is a stronger statement than the case's Confidential flag, which is a handling instruction rather than an access rule.</p>
+                <h4>Worked example</h4>
+                <p>You draft a memorandum, send it for review, and a colleague approves it. You publish it; the client downloads it from their portal that evening. A week later new facts arrive, you move the document back to review — and it disappears from the client's page at once, without you touching the publish flag.</p>
+                <h4>Good practice</h4>
+                <p>Publish nothing before approval. The portal enforces this, but the habit matters: a client who has already read a draft cannot un-read it.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_billing" model="legal.guide.topic">
+        <field name="name">Time, expenses and invoicing</field>
+        <field name="summary">From a logged hour to a posted invoice, with the numbers</field>
+        <field name="category">money</field>
+        <field name="icon">fa-money</field>
+        <field name="sequence">70</field>
+        <field name="audience">accountant</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <h4>The chain</h4>
+                <ol>
+                    <li><b>Log time</b> on the case: hours and what you did. The rate comes from the engagement automatically — a zero-rate entry is refused rather than invoiced at nothing.</li>
+                    <li><b>Mark it billable.</b> Draft time is yours; billable time is the firm's to invoice.</li>
+                    <li><b>Approve expenses.</b> An unapproved expense is never billable.</li>
+                    <li><b>Create the invoice</b> from the case. The wizard gathers everything billable and not yet invoiced.</li>
+                </ol>
+                <h4>Worked example</h4>
+                <p>On LAW/2026/00123 (hourly, 800 SAR):</p>
+                <ul>
+                    <li>6.5 hours drafting and hearings → 5,200 SAR</li>
+                    <li>Court fee 1,000 SAR, approved → 1,000 SAR</li>
+                    <li>One 2-hour entry still in draft → <b>not included</b>, and the wizard names it and says why</li>
+                </ul>
+                <p>The invoice posts at 6,200 SAR plus VAT through the standard Saudi e-invoicing chain. The two draft hours stay waiting on the dashboard.</p>
+                <h4>Nothing bills twice</h4>
+                <p>Each time entry, expense, milestone and success fee is linked to the invoice line that billed it. That link is what makes double billing impossible — not a report anyone has to read.</p>
+                <h4>Good practice</h4>
+                <p>Log time the day you spend it, and mark billable in the same action unless you have a reason not to. The gap between "worked" and "billable" is where a practice's revenue quietly disappears.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_trust" model="legal.guide.topic">
+        <field name="name">Client trust money</field>
+        <field name="summary">Their money, held apart from yours, with a worked example</field>
+        <field name="category">money</field>
+        <field name="icon">fa-shield</field>
+        <field name="sequence">80</field>
+        <field name="audience">accountant</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <p>A retainer is not revenue. It posts to a segregated liability account — the firm owes it back until it is earned — and becomes income only when a posted invoice is deliberately settled against it.</p>
+                <h4>The four movements</h4>
+                <table class="table table-sm">
+                    <tr><td><b>Deposit</b></td><td>Increases what the firm owes the client.</td></tr>
+                    <tr><td><b>Apply to an invoice</b></td><td>A separate, explicit decision — never a side effect of creating the invoice.</td></tr>
+                    <tr><td><b>Refund</b></td><td>Requires a reason and a reference.</td></tr>
+                    <tr><td><b>Transfer between cases</b></td><td>Requires both a source and a destination case.</td></tr>
+                </table>
+                <h4>Worked example</h4>
+                <p>The client deposits 20,000 SAR against LAW/2026/00123. You invoice 6,200 SAR and apply the trust funds: the liability drops to 13,800 SAR and 6,200 SAR becomes revenue. At closing you refund the remaining 13,800 SAR with the bank reference recorded.</p>
+                <h4>Two rules the system enforces</h4>
+                <ul>
+                    <li>The balance <b>cannot go negative</b> — not even under two withdrawals posted at the same moment.</li>
+                    <li>A case <b>cannot be closed</b> while the client still has an unsettled balance.</li>
+                </ul>
+                <h4>Good practice</h4>
+                <p>Apply trust money only against a posted invoice the client has seen. Applying it earlier turns a client's money into the firm's on the strength of an internal draft.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_portal" model="legal.guide.topic">
+        <field name="name">What the client sees</field>
+        <field name="summary">The portal, and how to put something in front of a client</field>
+        <field name="category">outside</field>
+        <field name="icon">fa-user</field>
+        <field name="sequence">90</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <p>Clients open <code>/my/legal-cases</code> — in Arabic at <code>/ar/my/legal-cases</code> — and see their own accepted cases only.</p>
+                <h4>On the page</h4>
+                <ul>
+                    <li>Confirmed hearings</li>
+                    <li>Parties you marked <b>Visible in portal</b></li>
+                    <li>Documents that are published <b>and</b> approved</li>
+                    <li>Their own posted invoices</li>
+                    <li>The money held in trust for them</li>
+                </ul>
+                <h4>Never on the page</h4>
+                <p>Draft or cancelled cases, internal notes, fee workings, hours and expense economics, staff assignments, another party's invoice. These are not merely left out of the template — the fields are refused to any browser that asks the server for them directly.</p>
+                <h4>To show a client something</h4>
+                <ol>
+                    <li>A hearing: confirm it.</li>
+                    <li>A document: approve it, then publish it.</li>
+                    <li>A party: tick <b>Visible in portal</b> on the party line.</li>
+                </ol>
+                <h4>Good practice</h4>
+                <p>Before a client meeting, open the portal as they see it. What the file contains and what the client has been shown are two different things, and only one of them is what they will ask about.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_ai" model="legal.guide.topic">
+        <field name="name">Using the AI, and checking it</field>
+        <field name="summary">Consent before sending, citations after</field>
+        <field name="category">outside</field>
+        <field name="icon">fa-magic</field>
+        <field name="sequence">100</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <h4>Before anything leaves</h4>
+                <p>Every send passes a consent screen that shows <b>the actual text</b> going out, with explicit ticks for what is included. Nothing is sent because a default was left alone. Agents do not work at all until the firm approves them — a decision, not a setup step.</p>
+                <h4>After the answer</h4>
+                <p>Answers cite articles of Saudi statutes from the indexed corpus. Each request is flagged when it cites a <b>repealed</b> statute or cites <b>nothing at all</b>. Review those from <b>AI &gt; AI Requests</b>, filter <i>Needs Review</i>; the same count sits on the manager's dashboard.</p>
+                <h4>Worked example</h4>
+                <p>You ask for a memorandum on a labour dispute. The answer cites three articles. One flag appears: a cited article belongs to a statute repealed in 2021. You open the corpus, find the article that replaced it, and correct the draft before it goes anywhere near a client.</p>
+                <h4>Good practice</h4>
+                <p>Treat every answer as a sourced draft by a capable junior: read the cited article itself, not the sentence summarising it. An AI answer is not a legal opinion and the module never presents it as one.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_roles" model="legal.guide.topic">
+        <field name="name">Roles and what each one adds</field>
+        <field name="summary">One chain: staff, lawyer, supervisor, manager — plus accounting</field>
+        <field name="category">reference</field>
+        <field name="icon">fa-users</field>
+        <field name="sequence">110</field>
+        <field name="audience">supervisor</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <table class="table table-sm">
+                    <tr><td><b>Staff</b></td><td>Their own files.</td></tr>
+                    <tr><td><b>Lawyer</b></td><td>Their cases and their team's; logs their own time.</td></tr>
+                    <tr><td><b>Supervisor</b></td><td>The whole firm's cases, the conflict register, the case load per lawyer.</td></tr>
+                    <tr><td><b>Manager</b></td><td>Overrides a blocked screening with a reason; <b>deletion</b>; the audit log; configuration.</td></tr>
+                    <tr><td><b>Accounting</b></td><td>Engagements, expenses, invoicing, client trust.</td></tr>
+                </table>
+                <p>Each level inherits the one below it. A manager is also a supervisor and an accountant.</p>
+                <h4>Deletion belongs to the manager alone</h4>
+                <p>That includes a file's activities and log notes. Everyone can mark work done; only a manager can make a record cease to exist. Identity and registration numbers are likewise readable by managers only.</p>
+                <h4>Good practice</h4>
+                <p>Give a new lawyer the Lawyer role and add them to case teams, rather than raising them to Supervisor so they can see one file. The team field exists for exactly that.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_routines" model="legal.guide.topic">
+        <field name="name">A working rhythm</field>
+        <field name="summary">What to check daily, weekly and monthly</field>
+        <field name="category">reference</field>
+        <field name="icon">fa-check-square-o</field>
+        <field name="sequence">120</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <h4>Every day — the lawyer</h4>
+                <ul>
+                    <li>Dashboard: clear anything red. Overdue deadlines first.</li>
+                    <li>Log today's hours today, and mark them billable.</li>
+                    <li>Confirm tomorrow's hearings so the client sees them and the reminder runs.</li>
+                </ul>
+                <h4>Every week — the supervisor</h4>
+                <ul>
+                    <li>Conflict Register: no blocked screening left sitting.</li>
+                    <li>Unassigned cases: every open file has a lawyer answerable for it.</li>
+                    <li>Case load by lawyer: look for the person carrying twice the median.</li>
+                </ul>
+                <h4>Every week — accounting</h4>
+                <ul>
+                    <li>Billable but not invoiced: bill it or find out why it is stuck.</li>
+                    <li>Approved expenses waiting.</li>
+                    <li>Draft engagements — work billed against an inactive engagement prices itself at nothing.</li>
+                </ul>
+                <h4>Every month — the manager</h4>
+                <ul>
+                    <li>AI answers needing review.</li>
+                    <li>Trust balances against closing cases; a case cannot close with money outstanding.</li>
+                    <li>The audit log, on any file where something unusual happened.</li>
+                </ul>
+            </div>
+        </field>
+    </record>
+
+    <record id="guide_limits" model="legal.guide.topic">
+        <field name="name">What this system does not do</field>
+        <field name="summary">Stated plainly, so nobody relies on it by accident</field>
+        <field name="category">reference</field>
+        <field name="icon">fa-exclamation-triangle</field>
+        <field name="sequence">130</field>
+        <field name="is_shipped" eval="True"/>
+        <field name="body" type="html">
+            <div>
+                <ul>
+                    <li><b>No automated Najiz integration.</b> Najiz numbers, links and Hijri dates are structured manual references, entered by a person.</li>
+                    <li><b>No calculation of suspended periods or official holidays.</b> Proposed deadlines are assistive; the binding date is the lawyer's, recorded with its source.</li>
+                    <li><b>No parallel tax engine.</b> VAT and ZATCA clearance stay with <code>l10n_sa</code> and <code>l10n_sa_edi</code>.</li>
+                    <li><b>An AI answer is not a legal opinion.</b> It is a sourced draft that a lawyer must read against the cited articles.</li>
+                    <li><b>The Confidential flag is a handling instruction</b>, not an access rule. Access comes from the case team and from a document's Restricted flag.</li>
+                </ul>
+                <p>Each of these is a deliberate boundary. A system that pretended otherwise would be more comfortable to demonstrate and more dangerous to practise on.</p>
+            </div>
+        </field>
+    </record>
+
+</odoo>

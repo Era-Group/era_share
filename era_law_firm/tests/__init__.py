@@ -13,3 +13,4 @@ from . import test_portal_access
 from . import test_demo_portal_accounts
 from . import test_dashboard
 from . import test_cron_autostart
+from . import test_guide

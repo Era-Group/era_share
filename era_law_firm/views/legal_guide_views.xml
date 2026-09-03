@@ -1,0 +1,91 @@
+<odoo>
+
+    <record id="view_legal_guide_topic_kanban" model="ir.ui.view">
+        <field name="name">legal.guide.topic.kanban</field>
+        <field name="model">legal.guide.topic</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="category" class="o_legal_guide_kanban"
+                    records_draggable="false" group_create="false" quick_create="false">
+                <field name="icon"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex align-items-start gap-2">
+                            <span class="o_legal_guide_icon">
+                                <i t-attf-class="fa #{record.icon.raw_value or 'fa-book'}" role="img"/>
+                            </span>
+                            <div class="flex-grow-1">
+                                <strong class="d-block"><field name="name"/></strong>
+                                <span class="text-muted"><field name="summary"/></span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_legal_guide_topic_form" model="ir.ui.view">
+        <field name="name">legal.guide.topic.form</field>
+        <field name="model">legal.guide.topic</field>
+        <field name="arch" type="xml">
+            <form class="o_legal_guide_form">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="What question does this answer?"/></h1>
+                        <h3 class="text-muted"><field name="summary" placeholder="One line for the card"/></h3>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="category"/>
+                            <field name="audience"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="icon" placeholder="fa-book"/>
+                            <field name="is_shipped"/>
+                        </group>
+                    </group>
+                    <field name="body" nolabel="1" class="o_legal_guide_body"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_legal_guide_topic_search" model="ir.ui.view">
+        <field name="name">legal.guide.topic.search</field>
+        <field name="model">legal.guide.topic</field>
+        <field name="arch" type="xml">
+            <search>
+                <!-- The body is where the answer actually is, so it is searched. -->
+                <field name="name" filter_domain="['|', '|', ('name', 'ilike', self), ('summary', 'ilike', self), ('body', 'ilike', self)]"
+                       string="Search the guide"/>
+                <filter name="for_lawyers" string="For Lawyers" domain="[('audience', 'in', ('all', 'lawyer'))]"/>
+                <filter name="for_supervisors" string="For Supervisors" domain="[('audience', 'in', ('all', 'supervisor'))]"/>
+                <filter name="for_accounting" string="For Accounting" domain="[('audience', 'in', ('all', 'accountant'))]"/>
+                <separator/>
+                <filter name="house_rules" string="Our Own Topics" domain="[('is_shipped', '=', False)]"/>
+                <group>
+                    <filter name="group_category" string="Section" context="{'group_by': 'category'}"/>
+                    <filter name="group_audience" string="Audience" context="{'group_by': 'audience'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_legal_guide_topic" model="ir.actions.act_window">
+        <field name="name">User Guide</field>
+        <field name="res_model">legal.guide.topic</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="search_view_id" ref="view_legal_guide_topic_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">The guide is empty</p>
+            <p>Upgrade the module to load the shipped topics, or write your firm's own.</p>
+        </field>
+    </record>
+
+    <!-- Its own entry, not buried in Configuration: someone reaches for the
+         manual precisely when they cannot find things. -->
+    <menuitem id="menu_legal_guide" name="User Guide"
+              parent="menu_legal_root" action="action_legal_guide_topic" sequence="80"/>
+
+</odoo>

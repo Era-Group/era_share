@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-01 19:42+0000\n"
-"PO-Revision-Date: 2026-09-01 19:42+0000\n"
+"POT-Creation-Date: 2026-09-03 08:39+0000\n"
+"PO-Revision-Date: 2026-09-03 08:39+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -32,6 +32,522 @@ msgstr ""
 "<div class=\"text-danger\"><strong>%(count)s ملف قائم يشارك طرفاً مع هذا "
 "الملف.</strong> ستُفتح القضية، لكنها لا تُؤكَّد حتى يسجّل مدير "
 "سبباً.</div><ul>%(rows)s</ul>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_ai
+msgid ""
+"<div>\n"
+"                <h4>Before anything leaves</h4>\n"
+"                <p>Every send passes a consent screen that shows <b>the actual text</b> going out, with explicit ticks for what is included. Nothing is sent because a default was left alone. Agents do not work at all until the firm approves them — a decision, not a setup step.</p>\n"
+"                <h4>After the answer</h4>\n"
+"                <p>Answers cite articles of Saudi statutes from the indexed corpus. Each request is flagged when it cites a <b>repealed</b> statute or cites <b>nothing at all</b>. Review those from <b>AI &gt; AI Requests</b>, filter <i>Needs Review</i>; the same count sits on the manager's dashboard.</p>\n"
+"                <h4>Worked example</h4>\n"
+"                <p>You ask for a memorandum on a labour dispute. The answer cites three articles. One flag appears: a cited article belongs to a statute repealed in 2021. You open the corpus, find the article that replaced it, and correct the draft before it goes anywhere near a client.</p>\n"
+"                <h4>Good practice</h4>\n"
+"                <p>Treat every answer as a sourced draft by a capable junior: read the cited article itself, not the sentence summarising it. An AI answer is not a legal opinion and the module never presents it as one.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<h4>قبل أن يخرج شيء</h4>\n"
+"<p>كل إرسال يمرّ بشاشة موافقة تعرض <b>النص الحقيقي</b> الذي سيخرج، وتأشيرات صريحة لما يُضمَّن. ولا يُرسل شيء لأن خياراً افتراضياً تُرك على حاله. والوكلاء لا يعملون أصلاً حتى <b>يعتمدهم المكتب</b> — قرار لا خطوة تركيب.</p>\n"
+"<h4>بعد الإجابة</h4>\n"
+"<p>تستشهد الإجابات بمواد الأنظمة السعودية من المدوّنة المفهرسة. ويُؤشَّر كل طلب استشهد بنظام <b>ملغي</b> أو لم يستشهد <b>بشيء</b>. راجعها من <b>الذكاء ← طلبات الذكاء</b> بمرشِّح <i>تحتاج مراجعة</i>؛ والعدد نفسه على لوحة المدير.</p>\n"
+"<h4>مثال عملي</h4>\n"
+"<p>تطلب مذكرة في نزاع عمالي. تستشهد الإجابة بثلاث مواد. ويظهر تنبيه واحد: مادة مستشهَد بها تتبع نظاماً أُلغي عام ٢٠٢١. فتفتح المدوّنة، وتجد المادة التي حلّت محلها، وتصحّح المسودة قبل أن تقترب من موكِّل.</p>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<p>عامِل كل إجابة كمسوّدة مُسنَدة كتبها مساعد كفء: اقرأ المادة المستشهَد بها نفسها، لا الجملة التي تلخّصها. فإجابة الذكاء ليست رأياً قانونياً، والنظام لا يقدّمها كذلك أبداً.</p>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_routines
+msgid ""
+"<div>\n"
+"                <h4>Every day — the lawyer</h4>\n"
+"                <ul>\n"
+"                    <li>Dashboard: clear anything red. Overdue deadlines first.</li>\n"
+"                    <li>Log today's hours today, and mark them billable.</li>\n"
+"                    <li>Confirm tomorrow's hearings so the client sees them and the reminder runs.</li>\n"
+"                </ul>\n"
+"                <h4>Every week — the supervisor</h4>\n"
+"                <ul>\n"
+"                    <li>Conflict Register: no blocked screening left sitting.</li>\n"
+"                    <li>Unassigned cases: every open file has a lawyer answerable for it.</li>\n"
+"                    <li>Case load by lawyer: look for the person carrying twice the median.</li>\n"
+"                </ul>\n"
+"                <h4>Every week — accounting</h4>\n"
+"                <ul>\n"
+"                    <li>Billable but not invoiced: bill it or find out why it is stuck.</li>\n"
+"                    <li>Approved expenses waiting.</li>\n"
+"                    <li>Draft engagements — work billed against an inactive engagement prices itself at nothing.</li>\n"
+"                </ul>\n"
+"                <h4>Every month — the manager</h4>\n"
+"                <ul>\n"
+"                    <li>AI answers needing review.</li>\n"
+"                    <li>Trust balances against closing cases; a case cannot close with money outstanding.</li>\n"
+"                    <li>The audit log, on any file where something unusual happened.</li>\n"
+"                </ul>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<h4>كل يوم — المحامي</h4>\n"
+"<ul>\n"
+"<li>اللوحة: أفرغ كل أحمر. المهل المتأخرة أولاً.</li>\n"
+"<li>سجّل ساعات اليوم في يومها، واجعلها قابلة للفوترة.</li>\n"
+"<li>أكّد جلسات الغد ليراها الموكِّل ويعمل التذكير.</li>\n"
+"</ul>\n"
+"<h4>كل أسبوع — المشرف</h4>\n"
+"<ul>\n"
+"<li>سجل التعارضات: لا فحص موقوف متروك.</li>\n"
+"<li>القضايا بلا محامٍ: لكل ملف مفتوح محامٍ يُسأل عنه.</li>\n"
+"<li>توزيع الأحمال: ابحث عمّن يحمل ضعف الوسيط.</li>\n"
+"</ul>\n"
+"<h4>كل أسبوع — المحاسبة</h4>\n"
+"<ul>\n"
+"<li>قابل للفوترة ولم يُفوتر: فوتره أو اعرف سبب توقفه.</li>\n"
+"<li>المصروفات المعتمدة المنتظرة.</li>\n"
+"<li>الاتفاقيات المسودة — فالعمل على اتفاقية غير مفعّلة يُسعّر نفسه بلا شيء.</li>\n"
+"</ul>\n"
+"<h4>كل شهر — المدير</h4>\n"
+"<ul>\n"
+"<li>إجابات الذكاء التي تحتاج مراجعة.</li>\n"
+"<li>أرصدة الأمانات مقابل القضايا المتجهة للإغلاق؛ فالقضية لا تُغلق ومالٌ معلّق.</li>\n"
+"<li>سجل التدقيق، على أي ملف جرى فيه ما يستدعي النظر.</li>\n"
+"</ul>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_schedule
+msgid ""
+"<div>\n"
+"                <h4>Hearings</h4>\n"
+"                <p>A hearing carries its date, court, circuit and the lawyer attending. Confirming it does two things: it starts the reminder, and it makes the hearing visible to the client in the portal. A draft hearing is your planning and stays private.</p>\n"
+"                <h4>Deadlines</h4>\n"
+"                <p>Statutory periods are <b>proposed</b> from configurable rules, then the lawyer adopts the binding date and records where it came from. The system is assistive by design:</p>\n"
+"                <ul>\n"
+"                    <li>It does not calculate suspended periods.</li>\n"
+"                    <li>It does not calculate official holidays.</li>\n"
+"                    <li>It says so on the field rather than letting you assume otherwise.</li>\n"
+"                </ul>\n"
+"                <h4>Worked example</h4>\n"
+"                <p>Judgment issued 12 Rajab. The rule proposes an appeal deadline 30 days out. You check the court's own notice, find the period runs from notification rather than issue, set the binding date accordingly and write the source in the field. The dashboard now counts it, and the reminder is raised against you.</p>\n"
+"                <h4>Good practice</h4>\n"
+"                <p>Record the source of every binding date in the same sitting. Six months later, \"why this date\" is a question with real consequences, and the answer must be on the record, not in a memory.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<h4>الجلسات</h4>\n"
+"<p>الجلسة تحمل موعدها والمحكمة والدائرة والمحامي الحاضر. وتأكيدها يفعل أمرين: يبدأ التذكير، ويُظهرها للموكِّل في البوابة. أما الجلسة المسودة فهي تخطيطك أنت وتبقى داخلية.</p>\n"
+"<h4>المهل</h4>\n"
+"<p>تُقترح المدد النظامية من قواعد قابلة للتهيئة، ثم <b>يعتمد المحامي التاريخ الملزم ويوثّق مصدره</b>. والنظام مساعِد بالتصميم:</p>\n"
+"<ul>\n"
+"<li>لا يحسب المدد الموقوفة.</li>\n"
+"<li>لا يحسب العطل الرسمية.</li>\n"
+"<li>ويقول ذلك على الحقل نفسه بدل أن يدعك تفترض غيره.</li>\n"
+"</ul>\n"
+"<h4>مثال عملي</h4>\n"
+"<p>صدر الحكم في ١٢ رجب. تقترح القاعدة مهلة اعتراض بعد ٣٠ يوماً. تراجع تبليغ المحكمة فتجد المدة تسري من التبليغ لا من الصدور، فتضبط التاريخ الملزم وفقاً لذلك وتكتب المصدر في الحقل. عندها تعدّها اللوحة، ويُرفع التذكير عليك.</p>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<p>وثّق مصدر كل تاريخ ملزم في الجلسة نفسها. فبعد ستة أشهر يصير سؤال «لماذا هذا التاريخ» سؤالاً له أثر حقيقي، وجوابه يجب أن يكون في السجل لا في ذاكرة أحد.</p>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_billing
+msgid ""
+"<div>\n"
+"                <h4>The chain</h4>\n"
+"                <ol>\n"
+"                    <li><b>Log time</b> on the case: hours and what you did. The rate comes from the engagement automatically — a zero-rate entry is refused rather than invoiced at nothing.</li>\n"
+"                    <li><b>Mark it billable.</b> Draft time is yours; billable time is the firm's to invoice.</li>\n"
+"                    <li><b>Approve expenses.</b> An unapproved expense is never billable.</li>\n"
+"                    <li><b>Create the invoice</b> from the case. The wizard gathers everything billable and not yet invoiced.</li>\n"
+"                </ol>\n"
+"                <h4>Worked example</h4>\n"
+"                <p>On LAW/2026/00123 (hourly, 800 SAR):</p>\n"
+"                <ul>\n"
+"                    <li>6.5 hours drafting and hearings → 5,200 SAR</li>\n"
+"                    <li>Court fee 1,000 SAR, approved → 1,000 SAR</li>\n"
+"                    <li>One 2-hour entry still in draft → <b>not included</b>, and the wizard names it and says why</li>\n"
+"                </ul>\n"
+"                <p>The invoice posts at 6,200 SAR plus VAT through the standard Saudi e-invoicing chain. The two draft hours stay waiting on the dashboard.</p>\n"
+"                <h4>Nothing bills twice</h4>\n"
+"                <p>Each time entry, expense, milestone and success fee is linked to the invoice line that billed it. That link is what makes double billing impossible — not a report anyone has to read.</p>\n"
+"                <h4>Good practice</h4>\n"
+"                <p>Log time the day you spend it, and mark billable in the same action unless you have a reason not to. The gap between \"worked\" and \"billable\" is where a practice's revenue quietly disappears.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<h4>السلسلة</h4>\n"
+"<ol>\n"
+"<li><b>سجّل الوقت</b> على القضية: الساعات وما فعلته. ويأتي السعر من اتفاقية الأتعاب تلقائياً — والقيد بسعر صفر يُرفض بدل أن يُفوتَر بلا شيء.</li>\n"
+"<li><b>اجعله قابلاً للفوترة.</b> الوقت المسودة لك، والقابل للفوترة للمكتب ليفوتره.</li>\n"
+"<li><b>اعتمد المصروفات.</b> فالمصروف غير المعتمد لا يُفوتَر أبداً.</li>\n"
+"<li><b>أنشئ الفاتورة</b> من القضية. يجمع المعالج كل ما هو قابل للفوترة ولم يُفوتَر بعد.</li>\n"
+"</ol>\n"
+"<h4>مثال عملي</h4>\n"
+"<p>على LAW/2026/00123 (بالساعة، ٨٠٠ ريال):</p>\n"
+"<ul>\n"
+"<li>٦٫٥ ساعات صياغة وجلسات ← ٥٬٢٠٠ ريال</li>\n"
+"<li>رسوم محكمة ١٬٠٠٠ ريال، معتمدة ← ١٬٠٠٠ ريال</li>\n"
+"<li>قيد ساعتين ما زال مسودة ← <b>غير مُدرَج</b>، والمعالج يسمّيه ويقول لماذا</li>\n"
+"</ul>\n"
+"<p>تُرحَّل الفاتورة بـ٦٬٢٠٠ ريال زائد الضريبة عبر سلسلة الفوترة السعودية المعيارية. وتبقى الساعتان المسودة تنتظران على اللوحة.</p>\n"
+"<h4>لا شيء يُفوتَر مرتين</h4>\n"
+"<p>كل قيد وقت ومصروف ودفعة وأتعاب نجاح مربوط بسطر الفاتورة الذي فوتره. وهذا الربط هو ما يجعل الفوترة المزدوجة مستحيلة — لا تقريرٌ يقرؤه أحد.</p>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<p>سجّل الوقت في يومه، واجعله قابلاً للفوترة في الحركة نفسها ما لم يكن لديك سبب. فالفجوة بين «عملتُ» و«قابل للفوترة» هي حيث تتبخر إيرادات المكتب بهدوء.</p>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_documents
+msgid ""
+"<div>\n"
+"                <p>A document moves <b>Draft → In Review → Approved</b> (or <b>Rejected</b>, and <b>Archived</b> when it is no longer live).</p>\n"
+"                <h4>What the client sees</h4>\n"
+"                <p>Two conditions, both required, checked every single time the portal is opened: the document is <b>published to the portal</b> and it is <b>currently approved</b>. Withdrawing approval hides it immediately even though it is still marked published — publishing checks approval when you publish, and files change afterwards.</p>\n"
+"                <h4>Restricted documents</h4>\n"
+"                <p>Marking a document <b>Restricted</b> limits it to the people you name, inside the firm. It is a stronger statement than the case's Confidential flag, which is a handling instruction rather than an access rule.</p>\n"
+"                <h4>Worked example</h4>\n"
+"                <p>You draft a memorandum, send it for review, and a colleague approves it. You publish it; the client downloads it from their portal that evening. A week later new facts arrive, you move the document back to review — and it disappears from the client's page at once, without you touching the publish flag.</p>\n"
+"                <h4>Good practice</h4>\n"
+"                <p>Publish nothing before approval. The portal enforces this, but the habit matters: a client who has already read a draft cannot un-read it.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<p>يمرّ المستند بـ<b>مسودة ← مراجعة ← معتمد</b> (أو <b>مرفوض</b>، و<b>مؤرشف</b> حين تنتهي الحاجة إليه).</p>\n"
+"<h4>ما يراه الموكِّل</h4>\n"
+"<p>شرطان، كلاهما لازم، ويُفحصان في كل مرة تُفتح فيها البوابة: أن يكون المستند <b>منشوراً للبوابة</b> وأن يكون <b>معتمداً الآن</b>. فسحب الاعتماد يخفيه فوراً وإن بقي مؤشَّراً كمنشور — لأن النشر يفحص الاعتماد لحظة النشر، والملفات تتغير بعدها.</p>\n"
+"<h4>المستند المقيَّد</h4>\n"
+"<p>تأشير المستند <b>مقيَّد</b> يحصره في من تسمّيهم داخل المكتب. وهو أقوى من علامة «سرّي» على القضية، فتلك تعليمة تعامل لا قاعدة وصول.</p>\n"
+"<h4>مثال عملي</h4>\n"
+"<p>تكتب مذكرة، وترسلها للمراجعة، فيعتمدها زميل. تنشرها، فيحمّلها الموكِّل من بوابته مساءً. وبعد أسبوع تصل وقائع جديدة، فتعيد المستند إلى المراجعة — فيختفي من صفحة الموكِّل في الحال، دون أن تلمس علامة النشر.</p>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<p>لا تنشر شيئاً قبل اعتماده. البوابة تفرض ذلك، لكن العادة هي المهمة: الموكِّل الذي قرأ مسودة لا يستطيع أن «يُلغي» قراءتها.</p>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_trust
+msgid ""
+"<div>\n"
+"                <p>A retainer is not revenue. It posts to a segregated liability account — the firm owes it back until it is earned — and becomes income only when a posted invoice is deliberately settled against it.</p>\n"
+"                <h4>The four movements</h4>\n"
+"                <table class=\"table table-sm\">\n"
+"                    <tr><td><b>Deposit</b></td><td>Increases what the firm owes the client.</td></tr>\n"
+"                    <tr><td><b>Apply to an invoice</b></td><td>A separate, explicit decision — never a side effect of creating the invoice.</td></tr>\n"
+"                    <tr><td><b>Refund</b></td><td>Requires a reason and a reference.</td></tr>\n"
+"                    <tr><td><b>Transfer between cases</b></td><td>Requires both a source and a destination case.</td></tr>\n"
+"                </table>\n"
+"                <h4>Worked example</h4>\n"
+"                <p>The client deposits 20,000 SAR against LAW/2026/00123. You invoice 6,200 SAR and apply the trust funds: the liability drops to 13,800 SAR and 6,200 SAR becomes revenue. At closing you refund the remaining 13,800 SAR with the bank reference recorded.</p>\n"
+"                <h4>Two rules the system enforces</h4>\n"
+"                <ul>\n"
+"                    <li>The balance <b>cannot go negative</b> — not even under two withdrawals posted at the same moment.</li>\n"
+"                    <li>A case <b>cannot be closed</b> while the client still has an unsettled balance.</li>\n"
+"                </ul>\n"
+"                <h4>Good practice</h4>\n"
+"                <p>Apply trust money only against a posted invoice the client has seen. Applying it earlier turns a client's money into the firm's on the strength of an internal draft.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<p>الدفعة المقدَّمة ليست إيراداً. تُرحَّل إلى حساب التزام مفصول — المكتب مدينٌ بها حتى تُستحق — ولا تصير دخلاً إلا بتسوية فاتورة مرحَّلة مقابلها بقرار صريح.</p>\n"
+"<h4>الحركات الأربع</h4>\n"
+"<table class=\"table table-sm\">\n"
+"<tr><td><b>إيداع</b></td><td>يزيد ما يدين به المكتب للموكِّل.</td></tr>\n"
+"<tr><td><b>تطبيق على فاتورة</b></td><td>قرار منفصل صريح — لا أثرٌ جانبي لإنشاء الفاتورة.</td></tr>\n"
+"<tr><td><b>رد</b></td><td>يتطلب سبباً ومرجعاً.</td></tr>\n"
+"<tr><td><b>تحويل بين قضيتين</b></td><td>يتطلب قضية مصدر وقضية وجهة معاً.</td></tr>\n"
+"</table>\n"
+"<h4>مثال عملي</h4>\n"
+"<p>يودع الموكِّل ٢٠٬٠٠٠ ريال على LAW/2026/00123. تُصدر فاتورة بـ٦٬٢٠٠ ريال وتطبّق الأمانة عليها: فينزل الالتزام إلى ١٣٬٨٠٠ ريال، ويصير ٦٬٢٠٠ ريال إيراداً. وعند الإغلاق تردّ الباقي ١٣٬٨٠٠ ريال مع تسجيل مرجع الحوالة.</p>\n"
+"<h4>قاعدتان يفرضهما النظام</h4>\n"
+"<ul>\n"
+"<li><b>لا يصير الرصيد سالباً</b> — ولا بسحبين مُرحَّلين في اللحظة نفسها.</li>\n"
+"<li><b>لا تُغلق القضية</b> وللموكِّل رصيد غير مسوّى.</li>\n"
+"</ul>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<p>لا تطبّق الأمانة إلا على فاتورة مرحَّلة رآها الموكِّل. فتطبيقها قبل ذلك يحوّل مال الموكِّل إلى مال المكتب استناداً إلى مسودة داخلية.</p>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_portal
+msgid ""
+"<div>\n"
+"                <p>Clients open <code>/my/legal-cases</code> — in Arabic at <code>/ar/my/legal-cases</code> — and see their own accepted cases only.</p>\n"
+"                <h4>On the page</h4>\n"
+"                <ul>\n"
+"                    <li>Confirmed hearings</li>\n"
+"                    <li>Parties you marked <b>Visible in portal</b></li>\n"
+"                    <li>Documents that are published <b>and</b> approved</li>\n"
+"                    <li>Their own posted invoices</li>\n"
+"                    <li>The money held in trust for them</li>\n"
+"                </ul>\n"
+"                <h4>Never on the page</h4>\n"
+"                <p>Draft or cancelled cases, internal notes, fee workings, hours and expense economics, staff assignments, another party's invoice. These are not merely left out of the template — the fields are refused to any browser that asks the server for them directly.</p>\n"
+"                <h4>To show a client something</h4>\n"
+"                <ol>\n"
+"                    <li>A hearing: confirm it.</li>\n"
+"                    <li>A document: approve it, then publish it.</li>\n"
+"                    <li>A party: tick <b>Visible in portal</b> on the party line.</li>\n"
+"                </ol>\n"
+"                <h4>Good practice</h4>\n"
+"                <p>Before a client meeting, open the portal as they see it. What the file contains and what the client has been shown are two different things, and only one of them is what they will ask about.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<p>يفتح الموكِّل <code>/my/legal-cases</code> — وبالعربية <code>/ar/my/legal-cases</code> — فيرى قضاياه المقبولة وحدها.</p>\n"
+"<h4>على الصفحة</h4>\n"
+"<ul>\n"
+"<li>الجلسات المؤكدة</li>\n"
+"<li>الأطراف التي أشّرتها <b>ظاهر في البوابة</b></li>\n"
+"<li>المستندات المنشورة <b>والمعتمدة</b> معاً</li>\n"
+"<li>فواتيره المرحَّلة هو</li>\n"
+"<li>أمواله المحفوظة أمانةً</li>\n"
+"</ul>\n"
+"<h4>ما لا يظهر أبداً</h4>\n"
+"<p>القضايا المسودة أو الملغاة، والملاحظات الداخلية، وحسابات الأتعاب، والساعات واقتصاديات المصروفات، وتوزيع الطاقم، وفاتورة طرف آخر. وهذه ليست متروكة خارج القالب فحسب — بل الحقول نفسها مرفوضة لأي متصفح يطلبها من الخادم مباشرة.</p>\n"
+"<h4>لتُظهر شيئاً للموكِّل</h4>\n"
+"<ol>\n"
+"<li>جلسة: أكّدها.</li>\n"
+"<li>مستند: اعتمده ثم انشره.</li>\n"
+"<li>طرف: أشّر <b>ظاهر في البوابة</b> على سطر الطرف.</li>\n"
+"</ol>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<p>قبل أي لقاء مع موكِّل، افتح البوابة كما يراها هو. فما يحويه الملف وما عُرض على الموكِّل أمران مختلفان، وأحدهما فقط هو ما سيسأل عنه.</p>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_conflicts
+msgid ""
+"<div>\n"
+"                <p>Screening compares this case's parties against every confirmed and closed file <b>in the firm</b> — not only the files the lawyer running it can see. A screening limited to your own book is blind to the conflict it exists to catch: your colleague's client.</p>\n"
+"                <h4>The three keys, strongest first</h4>\n"
+"                <table class=\"table table-sm\">\n"
+"                    <tr><td><b>Same contact record</b></td><td>Certainty. The same partner is on both files.</td></tr>\n"
+"                    <tr><td><b>Same ID or registration number</b></td><td>Two records, one person or company. Duplicate contacts are the normal state of any client list.</td></tr>\n"
+"                    <tr><td><b>Same name after normalisation</b></td><td>A question for a human: «محمد عبدالله» and «محمد عبد الله» normalise to the same name, and may or may not be the same man.</td></tr>\n"
+"                </table>\n"
+"                <p>Every hit records which key found it, so a reviewer can weigh it instead of guessing.</p>\n"
+"                <h4>The register</h4>\n"
+"                <p><b>Matters &gt; Conflict Register</b> lists every screening the firm has run: case, client, lawyer, how many matches, the strongest evidence, and when it last ran. It opens filtered on <i>Blocked</i>; clear that filter to see everything, or filter to <i>Certain Matches</i> when you want only the hits nobody needs to judge.</p>\n"
+"                <h4>Worked example</h4>\n"
+"                <p>You open a case for a new client against <i>Northern Trading</i>. The screening blocks: <i>Northern Trading</i> is a former client of a colleague, matched on <b>same ID / registration number</b> even though the name was entered differently. The register shows the earlier case reference, so the manager can read that file before deciding.</p>\n"
+"                <h4>Good practice</h4>\n"
+"                <ul>\n"
+"                    <li>Re-run the screening whenever parties change — the system voids the old result, and a stale clearance is worse than none.</li>\n"
+"                    <li>Write overrides for the next reader: <i>\"Former client, matter closed 2019, unrelated subject, client consent on file\"</i> — not <i>\"OK\"</i>.</li>\n"
+"                    <li>Review the register weekly. A blocked screening sitting untouched is a case that cannot be worked.</li>\n"
+"                </ul>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<p>يقارن الفحص أطراف هذه القضية بكل ملف مؤكَّد ومغلق <b>في المكتب</b> — لا بالملفات التي يراها المحامي الذي أجراه فقط. فالفحص المحصور في دفترك أعمى عن التعارض الذي وُجد ليمسكه: موكِّل زميلك.</p>\n"
+"<h4>المفاتيح الثلاثة، الأقوى أولاً</h4>\n"
+"<table class=\"table table-sm\">\n"
+"<tr><td><b>نفس السجل</b></td><td>يقين. الشخص نفسه على الملفين.</td></tr>\n"
+"<tr><td><b>نفس رقم الهوية أو السجل التجاري</b></td><td>سجلّان لشخص أو منشأة واحدة. وتكرار جهات الاتصال هو الحال الطبيعي لأي قائمة موكِّلين.</td></tr>\n"
+"<tr><td><b>نفس الاسم بعد توحيد الإملاء</b></td><td>سؤال لبشر: «محمد عبدالله» و«محمد عبد الله» يتوحّدان، وقد يكونان رجلاً واحداً وقد لا يكونان.</td></tr>\n"
+"</table>\n"
+"<p>وكل إصابة تسجّل المفتاح الذي وجدها، ليزنها المراجع بدل أن يخمّن.</p>\n"
+"<h4>السجل</h4>\n"
+"<p><b>الملفات ← سجل التعارضات</b> يعرض كل فحص أجراه المكتب: القضية، والموكِّل، والمحامي، وعدد المطابقات، وأقوى دليل، وتاريخ آخر فحص. ويفتح مرشَّحاً على <i>موقوف</i>؛ أزل المرشِّح لترى الكل، أو رشِّح على <i>مطابقات مؤكدة</i> حين تريد ما لا يحتاج حكم بشر.</p>\n"
+"<h4>مثال عملي</h4>\n"
+"<p>تفتح قضية لموكِّل جديد ضد <i>شركة الشمال التجارية</i>. فيوقف الفحص: الشركة موكِّل سابق لزميلك، وطابقها الفحص على <b>رقم السجل التجاري</b> رغم اختلاف كتابة الاسم. ويعرض السجل مرجع القضية الأقدم، ليقرأ المدير ذلك الملف قبل أن يقرر.</p>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<ul>\n"
+"<li>أعِد الفحص كلما تغيّرت الأطراف — النظام يُبطل النتيجة القديمة، وبراءة قديمة أسوأ من لا شيء.</li>\n"
+"<li>اكتب أسباب التجاوز للقارئ القادم: <i>«موكِّل سابق، ملف مغلق ٢٠١٩، موضوع لا صلة له، وموافقة الموكِّل محفوظة»</i> — لا <i>«تمام»</i>.</li>\n"
+"<li>راجع السجل أسبوعياً. فالفحص الموقوف الذي يبقى دون لمس هو قضية لا يمكن العمل عليها.</li>\n"
+"</ul>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_getting_around
+msgid ""
+"<div>\n"
+"                <p>The app opens on the dashboard. Everything else sits under seven sections, grouped by the question you are asking — not by which table the data lives in. What your role does not cover is not shown to you at all.</p>\n"
+"                <table class=\"table table-sm\">\n"
+"                    <tr><td><b>Dashboard</b></td><td>What needs you today</td></tr>\n"
+"                    <tr><td><b>Matters</b></td><td>Open a Case · Cases · Consultations · Conflict Register</td></tr>\n"
+"                    <tr><td><b>Schedule</b></td><td>Hearings · Deadlines</td></tr>\n"
+"                    <tr><td><b>Documents</b></td><td>All Documents · Document Generation · Signatures</td></tr>\n"
+"                    <tr><td><b>Billing</b></td><td>Engagements · Time Entries · Expenses · Success Fees · Client Trust</td></tr>\n"
+"                    <tr><td><b>AI</b></td><td>AI Requests</td></tr>\n"
+"                    <tr><td><b>Configuration</b></td><td>Case Setup · Judiciary · AI · Signing · Technical</td></tr>\n"
+"                </table>\n"
+"                <h4>Good practice</h4>\n"
+"                <p>Do not navigate by menu when you are working a file. Open the case and stay in it: hearings, deadlines, documents, time and invoices are all on the case itself, and the <b>Next Step</b> line at the top says what the file is waiting for.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<p>يفتح التطبيق على لوحة القيادة. وما عداها في سبعة أقسام، مرتّبة بالسؤال الذي تطرحه — لا بالجدول الذي تسكنه البيانات. وما لا يخصّ دورك لا يظهر لك أصلاً.</p>\n"
+"<table class=\"table table-sm\">\n"
+"<tr><td><b>لوحة القيادة</b></td><td>ما يحتاج انتباهك اليوم</td></tr>\n"
+"<tr><td><b>الملفات</b></td><td>فتح قضية · القضايا · الاستشارات · سجل التعارضات</td></tr>\n"
+"<tr><td><b>المواعيد</b></td><td>الجلسات · المواعيد النظامية</td></tr>\n"
+"<tr><td><b>المستندات</b></td><td>كل المستندات · توليد المستندات · التواقيع</td></tr>\n"
+"<tr><td><b>الفوترة</b></td><td>عقود الأتعاب · قيود الوقت · المصروفات · أتعاب النجاح · أمانات الموكلين</td></tr>\n"
+"<tr><td><b>الذكاء الاصطناعي</b></td><td>طلبات الذكاء</td></tr>\n"
+"<tr><td><b>الإعدادات</b></td><td>إعداد القضايا · الجهات القضائية · الذكاء · التوقيع · تقني</td></tr>\n"
+"</table>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<p>لا تتنقّل بالقوائم وأنت تعمل على ملف. افتح القضية وابقَ فيها: الجلسات والمهل والمستندات والوقت والفواتير كلها على القضية نفسها، وسطر <b>الخطوة التالية</b> في أعلاها يقول ما ينتظره الملف.</p>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_dashboard
+msgid ""
+"<div>\n"
+"                <p>The dashboard is not a report. Each tile is a piece of work waiting for someone, and clicking it opens precisely the records it counted — never a similar list you then have to filter.</p>\n"
+"                <h4>What each section is for</h4>\n"
+"                <ul>\n"
+"                    <li><b>Work in Progress</b> — your open cases, this week's hearings, deadlines already past, cases still waiting on a screening, and time you logged but never marked billable.</li>\n"
+"                    <li><b>Team</b> (supervisors) — screenings that came back blocked, cases with no lawyer on them, and the case load per lawyer.</li>\n"
+"                    <li><b>Oversight</b> (managers) — AI answers flagged for review, and the client trust accounts.</li>\n"
+"                    <li><b>Billing</b> (accounting) — work that is billable but not invoiced, approved expenses waiting, engagements never activated.</li>\n"
+"                </ul>\n"
+"                <h4>Whole Firm or Only Mine</h4>\n"
+"                <p>The switch at the top of Work in Progress decides whose work the numbers count. A supervisor or manager opens on the whole firm — that is the practice they are answerable for — and narrows to their own files with one click. A lawyer has no switch, because their permissions already answer that question.</p>\n"
+"                <h4>Colour carries meaning</h4>\n"
+"                <p>Red is late or blocked. Amber is due this week or needs a decision. Green is money. If nothing is red, nothing is overdue.</p>\n"
+"                <h4>Good practice</h4>\n"
+"                <p>Start the day on the dashboard and empty red first. An overdue statutory deadline is the one failure on this screen that cannot be recovered by working faster tomorrow.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<p>اللوحة ليست تقريراً. كل بلاطة عملٌ ينتظر أحداً، والضغط عليها يفتح السجلات التي عدّتها بالضبط — لا قائمة قريبة منها ترشّحها بنفسك بعد ذلك.</p>\n"
+"<h4>ماذا يعني كل قسم</h4>\n"
+"<ul>\n"
+"<li><b>العمل الجاري</b> — قضاياك المفتوحة، وجلسات هذا الأسبوع، والمهل التي فات موعدها، والقضايا التي تنتظر فحص تعارض، ووقتٌ سجّلته ولم تجعله قابلاً للفوترة.</li>\n"
+"<li><b>الفريق</b> (للمشرفين) — الفحوص التي عادت موقوفة، والقضايا بلا محامٍ مسؤول، وتوزيع الأحمال على المحامين.</li>\n"
+"<li><b>الإشراف</b> (للمديرين) — إجابات الذكاء المؤشَّرة للمراجعة، وحسابات أمانات الموكلين.</li>\n"
+"<li><b>الفوترة</b> (للمحاسبة) — عملٌ قابل للفوترة لم يُفوتر، ومصروفات معتمدة تنتظر، واتفاقيات لم تُفعَّل.</li>\n"
+"</ul>\n"
+"<h4>«المكتب كله» أو «ما يخصّني فقط»</h4>\n"
+"<p>المبدّل في رأس «العمل الجاري» يقرر لمن تُحسب الأرقام. المشرف والمدير يفتحان على المكتب كله — فهذه هي الممارسة التي يُسألان عنها — ويضيّقانه إلى ملفاتهما بنقرة. والمحامي بلا مبدّل، لأن صلاحياته تجيب عن السؤال أصلاً.</p>\n"
+"<h4>اللون معنى</h4>\n"
+"<p>الأحمر متأخر أو موقوف. والكهرماني مستحقٌّ هذا الأسبوع أو يحتاج قراراً. والأخضر مال. فإن لم يكن ثمّة أحمر، فلا شيء متأخر.</p>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<p>ابدأ يومك على اللوحة وأفرغ الأحمر أولاً. فالمهلة النظامية الفائتة هي الإخفاق الوحيد على هذه الشاشة الذي لا يُصلحه أن تعمل أسرع غداً.</p>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_intake
+msgid ""
+"<div>\n"
+"                <p>Use <b>Matters &gt; Open a Case</b>, or the button at the top of the dashboard. The wizard asks for what a file cannot exist without, runs the conflict screening for you, and creates the engagement in the same pass.</p>\n"
+"                <h4>The four steps</h4>\n"
+"                <ol>\n"
+"                    <li><b>Client, case type, responsible lawyer.</b> The type decides how the file is handled — litigation, execution, consultation or other.</li>\n"
+"                    <li><b>Opponents and other parties.</b> Enter them here. The screening reads exactly this list, so a party added later means a screening that has to run again.</li>\n"
+"                    <li><b>Conflict preview.</b> Shown inside the wizard before anything is saved.</li>\n"
+"                    <li><b>Fee engagement.</b> Hourly, fixed, milestones or a success fee — or none for now.</li>\n"
+"                </ol>\n"
+"                <h4>Worked example</h4>\n"
+"                <p>A construction company asks you to sue a supplier over a delayed delivery.</p>\n"
+"                <ul>\n"
+"                    <li>Client: <i>Al-Sahel Construction</i>. Type: <i>Litigation</i>. Lawyer: you.</li>\n"
+"                    <li>Opponent: <i>Modern Supply Est.</i> — with its commercial registration number, because that is the key that catches the same company entered twice under two spellings.</li>\n"
+"                    <li>Engagement: <i>Hourly</i>, 800 SAR. Every time entry on this case will now price itself.</li>\n"
+"                </ul>\n"
+"                <p>The screening comes back clear, the case is confirmed, and the file opens on LAW/2026/00123.</p>\n"
+"                <h4>When the screening blocks</h4>\n"
+"                <p>The case is created and left in <b>Draft</b>. It cannot be confirmed until a legal manager overrides the screening with a reason recorded in their name. That is the design: a blocked file is a decision for the firm, not a form to be argued with.</p>\n"
+"                <h4>Good practice</h4>\n"
+"                <p>Enter the identity or registration number of every party, always. It is the difference between a screening that catches a conflict and one that misses it because a name was typed with a space in a different place.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<p>من <b>الملفات ← فتح قضية</b>، أو من الزر في أعلى لوحة القيادة. يسأل المعالج عمّا لا يقوم ملف بدونه، ويجري فحص التعارض عنك، وينشئ اتفاقية الأتعاب في المسار نفسه.</p>\n"
+"<h4>الخطوات الأربع</h4>\n"
+"<ol>\n"
+"<li><b>الموكِّل ونوع القضية والمحامي المسؤول.</b> النوع يحدد كيف يُعامَل الملف — ترافع أو تنفيذ أو استشارة أو غيرها.</li>\n"
+"<li><b>الخصوم وبقية الأطراف.</b> أدخلهم هنا. الفحص يقرأ هذه القائمة بعينها، فأي طرف يُضاف لاحقاً يعني فحصاً يجب أن يُعاد.</li>\n"
+"<li><b>معاينة التعارض.</b> تظهر داخل المعالج قبل أن يُحفظ شيء.</li>\n"
+"<li><b>اتفاقية الأتعاب.</b> بالساعة أو مقطوعة أو بالدفعات أو أتعاب نجاح — أو بلا اتفاقية الآن.</li>\n"
+"</ol>\n"
+"<h4>مثال عملي</h4>\n"
+"<p>شركة مقاولات تطلب مقاضاة مورّد بسبب تأخر توريد.</p>\n"
+"<ul>\n"
+"<li>الموكِّل: <i>شركة الساحل للمقاولات</i>. النوع: <i>ترافع</i>. المحامي: أنت.</li>\n"
+"<li>الخصم: <i>مؤسسة التوريد الحديثة</i> — مع رقم سجلها التجاري، لأنه المفتاح الذي يمسك الشركة نفسها إن أُدخلت مرتين بإملاءين.</li>\n"
+"<li>الاتفاقية: <i>بالساعة</i>، ٨٠٠ ريال. وكل قيد وقت على هذه القضية سيُسعّر نفسه من الآن.</li>\n"
+"</ul>\n"
+"<p>يعود الفحص خالياً، وتُؤكَّد القضية، ويُفتح الملف برقم LAW/2026/00123.</p>\n"
+"<h4>حين يوقف الفحص</h4>\n"
+"<p>تُنشأ القضية وتبقى <b>مسودة</b>. ولا تُؤكَّد حتى يتجاوز مديرٌ قانوني الفحص بسبب يُسجَّل باسمه. وهذا هو التصميم: الملف الموقوف قرارٌ للمكتب لا نموذجٌ يُجادَل.</p>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<p>أدخل رقم الهوية أو السجل التجاري لكل طرف، دائماً. هو الفرق بين فحصٍ يمسك تعارضاً وفحصٍ يفوته لأن اسماً كُتب بمسافة في موضع مختلف.</p>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_roles
+msgid ""
+"<div>\n"
+"                <table class=\"table table-sm\">\n"
+"                    <tr><td><b>Staff</b></td><td>Their own files.</td></tr>\n"
+"                    <tr><td><b>Lawyer</b></td><td>Their cases and their team's; logs their own time.</td></tr>\n"
+"                    <tr><td><b>Supervisor</b></td><td>The whole firm's cases, the conflict register, the case load per lawyer.</td></tr>\n"
+"                    <tr><td><b>Manager</b></td><td>Overrides a blocked screening with a reason; <b>deletion</b>; the audit log; configuration.</td></tr>\n"
+"                    <tr><td><b>Accounting</b></td><td>Engagements, expenses, invoicing, client trust.</td></tr>\n"
+"                </table>\n"
+"                <p>Each level inherits the one below it. A manager is also a supervisor and an accountant.</p>\n"
+"                <h4>Deletion belongs to the manager alone</h4>\n"
+"                <p>That includes a file's activities and log notes. Everyone can mark work done; only a manager can make a record cease to exist. Identity and registration numbers are likewise readable by managers only.</p>\n"
+"                <h4>Good practice</h4>\n"
+"                <p>Give a new lawyer the Lawyer role and add them to case teams, rather than raising them to Supervisor so they can see one file. The team field exists for exactly that.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<table class=\"table table-sm\">\n"
+"<tr><td><b>موظف</b></td><td>ملفاته هو.</td></tr>\n"
+"<tr><td><b>محامٍ</b></td><td>قضاياه وقضايا فريقه؛ ويسجّل وقته.</td></tr>\n"
+"<tr><td><b>مشرف</b></td><td>قضايا المكتب كلها، وسجل التعارضات، وتوزيع الأحمال على المحامين.</td></tr>\n"
+"<tr><td><b>مدير</b></td><td>يتجاوز الفحص الموقوف بسبب؛ و<b>الحذف</b>؛ وسجل التدقيق؛ والإعدادات.</td></tr>\n"
+"<tr><td><b>محاسبة</b></td><td>الاتفاقيات والمصروفات والفوترة وأمانات الموكلين.</td></tr>\n"
+"</table>\n"
+"<p>وكل مستوى يشمل ما دونه. فالمدير مشرفٌ ومحاسبٌ أيضاً.</p>\n"
+"<h4>الحذف للمدير وحده</h4>\n"
+"<p>ويشمل ذلك أنشطة الملف وملاحظاته. الجميع يستطيع إنهاء العمل؛ والمدير وحده يستطيع أن يجعل سجلاً يزول. وكذلك أرقام الهوية والسجل التجاري لا يقرؤها إلا المديرون.</p>\n"
+"<h4>أفضل ممارسة</h4>\n"
+"<p>امنح المحامي الجديد دور «محامٍ» وأضفه إلى فرق القضايا، بدل رفعه إلى «مشرف» ليرى ملفاً واحداً. حقل الفريق موجود لهذا بالضبط.</p>\n"
+"</div>"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,body:era_law_firm.guide_limits
+msgid ""
+"<div>\n"
+"                <ul>\n"
+"                    <li><b>No automated Najiz integration.</b> Najiz numbers, links and Hijri dates are structured manual references, entered by a person.</li>\n"
+"                    <li><b>No calculation of suspended periods or official holidays.</b> Proposed deadlines are assistive; the binding date is the lawyer's, recorded with its source.</li>\n"
+"                    <li><b>No parallel tax engine.</b> VAT and ZATCA clearance stay with <code>l10n_sa</code> and <code>l10n_sa_edi</code>.</li>\n"
+"                    <li><b>An AI answer is not a legal opinion.</b> It is a sourced draft that a lawyer must read against the cited articles.</li>\n"
+"                    <li><b>The Confidential flag is a handling instruction</b>, not an access rule. Access comes from the case team and from a document's Restricted flag.</li>\n"
+"                </ul>\n"
+"                <p>Each of these is a deliberate boundary. A system that pretended otherwise would be more comfortable to demonstrate and more dangerous to practise on.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div>\n"
+"<ul>\n"
+"<li><b>لا تكامل آلياً مع ناجز.</b> أرقام ناجز وروابطه والتواريخ الهجرية مراجع يدوية منظّمة يُدخلها إنسان.</li>\n"
+"<li><b>لا حساب للمدد الموقوفة ولا للعطل الرسمية.</b> المهل المقترحة مساعِدة، والتاريخ الملزم للمحامي يوثّقه بمصدره.</li>\n"
+"<li><b>لا محرك ضريبة موازٍ.</b> ضريبة القيمة المضافة وفوترة هيئة الزكاة تبقى على <code>l10n_sa</code> و<code>l10n_sa_edi</code>.</li>\n"
+"<li><b>إجابة الذكاء ليست رأياً قانونياً.</b> هي مسوّدة مُسنَدة يقرؤها المحامي مقابل المواد المستشهَد بها.</li>\n"
+"<li><b>علامة «سرّي» تعليمة تعامل</b> لا قاعدة وصول. الوصول يأتي من فريق القضية ومن تقييد المستند.</li>\n"
+"</ul>\n"
+"<p>وكل واحد من هذه حدٌّ مقصود. فنظامٌ يدّعي غير ذلك أسهل في العرض وأخطر في الممارسة.</p>\n"
+"</div>"
 
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
@@ -177,6 +693,11 @@ msgid "A transfer must move between two different cases."
 msgstr "التحويل يجب أن يكون بين قضيتين مختلفتين."
 
 #. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_routines
+msgid "A working rhythm"
+msgstr "إيقاع عمل"
+
+#. module: era_law_firm
 #: model:ir.ui.menu,name:era_law_firm.menu_legal_config_ai
 msgid "AI"
 msgstr "الذكاء الاصطناعي"
@@ -203,6 +724,7 @@ msgid "Access warning"
 msgstr "تنبيه وصول"
 
 #. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__audience__accountant
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_form
 msgid "Accounting"
 msgstr "المحاسبة"
@@ -518,6 +1040,12 @@ msgid "Attachment Count"
 msgstr "عدد المرفقات"
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__audience
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_guide_topic_search
+msgid "Audience"
+msgstr "الجمهور"
+
+#. module: era_law_firm
 #: model:ir.actions.act_window,name:era_law_firm.action_legal_audit_log
 #: model:ir.ui.menu,name:era_law_firm.menu_legal_audit_log
 msgid "Audit Log"
@@ -544,6 +1072,7 @@ msgstr "الرصيد المتاح"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
 msgid "Awaiting Conflict Check"
 msgstr "بانتظار فحص التعارض"
+
 #. module: era_law_firm
 #: model:legal.case.stage,name:era_law_firm.stage_hearing
 msgid "Awaiting Hearing"
@@ -628,6 +1157,11 @@ msgstr "فحوص التعارض الموقوفة"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
 msgid "Blocked Conflicts"
 msgstr "تعارضات موقوفة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__body
+msgid "Body"
+msgstr "المحتوى"
 
 #. module: era_law_firm
 #. odoo-python
@@ -798,6 +1332,11 @@ msgid "Cassation period (30 days)"
 msgstr "مدة الطعن بالنقض (30 يوماً)"
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__category
+msgid "Category"
+msgstr "القسم"
+
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_deadline_rule__warning
 msgid ""
 "Caution shown to whoever uses this rule, for example that the period does "
@@ -918,6 +1457,11 @@ msgid "Client Trust Liability"
 msgstr "التزام أمانات الموكلين"
 
 #. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__category__outside
+msgid "Client and AI"
+msgstr "الموكِّل والذكاء"
+
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__trust_allocated_amount
 msgid ""
 "Client money held in trust and earmarked for this case. Deposits add to it, "
@@ -943,6 +1487,11 @@ msgstr ""
 #: code:addons/era_law_firm/models/legal_next_step.py:0
 msgid "Client money is held for this case: %s"
 msgstr "يوجد مال للموكِّل مخصَّص لهذه القضية: %s"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_trust
+msgid "Client trust money"
+msgstr "أمانات الموكلين"
 
 #. module: era_law_firm
 #. odoo-python
@@ -1172,6 +1721,16 @@ msgid "Conflict overridden by %s. Reason: %s"
 msgstr "تم تجاوز التعارض بواسطة %s. السبب: %s"
 
 #. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_conflicts
+msgid "Conflict screening and the register"
+msgstr "فحص التعارض وسجلّه"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_ai
+msgid "Consent before sending, citations after"
+msgstr "موافقة قبل الإرسال، وتحقّق من الإسناد بعده"
+
+#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__consultation_ids
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case__case_type__consultation
 msgid "Consultation"
@@ -1285,6 +1844,7 @@ msgstr "إنشاء فاتورة قانونية"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__create_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__create_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__create_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__create_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_intake_wizard__create_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__create_uid
@@ -1315,6 +1875,7 @@ msgstr "أنشأه"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__create_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__create_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__create_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__create_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_intake_wizard__create_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__create_date
@@ -1373,6 +1934,11 @@ msgstr "العملة"
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__access_url
 msgid "Customer Portal URL"
 msgstr "رابط بوابة العميل"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__category__daily
+msgid "Daily Work"
+msgstr "العمل اليومي"
 
 #. module: era_law_firm
 #. odoo-python
@@ -1545,6 +2111,7 @@ msgstr "دائرة القضايا التعزيرية"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_intake_wizard__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__display_name
@@ -1595,6 +2162,11 @@ msgid "Documents"
 msgstr "المستندات"
 
 #. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_documents
+msgid "Documents, review and publishing"
+msgstr "المستندات والمراجعة والنشر"
+
+#. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_consultation__state__done
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline__overdue_state__done
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline__state__done
@@ -1631,6 +2203,7 @@ msgstr "اتفاقيات مسودة"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
 msgid "Draft Time"
 msgstr "وقت مسودة"
+
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__state
 #: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check__case_state
@@ -1718,6 +2291,16 @@ msgid ""
 msgstr ""
 "كل قضية فُحصت عادت خالية من التعارض، أو سجّل مدير سبباً للمضي.\n"
 "               أزل مرشِّح «موقوف» لرؤية السجل كاملاً."
+
+#. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_dashboard
+msgid "Every tile opens exactly the list its number counted"
+msgstr "كل بلاطة تفتح القائمة التي عدّها رقمها بالضبط"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__audience__all
+msgid "Everyone"
+msgstr "الجميع"
 
 #. module: era_law_firm
 #. odoo-python
@@ -1887,6 +2470,10 @@ msgid "Followers (Partners)"
 msgstr "المتابعون (جهات الاتصال)"
 
 #. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__icon
+msgid "Font Awesome class shown on the card."
+msgstr "صنف Font Awesome الظاهر على البطاقة."
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__activity_type_icon
 #: model:ir.model.fields,help:era_law_firm.field_legal_consultation__activity_type_icon
 #: model:ir.model.fields,help:era_law_firm.field_legal_deadline__activity_type_icon
@@ -1894,6 +2481,21 @@ msgstr "المتابعون (جهات الاتصال)"
 #: model:ir.model.fields,help:era_law_firm.field_legal_hearing__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
 msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_guide_topic_search
+msgid "For Accounting"
+msgstr "للمحاسبة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_guide_topic_search
+msgid "For Lawyers"
+msgstr "للمحامين"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_guide_topic_search
+msgid "For Supervisors"
+msgstr "للمشرفين"
 
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
@@ -1908,6 +2510,11 @@ msgid ""
 msgstr ""
 "التجميد يوقف كل الحركات. ولا يُغلق الحساب إلا برصيد صفري، ولهذا يجب رد "
 "الفائض أولاً."
+
+#. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_billing
+msgid "From a logged hour to a posted invoice, with the numbers"
+msgstr "من ساعة مسجَّلة إلى فاتورة مرحَّلة، بالأرقام"
 
 #. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_account__state__frozen
@@ -1928,6 +2535,11 @@ msgstr "المحكمة العامة"
 #: model:legal.jurisdiction,name:era_law_firm.jurisdiction_general
 msgid "General Judiciary"
 msgstr "القضاء العام"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__category__start
+msgid "Getting Started"
+msgstr "البداية"
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__has_message
@@ -1991,6 +2603,11 @@ msgstr "جلسة — %(case)s"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
 msgid "Hearings"
 msgstr "الجلسات"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_schedule
+msgid "Hearings and statutory periods"
+msgstr "الجلسات والمدد النظامية"
 
 #. module: era_law_firm
 #. odoo-python
@@ -2160,6 +2777,7 @@ msgstr "كيف انتهت المسألة: الحكم، أو شروط التسو�
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_intake_wizard__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__id
@@ -2184,6 +2802,7 @@ msgstr "المعرّف"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_exception_icon
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__activity_exception_icon
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_document__activity_exception_icon
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__icon
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__activity_exception_icon
 msgid "Icon"
 msgstr "أيقونة"
@@ -2343,6 +2962,11 @@ msgid "Is Rejected"
 msgstr "حالة رفض"
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__is_shipped
+msgid "Is Shipped"
+msgstr "مرفق مع الموديول"
+
+#. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_next_step.py:0
 msgid ""
@@ -2478,6 +3102,7 @@ msgstr "آخر فحص"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__write_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__write_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__write_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__write_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_intake_wizard__write_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__write_uid
@@ -2508,6 +3133,7 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__write_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__write_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__write_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__write_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_intake_wizard__write_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__write_date
@@ -2546,6 +3172,11 @@ msgstr "لوحة قيادة المكتب"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_search
 msgid "Lawyer"
 msgstr "المحامي"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__audience__lawyer
+msgid "Lawyers"
+msgstr "المحامون"
 
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_circuit__company_id
@@ -2917,6 +3548,11 @@ msgid "Model Name"
 msgstr "اسم النموذج"
 
 #. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__category__money
+msgid "Money"
+msgstr "المال"
+
+#. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
 msgid "Money held in trust"
 msgstr "أموال محفوظة أمانةً"
@@ -3045,6 +3681,7 @@ msgstr "رابط ناجز"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__name
@@ -3262,6 +3899,20 @@ msgid "Number of messages with delivery error"
 msgstr "عدد الرسائل التي فشل تسليمها"
 
 #. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_roles
+msgid "One chain: staff, lawyer, supervisor, manager — plus accounting"
+msgstr "سلسلة واحدة: موظف، محامٍ، مشرف، مدير — ومعها المحاسبة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_guide_topic_form
+msgid "One line for the card"
+msgstr "سطر واحد للبطاقة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__summary
+msgid "One line, shown on the card."
+msgstr "سطر واحد يظهر على البطاقة."
+#. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_dashboard__scope__mine
 msgid "Only Mine"
 msgstr "ما يخصّني فقط"
@@ -3360,6 +4011,7 @@ msgstr "مفتوح"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
 msgid "Open Cases"
 msgstr "قضايا مفتوحة"
+
 #. module: era_law_firm
 #: model:ir.actions.act_window,name:era_law_firm.action_legal_intake_wizard
 #: model:ir.model,name:era_law_firm.model_legal_intake_wizard
@@ -3384,6 +4036,11 @@ msgstr "افتح القضية"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_legal_cases
 msgid "Opened"
 msgstr "تاريخ الفتح"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_intake
+msgid "Opening a case"
+msgstr "فتح قضية"
 
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_intake_wizard_form
@@ -3440,6 +4097,11 @@ msgstr "ترتيب ظهور المرحلة في لوحة كانبان."
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__document_type__other
 msgid "Other"
 msgstr "أخرى"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_guide_topic_search
+msgid "Our Own Topics"
+msgstr "مواضيعنا نحن"
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__outcome
@@ -3689,6 +4351,11 @@ msgstr ""
 "والبوابة."
 
 #. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_dashboard
+msgid "Reading the dashboard"
+msgstr "قراءة لوحة القيادة"
+
+#. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_engagement_milestone__state__ready
 msgid "Ready"
 msgstr "جاهز"
@@ -3721,6 +4388,7 @@ msgstr "مدة التماس إعادة النظر (30 يوماً)"
 #: code:addons/era_law_firm/controllers/portal.py:0
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__reference
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__reference
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__category__reference
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_legal_cases
 msgid "Reference"
 msgstr "المرجع"
@@ -3861,6 +4529,11 @@ msgid "Role"
 msgstr "الصفة"
 
 #. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_roles
+msgid "Roles and what each one adds"
+msgstr "الأدوار وما يضيفه كل دور"
+
+#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__rule_id
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_search
 msgid "Rule"
@@ -3944,6 +4617,16 @@ msgid "Scheduled Actions"
 msgstr "الإجراءات المجدولة"
 
 #. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_guide_topic_search
+msgid "Search the guide"
+msgstr "ابحث في الدليل"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_guide_topic_search
+msgid "Section"
+msgstr "القسم"
+
+#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__access_token
 msgid "Security Token"
 msgstr "رمز الأمان"
@@ -3952,6 +4635,7 @@ msgstr "رمز الأمان"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__sequence
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__sequence
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_court__sequence
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__sequence
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__sequence
 msgid "Sequence"
 msgstr "التسلسل"
@@ -3975,6 +4659,11 @@ msgstr "يُضبط بعد إنشاء نشاط التذكير حتى لا تكر�
 msgid "Settle the client trust balance before closing the case."
 msgstr "يجب تسوية رصيد أمانة الموكل قبل إغلاق القضية."
 
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__is_shipped
+msgid ""
+"Shipped with the module. A firm's own topics are left alone by upgrades."
+msgstr "مرفق مع الموديول. ومواضيع المكتب نفسه لا تمسّها الترقيات."
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_jurisdiction__code
 msgid "Short code used in reports and reference lists."
@@ -4090,6 +4779,11 @@ msgid "State"
 msgstr "الحالة"
 
 #. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_limits
+msgid "Stated plainly, so nobody relies on it by accident"
+msgstr "مذكورٌ صراحةً كي لا يعتمد عليه أحد بالخطأ"
+
+#. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_search
@@ -4191,6 +4885,16 @@ msgstr "تاريخ مقترح فقط؛ يجب أن يراجعه المحامي �
 #: model:ir.model.fields,help:era_law_firm.field_legal_trust_account__posted_balance
 msgid "Sum of every posted movement on this account."
 msgstr "مجموع كل الحركات المرحَّلة على هذا الحساب."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_guide_topic__summary
+msgid "Summary"
+msgstr "الخلاصة"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_guide_topic__audience__supervisor
+msgid "Supervisors and managers"
+msgstr "المشرفون والمديرون"
 
 #. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_court__degree__supreme
@@ -4431,6 +5135,16 @@ msgid "The fee claimed on the successful outcome."
 msgstr "الأتعاب المطالب بها على النتيجة الناجحة."
 
 #. module: era_law_firm
+#: model_terms:ir.actions.act_window,help:era_law_firm.action_legal_guide_topic
+msgid "The guide is empty"
+msgstr "الدليل فارغ"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_intake
+msgid "The intake wizard, step by step, with a worked example"
+msgstr "معالج الاستقبال خطوة بخطوة، مع مثال عملي"
+
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_time_entry__invoice_line_id
 msgid ""
 "The invoice line this entry was billed on. Its presence is what prevents it "
@@ -4566,6 +5280,11 @@ msgid "The person seeking advice. They do not have to be an existing client."
 msgstr "طالب الاستشارة. لا يشترط أن يكون موكِّلاً قائماً."
 
 #. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_portal
+msgid "The portal, and how to put something in front of a client"
+msgstr "البوابة، وكيف تضع شيئاً أمام الموكِّل"
+
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__invoice_id
 msgid ""
 "The posted invoice this movement settles. It must belong to the same client,"
@@ -4574,6 +5293,10 @@ msgstr ""
 "الفاتورة المرحَّلة التي تسددها هذه الحركة. يجب أن تعود للموكل نفسه، وتُطابَق"
 " مع قيد الأمانة."
 
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__name
+msgid "The question this topic answers."
+msgstr "السؤال الذي يجيب عنه هذا الموضوع."
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__reversal_move_id
 msgid ""
@@ -4599,6 +5322,11 @@ msgid ""
 msgstr ""
 "بند الخدمة المستخدم في الفاتورة، وهو الذي يحدد أيضاً حساب الإيراد والضريبة "
 "المطبقة."
+
+#. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_getting_around
+msgid "The seven sections, and what each one answers"
+msgstr "الأقسام السبعة، وما يجيب عنه كل قسم"
 
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__circuit
@@ -4629,6 +5357,12 @@ msgstr ""
 "توثيق مصدره."
 
 #. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__body
+msgid ""
+"The topic itself: steps, a worked example, and what good practice looks "
+"like."
+msgstr "الموضوع نفسه: الخطوات، ومثال عملي، وكيف تبدو أفضل ممارسة."
+#. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_finance.py:0
 msgid "The trust account is not open."
@@ -4640,6 +5374,11 @@ msgid ""
 "The value claimed in the case. Used for reporting; it does not drive "
 "billing."
 msgstr "قيمة المطالبة في القضية. تُستخدم للتقارير ولا تحكم الفوترة."
+
+#. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_trust
+msgid "Their money, held apart from yours, with a worked example"
+msgstr "مالهم محفوظ بمعزل عن مالكم، مع مثال بالأرقام"
 
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_legal_cases
@@ -4722,6 +5461,11 @@ msgid ""
 msgstr "سيحذف هذا نهائياً كل سجل أنشأه محمّل بيانات الاختبار. أتريد المتابعة؟"
 
 #. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_conflicts
+msgid "Three match keys, and telling certainty from coincidence"
+msgstr "ثلاثة مفاتيح مطابقة، وفصل اليقين عن المصادفة"
+
+#. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_invoice_create_wizard_form
 msgid "Time"
 msgstr "الوقت"
@@ -4758,6 +5502,11 @@ msgstr "الوقت والمصروفات تُربط باتفاقية؛ وبدون
 #: model:ir.model.fields,help:era_law_firm.field_legal_time_entry__hours
 msgid "Time spent, in hours. Must be greater than zero."
 msgstr "الوقت المبذول بالساعات. يجب أن يكون أكبر من صفر."
+
+#. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_billing
+msgid "Time, expenses and invoicing"
+msgstr "الوقت والمصروفات والفوترة"
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__destination_case_id
@@ -4850,6 +5599,11 @@ msgid "Trust journal"
 msgstr "يومية الأمانات"
 
 #. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_documents
+msgid "Two independent switches decide what a client sees"
+msgstr "مفتاحان مستقلان يقرران ما يراه الموكِّل"
+
+#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_intake_wizard__case_type
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_legal_cases
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
@@ -4902,6 +5656,12 @@ msgid "Upcoming legal hearing"
 msgstr "جلسة قضائية قادمة"
 
 #. module: era_law_firm
+#: model_terms:ir.actions.act_window,help:era_law_firm.action_legal_guide_topic
+msgid ""
+"Upgrade the module to load the shipped topics, or write your firm's own."
+msgstr "رقِّ الموديول لتحميل المواضيع المرفقة، أو اكتب مواضيع مكتبك."
+
+#. module: era_law_firm
 #: model:legal.deadline.rule,name:era_law_firm.deadline_rule_urgent_10
 msgid "Urgent appeal period (10 days)"
 msgstr "مدة الاعتراض في المسائل المستعجلة (10 أيام)"
@@ -4914,6 +5674,22 @@ msgstr "مدة الاعتراض في المسائل المستعجلة (10 أي�
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_audit_log_search
 msgid "User"
 msgstr "المستخدم"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_guide_topic
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_guide
+msgid "User Guide"
+msgstr "دليل الاستخدام"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_guide_topic
+msgid "User Guide Topic"
+msgstr "موضوع في دليل الاستخدام"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_ai
+msgid "Using the AI, and checking it"
+msgstr "استخدام الذكاء الاصطناعي ومراجعته"
 
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_engagement_milestone__amount
@@ -4993,12 +5769,27 @@ msgid "What must be filed"
 msgstr "المطلوب تقديمه"
 
 #. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_guide_topic_form
+msgid "What question does this answer?"
+msgstr "ما السؤال الذي يجيب عنه هذا؟"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_portal
+msgid "What the client sees"
+msgstr "ما يراه الموكِّل"
+
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_deadline_rule__start_point
 msgid ""
 "What the period runs from: the date of the judgment, the date of service, or"
 " a date the lawyer enters."
 msgstr ""
 "مما تبدأ المدة: من تاريخ الحكم، أو تاريخ التبليغ، أو تاريخ يدخله المحامي."
+
+#. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_schedule
+msgid "What the system computes, and what stays yours"
+msgstr "ما يحسبه النظام، وما يبقى قرارك أنت"
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__next_step
@@ -5017,6 +5808,16 @@ msgid ""
 " its reference number."
 msgstr ""
 "موضوع هذا الملف بكلمات المكتب. إن تُرك فارغاً حملت القضية رقمها المرجعي."
+
+#. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_limits
+msgid "What this system does not do"
+msgstr "ما لا يفعله هذا النظام"
+
+#. module: era_law_firm
+#: model:legal.guide.topic,summary:era_law_firm.guide_routines
+msgid "What to check daily, weekly and monthly"
+msgstr "ما تراجعه يومياً وأسبوعياً وشهرياً"
 
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_consultation__notes
@@ -5073,6 +5874,11 @@ msgstr ""
 "وهذا هو مقصد الفصل كله."
 
 #. module: era_law_firm
+#: model:legal.guide.topic,name:era_law_firm.guide_getting_around
+msgid "Where everything lives"
+msgstr "أين تجد كل شيء"
+
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_deadline__source
 msgid ""
 "Where the binding date comes from, for example the date the judgment was "
@@ -5099,6 +5905,10 @@ msgid "Where this date comes from"
 msgstr "مصدر هذا التاريخ"
 
 #. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__category
+msgid "Where this topic sits in the guide."
+msgstr "موضع هذا الموضوع في الدليل."
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_document__portal_published
 msgid ""
 "Whether the client can see and download this document from the portal. Only "
@@ -5118,6 +5928,10 @@ msgstr "الحقول المعنية. وأرقام الهوية والأسرار 
 msgid "Who approved or rejected the document. Filled automatically on review."
 msgstr "من اعتمد المستند أو رفضه. يُملأ تلقائياً عند المراجعة."
 
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_guide_topic__audience
+msgid "Who most needs this topic. It stays readable by all staff."
+msgstr "من يحتاجه أكثر. ويبقى مقروءاً لكل الطاقم."
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_deadline__user_id
 msgid ""
@@ -5219,6 +6033,11 @@ msgstr "نشاطاً على سجل قانوني"
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_actions.py:0
 msgid "case_id"
+msgstr ""
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_guide_topic_form
+msgid "fa-book"
 msgstr ""
 
 #. module: era_law_firm

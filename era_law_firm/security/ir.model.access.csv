@@ -66,3 +66,5 @@ jurisdiction_portal,jurisdiction portal,model_legal_jurisdiction,base.group_port
 court_portal,court portal,model_legal_court,base.group_portal,1,0,0,0
 circuit_portal,circuit portal,model_legal_circuit,base.group_portal,1,0,0,0
 dashboard_staff,dashboard staff,model_legal_dashboard,group_legal_staff,1,1,1,1
+guide_topic_staff,guide topic staff,model_legal_guide_topic,group_legal_staff,1,0,0,0
+guide_topic_manager,guide topic manager,model_legal_guide_topic,group_legal_manager,1,1,1,1

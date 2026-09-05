@@ -13,17 +13,22 @@
 // long after it had been replaced. Inside the bundle, whose URL Odoo hashes
 // from its contents, a change invalidates itself.
 //
-// Unlike the band this replaces, a corner has a direction. Two things follow.
-// The position is written once, in `left`, and rtlcss turns it into `right`
-// when it compiles the Arabic bundle. The drawing itself cannot be flipped by
-// a stylesheet, so the generator writes a mirrored copy and the rule below
-// swaps to it — inside an rtl:ignore guard, because rtlcss would otherwise
-// flip a rule that is already the flipped one.
+// Unlike the band this replaces, a corner has a direction, and the drawing
+// cannot be flipped by a stylesheet — so the generator writes a mirrored copy
+// and the Arabic bundle has to reach for it.
+//
+// Both of those are said to rtlcss, which compiles that bundle: `left` becomes
+// `right` on its own, and the value directive below swaps the drawing. What
+// this cannot be is a [dir="rtl"] rule — the backend never puts that attribute
+// on the page, which is the whole reason Odoo compiles a second stylesheet
+// instead. The directive is interpolated as a string because Sass would
+// otherwise drop the comment before rtlcss ever saw it, which is how core
+// writes the same thing (web/static/src/scss/bootstrap_review.scss:87).
 
 $o-era-ornament-width: 360px;
 
 @mixin era-corner {
-  background-image: var(--era-ornament);
+  background-image: var(--era-ornament) #{"/*rtl:var(--era-ornament-rtl)*/"};
   // One lattice in the corner, drawn once at its own size. Stretched to the
   // width of the screen it would read as wallpaper, and the stars would go
   // oval on a wide monitor.
@@ -38,15 +43,6 @@ $o-era-ornament-width: 360px;
     @include era-corner;
   }
 }
-
-/*rtl:begin:ignore*/
-[dir="rtl"] .o_era_legal {
-  .o_form_sheet,
-  .o_content > .o_kanban_renderer {
-    background-image: var(--era-ornament-rtl);
-  }
-}
-/*rtl:end:ignore*/
 
 // The dashboard keeps its sheet transparent, which lets the lattice move one
 // level out — onto the container that holds the button row as well — so it
@@ -74,9 +70,3 @@ $o-era-ornament-width: 360px;
     top: auto;
   }
 }
-
-/*rtl:begin:ignore*/
-[dir="rtl"] .o_legal_dashboard.o_era_legal .o_form_sheet_bg {
-  background-image: var(--era-ornament-rtl);
-}
-/*rtl:end:ignore*/

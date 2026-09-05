@@ -1,11 +1,11 @@
 /**
  * "Am I inside the law firm app?", answered as it changes.
  *
- * Two components need this: the research button, which only exists inside the
- * app, and the patch that hides Odoo's own AI button there. Both live in the
- * systray, which is built once and outlives every action, so the app has to be
- * watched rather than read — a component that read it at startup would keep
- * whatever answer happened to be true when the page loaded.
+ * The AI button in the systray needs it: which agent it opens depends on
+ * whether the lawyer is standing in this app. The systray is built once and
+ * outlives every action, so the app has to be watched rather than read — a
+ * component that read it at startup would keep whatever answer happened to be
+ * true when the page loaded.
  */
 import { useState, useEnv } from "@odoo/owl";
 import { useBus, useService } from "@web/core/utils/hooks";

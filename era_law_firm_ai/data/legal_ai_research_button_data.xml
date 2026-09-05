@@ -1,8 +1,14 @@
 <odoo>
-    <!-- What the research button opens, as data rather than as code: the key
-         the button sends, the agent that answers it, the standing instructions,
-         and the questions offered to start from. Point ai_agent elsewhere and
-         the button follows, with nothing to redeploy.
+    <!-- What the AI button opens inside this app, as data rather than as code:
+         the key the button sends there, the agent that answers it, the standing
+         instructions, and the questions offered to start from. Point ai_agent
+         elsewhere and the button follows, with nothing to redeploy.
+
+         One key covers every screen in the app, with a record or without one,
+         because that is how a lawyer moves through it: the dashboard, a list,
+         a statute, a case. The prompts below therefore come in both flavours —
+         they are sampled, not shown as a set — and the standing instructions
+         tell the agent to read the record when one arrives.
 
          Not noupdate: an upgrade should refresh what the module ships, and a
          firm that wants its own wording copies the record rather than editing
@@ -25,8 +31,24 @@
         <field name="sequence">40</field>
     </record>
 
+    <!-- Record-flavoured starters, written again rather than shared: a prompt
+         belongs to one composer, and this key meets an open file as often as
+         it meets an empty search. -->
+    <record id="prompt_app_file_summary" model="ai.prompt.button">
+        <field name="name">لخّص الملف المفتوح في خمسة أسطر</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="prompt_app_next_step" model="ai.prompt.button">
+        <field name="name">ما الخطوة التالية على هذا الملف ومتى؟</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="prompt_app_gaps" model="ai.prompt.button">
+        <field name="name">ما المستندات أو الأدلة الناقصة في هذا الملف؟</field>
+        <field name="sequence">70</field>
+    </record>
+
     <record id="composer_legal_research" model="ai.composer">
-        <field name="name">المستشار القانوني — the button this module adds</field>
+        <field name="name">المستشار القانوني — the AI button inside this app</field>
         <field name="interface_key">era_legal_research</field>
         <field name="ai_agent" ref="agent_legal_advisor"/>
         <field name="default_prompt">هذه محادثة مع مستشار المكتب داخل نظام إدارة مكتب المحاماة.
@@ -38,7 +60,10 @@
             ref('prompt_research_appeal_period'),
             ref('prompt_research_execution'),
             ref('prompt_research_labour'),
-            ref('prompt_research_commercial')])]"/>
+            ref('prompt_research_commercial'),
+            ref('prompt_app_file_summary'),
+            ref('prompt_app_next_step'),
+            ref('prompt_app_gaps')])]"/>
     </record>
 
 </odoo>

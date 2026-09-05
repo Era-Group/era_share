@@ -1,10 +1,12 @@
-"""The research button opens research, and leaves Odoo's own button alone.
+"""One AI button, and the agent behind it follows where the lawyer is.
 
-Which agent a button opens is a data decision here — an ai.composer row maps
-the button's interface key to the agent — so these are the claims worth
-holding: the mapping exists and points at the research agent, that agent is
-still the one pinned to the statute corpus, and nothing about Odoo's general
-assistant moved.
+There is a single button in the systray, Odoo's. Inside this app it announces
+the firm's own interface key, and outside it announces Odoo's — which agent
+each of those opens is a data decision, an ai.composer row per key. So these
+are the claims worth holding: both keys reach the advisor, that agent is the
+one pinned to the statute corpus, one of our records is answered by it even
+when it is opened from outside the app, and Odoo's general assistant is
+untouched everywhere else in the database.
 """
 from datetime import timedelta
 
@@ -22,7 +24,7 @@ class TestResearchButton(TransactionCase):
         cls.composer = cls.env.ref('era_law_firm_ai.composer_legal_research')
 
     def test_the_button_opens_an_agent_that_carries_the_corpus(self):
-        """The point of a button of our own: Odoo's shared agent has no legal
+        """The point of a key of our own: Odoo's shared agent has no legal
         sources, and giving it ours would put statutes into every other app."""
         self.assertEqual(self.composer.interface_key, RESEARCH_KEY)
         self.assertEqual(self.composer.ai_agent,
@@ -49,17 +51,16 @@ class TestResearchButton(TransactionCase):
         self.assertNotEqual(general.ai_agent,
                             self.env.ref('era_law_firm_ai.agent_legal_advisor'))
 
-    def test_the_record_button_answers_with_the_case_assistant(self):
-        """The two buttons carry different things, so they get different agents.
+    def test_our_records_are_answered_by_the_advisor_from_anywhere(self):
+        """A case followed from an invoice or from Discuss is still a case.
 
-        Odoo's own button passes the record it is looking at; the research
-        agent is restricted to the statute corpus and will not read a record it
-        is handed, so on a case file it could only ever answer questions about
-        something else."""
+        Outside the app the button announces Odoo's key, so the composer on
+        that key is what keeps one of our records from being answered by the
+        general assistant."""
         record = self.env.ref('era_law_firm_ai.composer_legal_record')
         self.assertEqual(record.interface_key, 'chatter_ai_button')
         self.assertEqual(record.ai_agent,
-                         self.env.ref('era_law_firm_ai.agent_case_assistant'))
+                         self.env.ref('era_law_firm_ai.agent_legal_advisor'))
         self.assertFalse(record.ai_agent.restrict_to_sources,
                          'it has to be able to use the record')
         covered = record.focused_models.mapped('model')
@@ -68,14 +69,27 @@ class TestResearchButton(TransactionCase):
         self.assertTrue(record.default_prompt)
         self.assertGreaterEqual(len(record.available_prompts), 3)
 
-    def test_the_two_buttons_do_not_open_the_same_agent(self):
-        """If they did, one of them would be redundant."""
+    def test_both_keys_speak_with_one_voice(self):
+        """Whichever way in a lawyer takes, the same agent answers."""
         record = self.env.ref('era_law_firm_ai.composer_legal_record')
-        self.assertNotEqual(record.ai_agent, self.composer.ai_agent)
+        self.assertEqual(record.ai_agent, self.composer.ai_agent)
+
+    def test_the_case_assistant_keeps_the_work_its_name_describes(self):
+        """It is the agent behind the tasks, where each task is named and the
+        agent behind it never has to be."""
+        assistant = self.env.ref('era_law_firm_ai.agent_case_assistant')
+        tasks = self.env['legal.ai.playbook'].search([('agent_id', '=', assistant.id)])
+        self.assertGreaterEqual(len(tasks), 10)
 
     def test_it_offers_questions_to_start_from(self):
+        """In both flavours: the key covers every screen in the app, so a
+        lawyer meets it on a case as often as on an empty search."""
         prompts = self.composer.available_prompts
-        self.assertGreaterEqual(len(prompts), 3)
+        self.assertGreaterEqual(len(prompts), 6)
+        names = prompts.mapped('name')
+        self.assertIn('لخّص الملف المفتوح في خمسة أسطر', names, 'a record is open')
+        self.assertIn('ما مدة الاعتراض على الحكم وما الذي تسري منه؟', names,
+                      'and often none is')
         for prompt in prompts:
             self.assertTrue(any('؀' <= c <= 'ۿ' for c in prompt.name),
                             'the lawyers reading these read Arabic: %s' % prompt.name)
@@ -91,12 +105,13 @@ class TestResearchButton(TransactionCase):
 
 @tagged('post_install', '-at_install')
 class TestAskAIFromRecord(TransactionCase):
-    """Hiding Odoo's button must not cost the lawyer the way in.
+    """The governed path has to reach as far as the quick one.
 
-    Odoo's AI button is hidden inside this app because it sends a record and
-    its chatter with no consent, redaction or audit. What replaces it has to
-    reach the same places — a hearing, a deadline, a document — and land on
-    the wizard that does keep that chain.
+    The button in the systray answers from a hearing, a deadline or a document
+    with no consent, redaction or audit — that is what makes it quick. The
+    lawyer who needs an answer they can be asked about must not have to walk
+    back to the case for it, so the governed wizard is offered on those records
+    too, already pointed at the file they belong to.
     """
 
     @classmethod
@@ -162,12 +177,12 @@ class TestAskAIFromRecord(TransactionCase):
 
 @tagged('post_install', '-at_install')
 class TestAdvisorSeesTheFile(TransactionCase):
-    """The firm's own button carries both halves: the statutes and the file.
+    """The button carries both halves: the statutes and the open file.
 
-    Odoo builds a record's context only for its own interface keys, so a button
-    with a key of its own arrives with the record's id and nothing in it. The
-    server fills that in — and only for this key, so the other buttons keep
-    behaving as Odoo wrote them.
+    Odoo serialises a record for its own key and knows nothing of a case file;
+    for ours it serialises nothing at all. The server fills in both — and only
+    for the two keys that reach the advisor, so every other way of opening a
+    chat behaves as Odoo wrote it.
     """
 
     @classmethod
@@ -213,12 +228,30 @@ class TestAdvisorSeesTheFile(TransactionCase):
         self.assertIn('ملف القضية', text)
         self.assertIn(self.case.name, text)
 
-    def test_the_other_buttons_are_left_as_odoo_wrote_them(self):
-        ours = self.case._ai_initialise_context('era_legal_research')
-        theirs = self.case._ai_initialise_context('chatter_ai_button')
-        self.assertNotEqual(ours, theirs)
-        self.assertFalse([line for line in theirs if 'ملف القضية' in line],
-                         'our context belongs to our key alone')
+    def test_odoo_s_key_carries_the_file_too(self):
+        """It is the way in from outside the app, and the same agent answers
+        it — so it cannot arrive with less of the file than ours does."""
+        text = '\n'.join(self.case._ai_initialise_context('chatter_ai_button'))
+        self.assertIn('ملف القضية', text)
+        self.assertIn('جلسة المستشار', text)
+
+    def test_any_record_in_the_app_hands_over_its_own_data(self):
+        """The key covers every screen in the app, not a list of models: a
+        statute, a rule, a template. Odoo serialises the record for its own
+        key only, so for ours the server has to."""
+        law = self.env['moj.law'].create({
+            'name': 'نظام المرافعات الشرعية', 'law_id': 'test-procedures'})
+        text = '\n'.join(law._ai_initialise_context('era_legal_research'))
+        self.assertIn('test-procedures', text)
+        self.assertIn('نظام المرافعات الشرعية', text,
+                      'and in Arabic, not escaped into six characters a letter')
+
+    def test_the_ways_in_we_do_not_own_are_left_alone(self):
+        """A chat opened from a rich text field or from the systray outside
+        the app is Odoo's, and must read exactly as Odoo wrote it."""
+        for key in ('html_field_text_select', 'systray_ai_button', 'mail_composer'):
+            text = '\n'.join(self.case._ai_initialise_context(key))
+            self.assertNotIn('ملف القضية', text, key)
 
     def test_the_backfill_does_not_run_twice(self):
         """It is called on every unchanged sync, so a second pass must be a

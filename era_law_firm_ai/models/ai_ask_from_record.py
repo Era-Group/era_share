@@ -1,12 +1,12 @@
 """Ask the AI from any record of a file, not only from the case itself.
 
-Odoo's own AI button is hidden inside this app (see legal_research_systray.js),
-because it sends the record and its whole chatter straight to the model with no
-consent screen, no redaction, no hash and no audit entry — the chain that every
-legal.ai.request goes through. Hiding it would have cost the lawyer a fast way
-in from a hearing or a document, so the governed wizard is offered there
-instead: same click, same speed, and the request still has to be consented to
-before anything leaves.
+Odoo's own AI button reaches these records too, and it sends them straight to
+the model with no consent screen, no redaction, no hash and no audit entry —
+the chain that every legal.ai.request goes through. It is left where it is,
+deliberately, as the quick path; what this adds is the governed one, at the
+same reach: a button on the hearing and the document as well as the case, so
+the lawyer who needs an answer they can be asked about does not have to walk
+back to the case to get it.
 
 A playbook works on a case, so a record's job here is only to say which case it
 belongs to — and, where the record is itself a document, which document.

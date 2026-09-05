@@ -1,17 +1,16 @@
 <odoo>
-    <!-- Odoo's own AI button, when it is pressed on one of this module's
-         records, answers with the Case Assistant.
+    <!-- One of this module's records, opened from outside this app — followed
+         from an invoice, from Discuss, from a search — is still a legal record,
+         and is answered by the advisor rather than by the general assistant.
 
-         That button passes the record it is looking at — its interface key is
-         literally "get help on a record" — so the agent behind it should be the
-         one that can read a record. The Case Assistant is: hearings and what
-         happened in them, deadlines, documents, the file's own history. The
-         research agent cannot, by design: it is restricted to the statute
-         corpus and will not use a record it is handed, so on a case file it can
-         only ever answer questions that have nothing to do with the case in
-         front of it.
+         Inside the app the button announces the firm's own key and this row is
+         not consulted; see legal_ai_research_button_data.xml. Chatting is one
+         thing, so one agent does it in both places: a lawyer asking about a
+         case should not have to learn which screen they came in from.
 
-         Research keeps the navbar button, where there is no record to read. -->
+         The Case Assistant keeps the work its name describes: it is the agent
+         behind twelve of the eighteen tasks under Ask AI, where each task is
+         named and the agent behind it never has to be. -->
 
     <record id="prompt_record_summary" model="ai.prompt.button">
         <field name="name">لخّص هذا الملف في خمسة أسطر</field>
@@ -31,9 +30,9 @@
     </record>
 
     <record id="composer_legal_record" model="ai.composer">
-        <field name="name">مساعد الملف — the record button inside the law firm</field>
+        <field name="name">مستشار الملف — Odoo’s record button inside the law firm</field>
         <field name="interface_key">chatter_ai_button</field>
-        <field name="ai_agent" ref="agent_case_assistant"/>
+        <field name="ai_agent" ref="agent_legal_advisor"/>
         <field name="focused_models" eval="[(6, 0, [
             ref('era_law_firm.model_legal_case'),
             ref('era_law_firm.model_legal_hearing'),

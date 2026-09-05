@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- The same button, told apart by what it says it will do. Only the
+         tooltip changes, so anything Odoo alters about the button itself
+         carries through. -->
+    <t t-name="era_law_firm_ai.SystrayActionLegalTitle"
+       t-inherit="ai.SystrayAction" t-inherit-mode="extension">
+        <xpath expr="//button" position="attributes">
+            <attribute name="title"/>
+            <attribute name="t-att-title">eraAiTitle</attribute>
+        </xpath>
+    </t>
+
+</templates>

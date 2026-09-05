@@ -12,9 +12,7 @@
                     <span class="fw-bold" t-esc="row.value"/>
                 </div>
             </div>
-            <div t-if="hasText" class="o_era_citation_text border rounded p-3 bg-view"
-                 style="max-height: 55vh; overflow-y: auto; line-height: 1.9;"
-                 t-out="body"/>
+            <div t-if="hasText" class="o_era_citation_text border rounded p-3 bg-view" t-out="body"/>
             <div t-else="" class="text-muted">
                 This source is a file rather than text. Open it to read it.
             </div>

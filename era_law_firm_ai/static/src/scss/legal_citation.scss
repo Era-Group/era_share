@@ -1,17 +1,56 @@
-// The statute in the citation dialog reads as a document, so its headings
-// carry a document's weight. Odoo's muted grey is right for a field label and
-// too light for a heading a lawyer scans a hundred articles by — and the
-// section titles were inheriting body colour, which put them at the same
-// weight as the text under them.
+// How a statute is set on the page.
+//
+// The first pass leaned on Bootstrap's utilities and left the text at a
+// reading-a-letter rhythm: 1.9 line height and half a rem under every
+// paragraph. A statute is not read that way — it is scanned, an article at a
+// time, and air between the lines pushes the next article off the screen. So
+// the spacing is tight here and lives in one place rather than in the markup.
 //
 // The greens are the ministry palette this module already uses (#1B8354),
 // taken a shade darker so a heading holds against the article text beside it.
+.o_era_citation_text {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
 .o_era_legal_text {
+    line-height: 1.5;
+
+    > :first-child {
+        margin-top: 0;
+    }
+
+    p {
+        margin-bottom: .25rem;
+    }
+
+    ul {
+        margin: .15rem 0 .45rem;
+        padding-inline-start: 1.15rem;
+    }
+
+    li {
+        margin-bottom: .1rem;
+    }
+
+    // Lettered and numbered branches carry their own marker, so the list
+    // draws none of its own.
+    .o_era_legal_branches {
+        list-style: none;
+        padding-inline-start: .85rem;
+    }
+
     .o_era_legal_section {
         color: var(--o-era-legal-section-color, #0B4F33);
+        font-size: 1.02rem;
+        font-weight: 700;
+        margin: .85rem 0 .25rem;
     }
 
     .o_era_legal_article {
         color: var(--o-era-legal-article-color, #1F2937);
+        font-size: .95rem;
+        font-weight: 700;
+        margin: .55rem 0 .1rem;
     }
 }

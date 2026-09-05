@@ -89,24 +89,24 @@ def format_legal_text(text):
                 items.append(_bullet_item(value) if kind == 'bullet'
                              else Markup('<li><b>%s -</b> %s</li>') % (value[0], value[1]))
                 index += 1
-            css = 'mb-3' if kind == 'bullet' else 'list-unstyled ps-3 mb-3'
+            css = 'o_era_legal_terms' if kind == 'bullet' else 'o_era_legal_branches'
             parts.append(Markup('<ul class="%s">%s</ul>') % (css, Markup('').join(items)))
             continue
         if kind == 'section':
-            parts.append(Markup('<h5 class="o_era_legal_section mt-4 mb-2 fw-bold">%s</h5>') % payload)
+            parts.append(Markup('<h5 class="o_era_legal_section">%s</h5>') % payload)
         elif kind == 'article':
             label, rest = payload
-            parts.append(Markup('<h6 class="o_era_legal_article mt-3 mb-1 fw-bold">%s</h6>') % label)
+            parts.append(Markup('<h6 class="o_era_legal_article">%s</h6>') % label)
             if rest:
                 # An article can open straight into its first branch.
                 sub_kind, sub_payload = _line_token(rest)
                 if sub_kind == 'marker':
-                    parts.append(Markup('<ul class="list-unstyled ps-3 mb-3"><li><b>%s -</b> %s</li></ul>')
+                    parts.append(Markup('<ul class="o_era_legal_branches"><li><b>%s -</b> %s</li></ul>')
                                  % (sub_payload[0], sub_payload[1]))
                 else:
-                    parts.append(Markup('<p class="mb-2">%s</p>') % rest)
+                    parts.append(Markup('<p>%s</p>') % rest)
         else:
-            parts.append(Markup('<p class="mb-2">%s</p>') % payload)
+            parts.append(Markup('<p>%s</p>') % payload)
         index += 1
 
     return Markup('<div class="o_era_legal_text">%s</div>') % Markup('').join(parts)

@@ -1,0 +1,44 @@
+<odoo>
+    <!-- What the research button opens, as data rather than as code: the key
+         the button sends, the agent that answers it, the standing instructions,
+         and the questions offered to start from. Point ai_agent elsewhere and
+         the button follows, with nothing to redeploy.
+
+         Not noupdate: an upgrade should refresh what the module ships, and a
+         firm that wants its own wording copies the record rather than editing
+         this one. -->
+
+    <record id="prompt_research_appeal_period" model="ai.prompt.button">
+        <field name="name">ما مدة الاعتراض على الحكم وما الذي تسري منه؟</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="prompt_research_execution" model="ai.prompt.button">
+        <field name="name">ما شروط قبول طلب التنفيذ والمستندات اللازمة له؟</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="prompt_research_labour" model="ai.prompt.button">
+        <field name="name">ما التزامات صاحب العمل عند إنهاء عقد غير محدد المدة؟</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="prompt_research_commercial" model="ai.prompt.button">
+        <field name="name">ما اختصاص المحكمة التجارية في هذا النزاع؟</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="composer_legal_research" model="ai.composer">
+        <field name="name">البحث النظامي — Legal Research button</field>
+        <field name="interface_key">era_legal_research</field>
+        <field name="ai_agent" ref="agent_research"/>
+        <field name="default_prompt">هذه محادثة بحث نظامي داخل نظام إدارة مكتب المحاماة.
+
+أجب من المصادر النظامية المرفوعة إلى هذا الوكيل وحدها. ابدأ بالجواب المباشر في سطرين، ثم اذكر السند: النظام واسم المادة ورقمها كما وردت في المصدر، ثم ما يقيّد الجواب أو يستثنيه.
+
+وإن لم يكن في المصادر ما يجيب فقل ذلك صراحةً واقترح ما الذي ينبغي رفعه، ولا تُجب من الذاكرة. ومخرجك بحث تمهيدي يتحقق منه المحامي قبل الاعتماد عليه.</field>
+        <field name="available_prompts" eval="[(6, 0, [
+            ref('prompt_research_appeal_period'),
+            ref('prompt_research_execution'),
+            ref('prompt_research_labour'),
+            ref('prompt_research_commercial')])]"/>
+    </record>
+
+</odoo>

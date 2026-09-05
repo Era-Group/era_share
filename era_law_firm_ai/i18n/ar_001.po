@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 10:24+0000\n"
-"PO-Revision-Date: 2026-09-03 10:24+0000\n"
+"POT-Creation-Date: 2026-09-05 09:01+0000\n"
+"PO-Revision-Date: 2026-09-05 09:01+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -211,6 +211,16 @@ msgid "AI Requests Count"
 msgstr "طلبات الذكاء"
 
 #. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_ai_composer
+msgid "AI model configurations (system prompts) for text drafting."
+msgstr "تهيئات نموذج الذكاء الاصطناعي (مدخلات النظام) لصياغة النصوص."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_composer__interface_key
+msgid "Action"
+msgstr "إجراء"
+
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_needaction
 msgid "Action Needed"
 msgstr "يتطلب إجراءً"
@@ -227,7 +237,10 @@ msgstr "نشط"
 msgid ""
 "Adds the entries this task can use that carry names, narrative or money. "
 "They are listed below so you know exactly what that means."
-msgstr "يضيف المدخلات التي يمكن للمهمة استخدامها وتحمل أسماء أو سرداً أو مالاً. مذكورة أدناه لتعرف بالضبط ما يعنيه ذلك."
+msgstr ""
+"يضيف المدخلات التي يمكن للمهمة استخدامها وتحمل أسماء أو سرداً أو مالاً. "
+"مذكورة أدناه لتعرف بالضبط ما يعنيه ذلك."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__agent_id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_playbook__agent_id
@@ -435,10 +448,12 @@ msgstr "قضية"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_playbook_wizard__case_type
 msgid "Case Type"
 msgstr "نوع القضية"
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_playbook__category
 msgid "Category"
 msgstr "القسم"
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__charter_id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__charter_id
@@ -607,7 +622,10 @@ msgstr "الوصف"
 msgid ""
 "Determines how the file is handled: a full litigation file, an execution "
 "request, a one-off consultation, or something else."
-msgstr "يحدد كيف يُعامَل الملف: ملف ترافع كامل، أو طلب تنفيذ، أو استشارة واحدة، أو غير ذلك."
+msgstr ""
+"يحدد كيف يُعامَل الملف: ملف ترافع كامل، أو طلب تنفيذ، أو استشارة واحدة، أو "
+"غير ذلك."
+
 #. module: era_law_firm_ai
 #. odoo-python
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
@@ -624,6 +642,7 @@ msgstr "المُرسل إلى وكيل"
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent_source__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_composer__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__display_name
@@ -695,7 +714,10 @@ msgstr "تفعيل الذكاء المحكوم"
 msgid ""
 "Entries this task can use but that carry names, narrative or money. Never "
 "ticked by the playbook itself; the lawyer adds them from the wizard."
-msgstr "مدخلات يمكن للمهمة استخدامها لكنها تحمل أسماء أو سرداً أو مالاً. لا يؤشّرها الأمر بنفسه أبداً؛ يضيفها المحامي من المعالج."
+msgstr ""
+"مدخلات يمكن للمهمة استخدامها لكنها تحمل أسماء أو سرداً أو مالاً. لا يؤشّرها "
+"الأمر بنفسه أبداً؛ يضيفها المحامي من المعالج."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_ai_playbook__applies_to__all
 msgid "Every case"
@@ -879,6 +901,7 @@ msgstr ""
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent_source__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_composer__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__id
@@ -1058,10 +1081,19 @@ msgid "Legal Governance (PDPL)"
 msgstr "الحوكمة القانونية (نظام حماية البيانات الشخصية)"
 
 #. module: era_law_firm_ai
+#. odoo-javascript
+#: code:addons/era_law_firm_ai/static/src/js/legal_research_systray.js:0
+msgid "Legal Research"
+msgstr "البحث النظامي"
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__status
 msgid "Legal Status"
 msgstr "الحالة النظامية"
 
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__ai_composer__interface_key__era_legal_research
+msgid "Legal research, from the law firm app"
+msgstr "بحث نظامي، من تطبيق مكتب المحاماة"
 #. module: era_law_firm_ai
 #: model:ir.actions.act_window,name:era_law_firm_ai.action_moj_law
 #: model:ir.ui.menu,name:era_law_firm_ai.menu_moj_law
@@ -1149,7 +1181,10 @@ msgid ""
 "Nothing would be sent: the ticked entries are empty on this case and there "
 "are no instructions. Tick entries that carry a value, or write what you need"
 " in the instructions box."
-msgstr "لن يُرسل شيء: المدخلات المؤشَّرة فارغة في هذه القضية ولا توجد تعليمات. أشّر مدخلات تحمل قيمة، أو اكتب ما تحتاجه في مربع التعليمات."
+msgstr ""
+"لن يُرسل شيء: المدخلات المؤشَّرة فارغة في هذه القضية ولا توجد تعليمات. أشّر "
+"مدخلات تحمل قيمة، أو اكتب ما تحتاجه في مربع التعليمات."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_needaction_counter
 msgid "Number of Actions"
@@ -1438,6 +1473,7 @@ msgstr "حدّد أعلى تصنيف يجوز أن يستقبله «%s»."
 msgid ""
 "Shipped with the module. A firm's own playbooks are left alone by upgrades."
 msgstr "مرفق مع الموديول. وأوامر المكتب نفسه لا تمسّها الترقيات."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_field__description
 msgid "Shown to the lawyer so they know what they are about to share."
@@ -1578,7 +1614,10 @@ msgstr ""
 msgid ""
 "The agent that runs this task. It must be approved for legal work before any"
 " request built from this playbook can be sent."
-msgstr "الوكيل الذي ينفّذ هذه المهمة. يجب اعتماده للعمل القانوني قبل إرسال أي طلب مبني على هذا الأمر."
+msgstr ""
+"الوكيل الذي ينفّذ هذه المهمة. يجب اعتماده للعمل القانوني قبل إرسال أي طلب "
+"مبني على هذا الأمر."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__sanitized_response
 msgid ""
@@ -1840,6 +1879,7 @@ msgstr "المهمة كما يسمّيها المحامي"
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_playbook__name
 msgid "The task as a lawyer would name it."
 msgstr "المهمة كما يسمّيها المحامي."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_playbook__needs_question
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_playbook_wizard__needs_question
@@ -1847,15 +1887,18 @@ msgid ""
 "The task needs the lawyer's own facts or question; the wizard insists on "
 "them."
 msgstr "المهمة تحتاج وقائع المحامي أو سؤاله؛ يصرّ عليها المعالج."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__playbook_id
 msgid "The task this request was built from, if any."
 msgstr "المهمة التي بُني منها هذا الطلب، إن وُجدت."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_playbook__needs_document
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_playbook_wizard__needs_document
 msgid "The task works on one document; the wizard asks which."
 msgstr "المهمة تعمل على مستند واحد؛ يسأل المعالج أيّه."
+
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_moj_corpus
 msgid ""
@@ -1999,6 +2042,7 @@ msgstr ""
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_playbook__field_ids
 msgid "Ticked on every request built from this playbook."
 msgstr "تُؤشَّر في كل طلب مبني على هذا الأمر."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__law_type
 msgid "Type"
@@ -2032,6 +2076,7 @@ msgstr "ما يعود، في سطر أو سطرين"
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_playbook__summary
 msgid "What comes back, in one or two lines. Shown before the task is chosen."
 msgstr "ما يعود، في سطر أو سطرين. يُعرض قبل اختيار المهمة."
+
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
 msgid ""
@@ -2051,7 +2096,10 @@ msgstr "ما يُطلب من الوكيل إنتاجه: البناء والنب�
 msgid ""
 "What the agent is asked to produce: the structure, the tone, the limits. "
 "Sent as the request's instructions, after redaction like everything else."
-msgstr "ما يُطلب من الوكيل إنتاجه: البناء والنبرة والحدود. يُرسل كتعليمات الطلب، بعد التنقيح ككل شيء آخر."
+msgstr ""
+"ما يُطلب من الوكيل إنتاجه: البناء والنبرة والحدود. يُرسل كتعليمات الطلب، بعد"
+" التنقيح ككل شيء آخر."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_field__name
 msgid ""
@@ -2065,7 +2113,10 @@ msgstr ""
 msgid ""
 "Whatever the task needs from you: the facts as you know them, the question "
 "to research, the point to argue. Redacted with everything else."
-msgstr "ما تحتاجه المهمة منك: الوقائع كما تعرفها، أو السؤال المطلوب بحثه، أو النقطة المراد الدفاع عنها. تُنقَّح مع كل شيء آخر."
+msgstr ""
+"ما تحتاجه المهمة منك: الوقائع كما تعرفها، أو السؤال المطلوب بحثه، أو النقطة "
+"المراد الدفاع عنها. تُنقَّح مع كل شيء آخر."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__consent_date
 msgid "When consent was given."
@@ -2090,6 +2141,7 @@ msgstr ""
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_playbook_wizard__agent_ready
 msgid "Whether the agent behind this task has been approved for legal work."
 msgstr "هل اعتُمد الوكيل خلف هذه المهمة للعمل القانوني."
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__classification_blocked
 msgid ""
@@ -2111,6 +2163,7 @@ msgstr ""
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_playbook__applies_to
 msgid "Which case types offer this task."
 msgstr "أنواع القضايا التي تتيح هذه المهمة."
+
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
 msgid "Why this request is being made"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="era_law_firm_ai.LegalResearchSystray">
+        <button t-if="state.inLawFirm"
+                class="o_nav_entry o_era_research_entry"
+                t-att-title="label"
+                t-att-aria-label="label"
+                t-on-click="onClickResearch">
+            <i class="fa fa-book" role="img"/>
+        </button>
+    </t>
+
+</templates>

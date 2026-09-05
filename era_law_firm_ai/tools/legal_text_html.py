@@ -93,10 +93,10 @@ def format_legal_text(text):
             parts.append(Markup('<ul class="%s">%s</ul>') % (css, Markup('').join(items)))
             continue
         if kind == 'section':
-            parts.append(Markup('<h5 class="mt-4 mb-2 fw-bold">%s</h5>') % payload)
+            parts.append(Markup('<h5 class="o_era_legal_section mt-4 mb-2 fw-bold">%s</h5>') % payload)
         elif kind == 'article':
             label, rest = payload
-            parts.append(Markup('<h6 class="mt-3 mb-1 fw-bold text-muted">%s</h6>') % label)
+            parts.append(Markup('<h6 class="o_era_legal_article mt-3 mb-1 fw-bold">%s</h6>') % label)
             if rest:
                 # An article can open straight into its first branch.
                 sub_kind, sub_payload = _line_token(rest)

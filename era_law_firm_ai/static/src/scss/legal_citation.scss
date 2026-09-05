@@ -1,0 +1,17 @@
+// The statute in the citation dialog reads as a document, so its headings
+// carry a document's weight. Odoo's muted grey is right for a field label and
+// too light for a heading a lawyer scans a hundred articles by — and the
+// section titles were inheriting body colour, which put them at the same
+// weight as the text under them.
+//
+// The greens are the ministry palette this module already uses (#1B8354),
+// taken a shade darker so a heading holds against the article text beside it.
+.o_era_legal_text {
+    .o_era_legal_section {
+        color: var(--o-era-legal-section-color, #0B4F33);
+    }
+
+    .o_era_legal_article {
+        color: var(--o-era-legal-article-color, #1F2937);
+    }
+}

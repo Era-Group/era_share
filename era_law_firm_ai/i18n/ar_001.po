@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 11:15+0000\n"
-"PO-Revision-Date: 2026-09-05 11:15+0000\n"
+"POT-Creation-Date: 2026-09-05 11:55+0000\n"
+"PO-Revision-Date: 2026-09-05 11:55+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -648,6 +648,11 @@ msgstr ""
 "غير ذلك."
 
 #. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_discuss_channel
+msgid "Discussion Channel"
+msgstr "قناة المناقشة"
+
+#. module: era_law_firm_ai
 #. odoo-python
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__attempt_ids
@@ -664,6 +669,7 @@ msgstr "المُرسل إلى وكيل"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent_source__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_composer__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_discuss_channel__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_askable__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__display_name
@@ -929,6 +935,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent_source__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_composer__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_discuss_channel__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_askable__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__id
@@ -1140,14 +1147,21 @@ msgid "Legal Hearing"
 msgstr "جلسة قضائية"
 
 #. module: era_law_firm_ai
+#: model:ir.actions.client,name:era_law_firm_ai.action_legal_research
+#: model:ir.ui.menu,name:era_law_firm_ai.menu_legal_research_chat
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_dashboard_form_research
+msgid "Legal Research"
+msgstr "البحث النظامي"
+
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__status
 msgid "Legal Status"
 msgstr "الحالة النظامية"
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__ai_composer__interface_key__era_legal_research
-msgid "Legal research, from the law firm app"
-msgstr "بحث نظامي، من تطبيق مكتب المحاماة"
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__ai_composer__interface_key__era_legal_corpus
+msgid "Legal research, from the law firm menu"
+msgstr "بحث نظامي، من قائمة المكتب"
 
 #. module: era_law_firm_ai
 #: model:ir.actions.act_window,name:era_law_firm_ai.action_moj_law
@@ -1616,6 +1630,11 @@ msgstr "اسم القالب"
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
 msgid "The AI agent could not answer this request: %s"
 msgstr "تعذّر على الوكيل الإجابة عن هذا الطلب: %s"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__ai_composer__interface_key__era_legal_research
+msgid "The AI button, inside the law firm app"
+msgstr "زر الذكاء، داخل تطبيق المكتب"
 
 #. module: era_law_firm_ai
 #. odoo-python

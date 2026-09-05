@@ -1,0 +1,41 @@
+<odoo>
+    <!-- A way to the restricted agent, without a record and without a second
+         icon in the systray.
+
+         The button in the top bar answers with the advisor, which reads the
+         open file and, where the corpus is silent, still answers. That is
+         right for thinking about a case and wrong for a reference: a lawyer
+         looking up a rule wants the text of the article or a plain "it is not
+         in the sources", which is exactly what the research agent is
+         restricted to give. Two icons side by side could not say that
+         difference; a name in the menu can.
+
+         It opens through the same launcher the systray button uses, so the
+         chat arrives with the composer's instructions and its own starter
+         questions — the general ones, since no file is involved. -->
+
+    <record id="action_legal_research" model="ir.actions.client">
+        <field name="name">Legal Research</field>
+        <field name="tag">era_law_firm_ai.legal_research_chat</field>
+    </record>
+
+    <menuitem id="menu_legal_research_chat" name="Legal Research"
+              parent="menu_legal_ai_root" action="action_legal_research"
+              sequence="5"/>
+
+    <!-- And on the home screen, next to the one other thing a lawyer starts
+         from a standing position. -->
+    <record id="view_legal_dashboard_form_research" model="ir.ui.view">
+        <field name="name">legal.dashboard.form.research</field>
+        <field name="model">legal.dashboard</field>
+        <field name="inherit_id" ref="era_law_firm.view_legal_dashboard_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_open_intake']" position="after">
+                <button type="action" name="%(action_legal_research)d"
+                        string="Legal Research" class="btn-secondary"
+                        groups="era_law_firm_ai.group_legal_ai_user"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

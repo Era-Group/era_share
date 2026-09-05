@@ -9,8 +9,10 @@ when it is opened from outside the app, and Odoo's general assistant is
 untouched everywhere else in the database.
 """
 from datetime import timedelta
+from unittest.mock import patch
 
 from odoo import fields
+from odoo.exceptions import AccessError
 from odoo.tests.common import TransactionCase, tagged
 
 from odoo.addons.era_law_firm_ai.models.ai_research_button import RESEARCH_KEY
@@ -81,15 +83,18 @@ class TestResearchButton(TransactionCase):
         tasks = self.env['legal.ai.playbook'].search([('agent_id', '=', assistant.id)])
         self.assertGreaterEqual(len(tasks), 10)
 
-    def test_it_offers_questions_to_start_from(self):
-        """In both flavours: the key covers every screen in the app, so a
-        lawyer meets it on a case as often as on an empty search."""
+    def test_its_questions_are_all_about_the_open_file(self):
+        """This agent's job is the file in front of the lawyer, so that is what
+        it offers to ask. The general statutory question has a door of its
+        own, and its questions live there."""
         prompts = self.composer.available_prompts
-        self.assertGreaterEqual(len(prompts), 6)
-        names = prompts.mapped('name')
-        self.assertIn('لخّص الملف المفتوح في خمسة أسطر', names, 'a record is open')
-        self.assertIn('ما مدة الاعتراض على الحكم وما الذي تسري منه؟', names,
-                      'and often none is')
+        self.assertGreaterEqual(len(prompts), 5)
+        for prompt in prompts:
+            self.assertTrue(any(word in prompt.name for word in ('الملف', 'الجلسة', 'موقفنا')),
+                            'not about the open file: %s' % prompt.name)
+        for prompt in prompts:
+            self.assertTrue(any('؀' <= c <= 'ۿ' for c in prompt.name),
+                            'the lawyers reading these read Arabic: %s' % prompt.name)
         for prompt in prompts:
             self.assertTrue(any('؀' <= c <= 'ۿ' for c in prompt.name),
                             'the lawyers reading these read Arabic: %s' % prompt.name)
@@ -257,3 +262,141 @@ class TestAdvisorSeesTheFile(TransactionCase):
         """It is called on every unchanged sync, so a second pass must be a
         no-op rather than a second copy of the corpus."""
         self.assertEqual(self.env['moj.law']._backfill_target_agents(), 0)
+
+
+@tagged('post_install', '-at_install')
+class TestLegalResearchEntry(TransactionCase):
+    """The reference the lawyer can reach without a case in front of them.
+
+    The systray button answers with the advisor, which reads the open file and
+    keeps answering where the corpus is silent. A lawyer looking up a rule
+    wants the other promise: the article, or a plain "not in the sources". That
+    is the research agent, and before this it had no door of its own — it
+    answered one task inside the governed wizard and nothing else.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.action = cls.env.ref('era_law_firm_ai.action_legal_research')
+        cls.composer = cls.env.ref('era_law_firm_ai.composer_legal_corpus')
+        cls.lawyer = cls.env['res.users'].create({
+            'name': 'محامي البحث', 'login': 'research_entry',
+            'group_ids': [(6, 0, [
+                cls.env.ref('base.group_user').id,
+                cls.env.ref('era_law_firm.group_legal_lawyer').id,
+                cls.env.ref('era_law_firm_ai.group_legal_ai_user').id])]})
+
+    def test_it_opens_the_agent_that_cannot_answer_from_memory(self):
+        """The whole point of a second door: this one is restricted to the
+        corpus, so what comes back is the text or nothing."""
+        agent = self.env.ref('era_law_firm_ai.agent_research')
+        self.assertTrue(agent.restrict_to_sources)
+        self.assertEqual(self.composer.ai_agent, agent)
+        self.assertNotEqual(self.composer.ai_agent,
+                            self.env.ref('era_law_firm_ai.agent_legal_advisor'))
+
+    def test_a_lawyer_reaches_it_by_name(self):
+        """It sits in the app's own AI section, not in the AI app's
+        configuration, which is where the agents themselves are."""
+        self.assertEqual(self.action.type, 'ir.actions.client')
+        self.assertEqual(self.action.tag, 'era_law_firm_ai.legal_research_chat')
+        menu = self.env.ref('era_law_firm_ai.menu_legal_research_chat')
+        self.assertEqual(menu.parent_id, self.env.ref('era_law_firm_ai.menu_legal_ai_root'))
+        visible = self.env['ir.ui.menu'].with_user(self.lawyer).search([('id', '=', menu.id)])
+        self.assertTrue(visible, 'a lawyer has to be able to see it')
+
+    def test_the_home_screen_offers_it_as_well(self):
+        """The menu is where you look for it once you know it exists; the
+        dashboard is where you meet it."""
+        arch = self.env['legal.dashboard'].with_user(self.lawyer).get_view()['arch']
+        self.assertIn(str(self.action.id), arch)
+
+    def test_the_questions_it_offers_are_the_ones_asked_of_a_book(self):
+        prompts = self.composer.available_prompts
+        self.assertGreaterEqual(len(prompts), 5)
+        for prompt in prompts:
+            self.assertNotIn('هذا الملف', prompt.name, 'no file is open here')
+
+    def test_a_chat_opened_here_carries_no_record(self):
+        """A reference that reads whatever file you happen to have open is no
+        longer a reference."""
+        channel = self.env['discuss.channel'].with_user(self.lawyer).create_ai_draft_channel(
+            'era_legal_corpus')
+        text = '\n'.join(self.env['discuss.channel'].sudo().browse(
+            channel['ai_channel_id']).ai_env_context or [])
+        self.assertNotIn('ملف القضية', text)
+        self.assertIn('بحث نظامي', text)
+
+
+@tagged('post_install', '-at_install')
+class TestPromptsFitTheSituation(TransactionCase):
+    """The advisor's questions are about the file — when there is a file.
+
+    Its button is in the systray, and the systray is on every screen. Pressed
+    from the dashboard, "summarise the open file" is an offer about nothing, so
+    the general questions are handed over instead — the reference's own list,
+    kept in one place rather than written twice.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.lawyer = cls.env['res.users'].create({
+            'name': 'محامي الأسئلة', 'login': 'prompt_situation',
+            'group_ids': [(6, 0, [
+                cls.env.ref('base.group_user').id,
+                cls.env.ref('era_law_firm.group_legal_lawyer').id,
+                cls.env.ref('era_law_firm_ai.group_legal_ai_user').id])]})
+        client = cls.env['res.partner'].create({'name': 'موكّل الأسئلة'})
+        wizard = cls.env['legal.intake.wizard'].with_user(cls.lawyer).create({
+            'client_id': client.id, 'case_type': 'litigation',
+            'lawyer_id': cls.lawyer.id, 'engagement_type': 'none'})
+        cls.case = cls.env['legal.case'].browse(wizard.action_open_case()['res_id'])
+
+    def _prompts(self, **kwargs):
+        channel = self.env['discuss.channel'].with_user(self.lawyer)
+        return channel.create_ai_draft_channel('era_legal_research', **kwargs)['prompts']
+
+    def test_a_plain_lawyer_gets_a_chat_at_all(self):
+        """It opened for an administrator and raised for a lawyer: the file is
+        rendered as the reader — which is what keeps another lawyer's
+        restricted document out of it — and one of its blocks reads a model
+        that only the accountant may."""
+        channel = self.env['discuss.channel'].with_user(self.lawyer).create_ai_draft_channel(
+            'era_legal_research', record_model='legal.case', record_id=self.case.id)
+        text = '\n'.join(self.env['discuss.channel'].sudo().browse(
+            channel['ai_channel_id']).ai_env_context or [])
+        self.assertIn('ملف القضية', text)
+
+    def test_a_block_the_reader_may_not_see_is_left_out_not_raised(self):
+        """Losing the money is the right failure; losing the chat is not."""
+        def refuse(self):
+            raise AccessError('the accountant\'s business')
+
+        with patch.object(type(self.case), '_era_render_financials', refuse):
+            text = self.case._era_ai_file_context()
+        self.assertIn('ملف القضية', text)
+        self.assertNotIn('الملخص المالي', text)
+
+    def test_on_a_record_it_asks_about_the_record(self):
+        own = self.env.ref('era_law_firm_ai.composer_legal_research').available_prompts
+        offered = self._prompts(record_model='legal.case', record_id=self.case.id)
+        self.assertTrue(offered)
+        for name in offered:
+            self.assertIn(name, own.mapped('name'), 'a file is open: ask about it')
+
+    def test_with_no_record_it_asks_what_a_book_is_asked(self):
+        general = self.env.ref('era_law_firm_ai.composer_legal_corpus').available_prompts
+        offered = self._prompts()
+        self.assertTrue(offered)
+        for name in offered:
+            self.assertIn(name, general.mapped('name'),
+                          'nothing about an open file when none is open')
+
+    def test_odoo_s_own_key_always_has_a_record_so_it_keeps_its_own(self):
+        """It only ever fires on a form, so its questions stay record-shaped."""
+        record = self.env.ref('era_law_firm_ai.composer_legal_record')
+        for prompt in record.available_prompts:
+            self.assertTrue(any(word in prompt.name for word in ('الملف', 'الجلسة', 'المستندات')),
+                            prompt.name)

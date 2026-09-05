@@ -14,26 +14,11 @@
          firm that wants its own wording copies the record rather than editing
          this one. -->
 
-    <record id="prompt_research_appeal_period" model="ai.prompt.button">
-        <field name="name">ما مدة الاعتراض على الحكم وما الذي تسري منه؟</field>
-        <field name="sequence">10</field>
-    </record>
-    <record id="prompt_research_execution" model="ai.prompt.button">
-        <field name="name">ما شروط قبول طلب التنفيذ والمستندات اللازمة له؟</field>
-        <field name="sequence">20</field>
-    </record>
-    <record id="prompt_research_labour" model="ai.prompt.button">
-        <field name="name">ما التزامات صاحب العمل عند إنهاء عقد غير محدد المدة؟</field>
-        <field name="sequence">30</field>
-    </record>
-    <record id="prompt_research_commercial" model="ai.prompt.button">
-        <field name="name">ما اختصاص المحكمة التجارية في هذا النزاع؟</field>
-        <field name="sequence">40</field>
-    </record>
-
-    <!-- Record-flavoured starters, written again rather than shared: a prompt
-         belongs to one composer, and this key meets an open file as often as
-         it meets an empty search. -->
+    <!-- The starters this button offers, and they are all about the file the
+         lawyer is standing on. That is what this agent is for; the general
+         statutory question has a door of its own now, and when this button is
+         pressed with no record open it borrows that door's questions
+         (ai_chat_prompts.py). -->
     <record id="prompt_app_file_summary" model="ai.prompt.button">
         <field name="name">لخّص الملف المفتوح في خمسة أسطر</field>
         <field name="sequence">50</field>
@@ -46,6 +31,18 @@
         <field name="name">ما المستندات أو الأدلة الناقصة في هذا الملف؟</field>
         <field name="sequence">70</field>
     </record>
+    <record id="prompt_app_hearing" model="ai.prompt.button">
+        <field name="name">حضّر لي الجلسة القادمة في هذا الملف</field>
+        <field name="sequence">80</field>
+    </record>
+    <record id="prompt_app_deadlines" model="ai.prompt.button">
+        <field name="name">ما المواعيد النظامية القريبة على هذا الملف وما مصدر كل منها؟</field>
+        <field name="sequence">90</field>
+    </record>
+    <record id="prompt_app_position" model="ai.prompt.button">
+        <field name="name">ما نقاط القوة والضعف في موقفنا على هذا الملف؟</field>
+        <field name="sequence">100</field>
+    </record>
 
     <record id="composer_legal_research" model="ai.composer">
         <field name="name">المستشار القانوني — the AI button inside this app</field>
@@ -57,13 +54,12 @@
 
 وفي الحالين: ابدأ بالجواب المباشر، ثم اذكر السند من النصوص المرفقة بنظامه ومادته كما وردت. ولا تذكر رقم مادة لم يرد نصها فيها. ومخرجك مسودة يتحقق منها المحامي قبل الاعتماد عليها.</field>
         <field name="available_prompts" eval="[(6, 0, [
-            ref('prompt_research_appeal_period'),
-            ref('prompt_research_execution'),
-            ref('prompt_research_labour'),
-            ref('prompt_research_commercial'),
             ref('prompt_app_file_summary'),
             ref('prompt_app_next_step'),
-            ref('prompt_app_gaps')])]"/>
+            ref('prompt_app_gaps'),
+            ref('prompt_app_hearing'),
+            ref('prompt_app_deadlines'),
+            ref('prompt_app_position')])]"/>
     </record>
 
 </odoo>

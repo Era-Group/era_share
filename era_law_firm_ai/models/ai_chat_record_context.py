@@ -16,6 +16,7 @@ the file in front of it — which neither of the two buttons beside it can be.
 import json
 
 from odoo import models
+from odoo.exceptions import AccessError
 
 from .ai_research_button import RESEARCH_KEY
 
@@ -115,11 +116,20 @@ class LegalCaseChatContext(models.Model):
         An empty heading tells the model a section exists and is blank, which
         it then tends to remark on; leaving it out says the same thing without
         spending the context on it.
+
+        And only the blocks this reader is allowed to see. The rendering runs
+        as the user on purpose — that is what keeps another lawyer's restricted
+        document out of the chat — but a lawyer who cannot read the client's
+        trust account should get an answer about their hearing, not an access
+        error where the chat should have opened.
         """
         self.ensure_one()
         parts = ['ملف القضية %s:' % (self.name or '')]
         for title, renderer in CASE_BLOCKS:
-            body = getattr(self, renderer)()
+            try:
+                body = getattr(self, renderer)()
+            except AccessError:
+                continue
             if body:
                 parts.append('%s:\n%s' % (title, body))
         return '\n\n'.join(parts)

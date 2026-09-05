@@ -14,3 +14,4 @@ from . import ai_citation_audit
 from . import ai_case_context
 from . import ai_playbook
 from . import ai_research_button
+from . import ai_ask_from_record

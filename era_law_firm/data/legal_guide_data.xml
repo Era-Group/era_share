@@ -320,6 +320,8 @@
             <div>
                 <h4>Start from the case, not from a blank form</h4>
                 <p>On any case, <b>Ask the AI</b> offers the tasks a firm actually asks for — a full report to the client of the proceedings to date, a brief with follow-up recommendations, preparation for the next hearing, the missing evidence, a deadline audit, a draft pleading, a research question, a document summary, a handover note, a closing report. Pick one and the request is assembled for you: the right agent, the right data ticked, the instructions already written. Sensitive extras — party names, internal notes, money — are offered by name and never added on their own. A legal manager can add the firm's own tasks under Configuration &gt; AI &gt; AI Playbooks.</p>
+                <h4>One way in, and it is governed</h4>
+                <p>Odoo's own AI button is hidden inside this app. Pressed on a record it sends that record's whole contents and its entire chatter straight to the model — no consent screen, no redaction of identity or account numbers, no audit entry. Every record of a file carries <b>Ask AI</b> instead, which opens the same wizard the case does, already pointed at that file: from a hearing, a deadline, a document, a consultation. Research keeps its own button in the top bar, where there is no record to send.</p>
                 <h4>Before anything leaves</h4>
                 <p>Every send passes a consent screen that shows <b>the actual text</b> going out, with explicit ticks for what is included. Nothing is sent because a default was left alone. Agents do not work at all until the firm approves them — a decision, not a setup step.</p>
                 <h4>After the answer</h4>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 09:01+0000\n"
-"PO-Revision-Date: 2026-09-05 09:01+0000\n"
+"POT-Creation-Date: 2026-09-05 10:09+0000\n"
+"PO-Revision-Date: 2026-09-05 10:09+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -351,8 +351,13 @@ msgstr "إعادة السؤال"
 
 #. module: era_law_firm_ai
 #. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_ask_from_record.py:0
 #: code:addons/era_law_firm_ai/models/ai_playbook.py:0
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_case_form_ask_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_consultation_form_ask_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_deadline_form_ask_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_document_form_ask_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_hearing_form_ask_ai
 msgid "Ask the AI"
 msgstr "اسأل الذكاء"
 
@@ -516,6 +521,11 @@ msgid "Config Settings"
 msgstr "إعدادات التهيئة"
 
 #. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_conflict_check
+msgid "Conflict Check"
+msgstr "فحص تعارض المصالح"
+
+#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
 msgid "Consent"
 msgstr "الموافقة"
@@ -643,6 +653,7 @@ msgstr "المُرسل إلى وكيل"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent_source__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_composer__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_askable__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__display_name
@@ -650,9 +661,14 @@ msgstr "المُرسل إلى وكيل"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_playbook_wizard__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_case__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_conflict_check__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_consultation__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_deadline__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_engagement__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_hearing__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_company__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_config_settings__display_name
@@ -902,6 +918,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent_source__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_composer__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_askable__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__id
@@ -909,9 +926,14 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_playbook_wizard__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_case__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_conflict_check__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_consultation__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_deadline__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_engagement__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_hearing__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_company__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_config_settings__id
@@ -1066,6 +1088,16 @@ msgid "Legal Charter"
 msgstr "الميثاق القانوني"
 
 #. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_consultation
+msgid "Legal Consultation"
+msgstr "استشارة قانونية"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_deadline
+msgid "Legal Deadline"
+msgstr "موعد نظامي"
+
+#. module: era_law_firm_ai
 #: model:ir.model,name:era_law_firm_ai.model_legal_document
 msgid "Legal Document"
 msgstr "مستند قانوني"
@@ -1076,15 +1108,26 @@ msgid "Legal Document Template"
 msgstr "قالب مستند قانوني"
 
 #. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_engagement
+msgid "Legal Engagement"
+msgstr "عقد أتعاب"
+
+#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
 msgid "Legal Governance (PDPL)"
 msgstr "الحوكمة القانونية (نظام حماية البيانات الشخصية)"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_hearing
+msgid "Legal Hearing"
+msgstr "جلسة قضائية"
 
 #. module: era_law_firm_ai
 #. odoo-javascript
 #: code:addons/era_law_firm_ai/static/src/js/legal_research_systray.js:0
 msgid "Legal Research"
 msgstr "البحث النظامي"
+
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__status
 msgid "Legal Status"
@@ -1094,6 +1137,7 @@ msgstr "الحالة النظامية"
 #: model:ir.model.fields.selection,name:era_law_firm_ai.selection__ai_composer__interface_key__era_legal_research
 msgid "Legal research, from the law firm app"
 msgstr "بحث نظامي، من تطبيق مكتب المحاماة"
+
 #. module: era_law_firm_ai
 #: model:ir.actions.act_window,name:era_law_firm_ai.action_moj_law
 #: model:ir.ui.menu,name:era_law_firm_ai.menu_moj_law
@@ -1305,6 +1349,10 @@ msgstr "الغرض"
 msgid "Ratings"
 msgstr "التقييمات"
 
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_ai_askable
+msgid "Record that can open the governed AI wizard"
+msgstr "سجل يفتح معالج الذكاء المحكوم"
 #. module: era_law_firm_ai
 #. odoo-python
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
@@ -1978,6 +2026,13 @@ msgstr ""
 "السعودية، فيكون الجواب مربوطاً بها لا بولاية قضائية أخرى. ومع ذلك لا يستطيع "
 "الوكيل فتحها — فإليها يرجع المحامي للتحقق من الاستشهاد قبل رفع النص مصدراً."
 
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_ask_from_record.py:0
+msgid ""
+"This record is not linked to a case yet, and every AI task works on a case "
+"file. Link it to one first."
+msgstr "هذا السجل غير مرتبط بقضية بعد، وكل مهام الذكاء تعمل على ملف قضية. اربطه بقضية أولاً."
 #. module: era_law_firm_ai
 #. odoo-python
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0

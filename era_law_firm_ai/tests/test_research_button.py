@@ -6,6 +6,9 @@ holding: the mapping exists and points at the research agent, that agent is
 still the one pinned to the statute corpus, and nothing about Odoo's general
 assistant moved.
 """
+from datetime import timedelta
+
+from odoo import fields
 from odoo.tests.common import TransactionCase, tagged
 
 from odoo.addons.era_law_firm_ai.models.ai_research_button import RESEARCH_KEY
@@ -81,3 +84,74 @@ class TestResearchButton(TransactionCase):
         self.composer.ai_agent = self.env.ref('era_law_firm_ai.agent_case_assistant')
         self.assertEqual(self.composer.ai_agent.name,
                          self.env.ref('era_law_firm_ai.agent_case_assistant').name)
+
+
+@tagged('post_install', '-at_install')
+class TestAskAIFromRecord(TransactionCase):
+    """Hiding Odoo's button must not cost the lawyer the way in.
+
+    Odoo's AI button is hidden inside this app because it sends a record and
+    its chatter with no consent, redaction or audit. What replaces it has to
+    reach the same places — a hearing, a deadline, a document — and land on
+    the wizard that does keep that chain.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.lawyer = cls.env['res.users'].create({
+            'name': 'محامي المدخل', 'login': 'ask_from_record',
+            'group_ids': [(6, 0, [
+                cls.env.ref('base.group_user').id,
+                cls.env.ref('era_law_firm.group_legal_lawyer').id,
+                cls.env.ref('era_law_firm_ai.group_legal_ai_user').id])]})
+        client = cls.env['res.partner'].create({'name': 'موكّل المدخل'})
+        wizard = cls.env['legal.intake.wizard'].with_user(cls.lawyer).create({
+            'client_id': client.id, 'case_type': 'litigation',
+            'lawyer_id': cls.lawyer.id, 'engagement_type': 'none'})
+        cls.case = cls.env['legal.case'].browse(wizard.action_open_case()['res_id'])
+
+    def _hearing(self):
+        now = fields.Datetime.now()
+        return self.env['legal.hearing'].create({
+            'name': 'جلسة المدخل', 'case_id': self.case.id,
+            'lawyer_id': self.lawyer.id, 'start_datetime': now,
+            'stop_datetime': now + timedelta(hours=1),
+            'company_id': self.env.company.id})
+
+    def test_a_hearing_opens_the_governed_wizard_on_its_case(self):
+        action = self._hearing().action_ask_ai()
+        self.assertEqual(action['res_model'], 'legal.ai.playbook.wizard')
+        self.assertEqual(action['context']['default_case_id'], self.case.id)
+
+    def test_a_document_arrives_with_itself_already_chosen(self):
+        attachment = self.env['ir.attachment'].create({
+            'name': 'ورقة.txt', 'raw': b'x', 'mimetype': 'text/plain',
+            'res_model': 'legal.case', 'res_id': self.case.id})
+        document = self.env['legal.document'].create({
+            'name': 'ورقة الملف', 'case_id': self.case.id,
+            'attachment_id': attachment.id, 'owner_id': self.lawyer.id})
+        action = document.action_ask_ai()
+        self.assertEqual(action['context']['default_case_id'], self.case.id)
+        self.assertEqual(action['context']['default_document_id'], document.id,
+                         'a task that works on a document should not ask which')
+
+    def test_every_record_of_a_file_offers_it(self):
+        for model in ('legal.hearing', 'legal.deadline', 'legal.document',
+                      'legal.consultation', 'legal.engagement',
+                      'legal.conflict.check'):
+            self.assertTrue(hasattr(self.env[model], 'action_ask_ai'), model)
+
+    def test_a_record_with_no_case_says_so(self):
+        """A consultation can exist before there is a case, and every AI task
+        works on one — so the button has to say that rather than open a wizard
+        it cannot fill."""
+        from odoo.exceptions import UserError
+        consultation = self.env['legal.consultation'].create({
+            'name': 'استشارة قبل الملف',
+            'partner_id': self.env['res.partner'].create({'name': 'مستشير'}).id,
+            'lawyer_id': self.lawyer.id,
+            'company_id': self.env.company.id})
+        self.assertFalse(consultation.case_id, 'precondition')
+        with self.assertRaises(UserError):
+            consultation.action_ask_ai()

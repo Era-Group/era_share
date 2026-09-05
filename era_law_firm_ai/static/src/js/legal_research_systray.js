@@ -10,12 +10,12 @@
  * the standing instructions and the starter prompts live — so a firm can point
  * the button elsewhere without a deployment.
  */
-import { Component, useState } from "@odoo/owl";
+import { Component } from "@odoo/owl";
 import { _t } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
-import { useBus, useService } from "@web/core/utils/hooks";
+import { useService } from "@web/core/utils/hooks";
+import { useInLawFirmApp } from "@era_law_firm_ai/js/era_app_watch";
 
-const LAW_FIRM_APP = "era_law_firm.menu_legal_root";
 const RESEARCH_KEY = "era_legal_research";
 
 export class LegalResearchSystray extends Component {
@@ -23,20 +23,9 @@ export class LegalResearchSystray extends Component {
     static template = "era_law_firm_ai.LegalResearchSystray";
 
     setup() {
-        this.menuService = useService("menu");
         this.aiChatLauncher = useService("aiChatLauncher");
         this.label = _t("Legal Research");
-        // Systray items are built once and live above the action, so the app
-        // has to be watched rather than read: without this the button would
-        // show whichever app happened to be open when the page loaded.
-        this.state = useState({ inLawFirm: this.isInLawFirm() });
-        useBus(this.env.bus, "MENUS:APP-CHANGED", () => {
-            this.state.inLawFirm = this.isInLawFirm();
-        });
-    }
-
-    isInLawFirm() {
-        return this.menuService.getCurrentApp()?.xmlid === LAW_FIRM_APP;
+        this.inLawFirm = useInLawFirmApp();
     }
 
     onClickResearch() {

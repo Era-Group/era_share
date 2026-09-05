@@ -649,4 +649,61 @@
         </field>
     </record>
 
+    <!-- ============ ASK AI FROM A RECORD OF THE FILE ============ -->
+    <!-- Odoo's own AI button is hidden inside this app, because it sends the
+         record and its chatter with no consent, redaction or audit. These put
+         the governed wizard where that button used to be. -->
+
+    <record id="view_legal_hearing_form_ask_ai" model="ir.ui.view">
+        <field name="name">legal.hearing.form.ask.ai</field>
+        <field name="model">legal.hearing</field>
+        <field name="inherit_id" ref="era_law_firm.view_legal_hearing_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='state']" position="before">
+                <button name="action_ask_ai" type="object" string="Ask the AI"
+                        class="btn-secondary" icon="fa-magic"
+                        groups="era_law_firm_ai.group_legal_ai_user"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_legal_deadline_form_ask_ai" model="ir.ui.view">
+        <field name="name">legal.deadline.form.ask.ai</field>
+        <field name="model">legal.deadline</field>
+        <field name="inherit_id" ref="era_law_firm.view_legal_deadline_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='state']" position="before">
+                <button name="action_ask_ai" type="object" string="Ask the AI"
+                        class="btn-secondary" icon="fa-magic"
+                        groups="era_law_firm_ai.group_legal_ai_user"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_legal_document_form_ask_ai" model="ir.ui.view">
+        <field name="name">legal.document.form.ask.ai</field>
+        <field name="model">legal.document</field>
+        <field name="inherit_id" ref="era_law_firm.view_legal_document_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='state']" position="before">
+                <button name="action_ask_ai" type="object" string="Ask the AI"
+                        class="btn-secondary" icon="fa-magic"
+                        groups="era_law_firm_ai.group_legal_ai_user"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_legal_consultation_form_ask_ai" model="ir.ui.view">
+        <field name="name">legal.consultation.form.ask.ai</field>
+        <field name="model">legal.consultation</field>
+        <field name="inherit_id" ref="era_law_firm.view_legal_consultation_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='state']" position="before">
+                <button name="action_ask_ai" type="object" string="Ask the AI"
+                        class="btn-secondary" icon="fa-magic"
+                        groups="era_law_firm_ai.group_legal_ai_user"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

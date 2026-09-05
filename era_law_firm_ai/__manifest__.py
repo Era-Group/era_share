@@ -1,7 +1,7 @@
 {
     'name': 'Era Law Firm AI Governance',
     'summary': 'Governed AI drafting, review and case summaries for Saudi law firms',
-    'version': '19.0.39.0.0',
+    'version': '19.0.40.0.0',
     'category': 'Services',
     'author': 'Era Group',
     'email': 'info@era.net.sa',
@@ -19,6 +19,7 @@
         'data/moj_corpus_cron.xml',
         'data/moj_agent_target.xml',
         'data/legal_ai_research_button_data.xml',
+        'data/legal_ai_record_button_data.xml',
         'data/legal_ai_playbooks_data.xml',
         'views/legal_ai_views.xml',
         'views/moj_corpus_views.xml',

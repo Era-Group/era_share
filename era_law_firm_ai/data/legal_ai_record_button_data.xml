@@ -1,0 +1,65 @@
+<odoo>
+    <!-- Odoo's own AI button, when it is pressed on one of this module's
+         records, answers with the Case Assistant.
+
+         That button passes the record it is looking at — its interface key is
+         literally "get help on a record" — so the agent behind it should be the
+         one that can read a record. The Case Assistant is: hearings and what
+         happened in them, deadlines, documents, the file's own history. The
+         research agent cannot, by design: it is restricted to the statute
+         corpus and will not use a record it is handed, so on a case file it can
+         only ever answer questions that have nothing to do with the case in
+         front of it.
+
+         Research keeps the navbar button, where there is no record to read. -->
+
+    <record id="prompt_record_summary" model="ai.prompt.button">
+        <field name="name">لخّص هذا الملف في خمسة أسطر</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="prompt_record_next_step" model="ai.prompt.button">
+        <field name="name">ما الخطوة التالية على هذا الملف ومتى؟</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="prompt_record_gaps" model="ai.prompt.button">
+        <field name="name">ما المستندات أو الأدلة الناقصة؟</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="prompt_record_hearing" model="ai.prompt.button">
+        <field name="name">حضّر لي الجلسة القادمة</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="composer_legal_record" model="ai.composer">
+        <field name="name">مساعد الملف — the record button inside the law firm</field>
+        <field name="interface_key">chatter_ai_button</field>
+        <field name="ai_agent" ref="agent_case_assistant"/>
+        <field name="focused_models" eval="[(6, 0, [
+            ref('era_law_firm.model_legal_case'),
+            ref('era_law_firm.model_legal_hearing'),
+            ref('era_law_firm.model_legal_deadline'),
+            ref('era_law_firm.model_legal_document'),
+            ref('era_law_firm.model_legal_consultation'),
+            ref('era_law_firm.model_legal_conflict_check'),
+            ref('era_law_firm.model_legal_engagement'),
+            ref('era_law_firm.model_legal_success_fee'),
+            ref('era_law_firm.model_legal_time_entry'),
+            ref('era_law_firm.model_legal_expense'),
+            ref('era_law_firm.model_legal_trust_account'),
+            ref('era_law_firm.model_legal_trust_transaction'),
+            ref('era_law_firm_ai.model_legal_ai_request')])]"/>
+        <field name="default_prompt">أنت تنظر إلى سجل داخل نظام إدارة مكتب محاماة سعودي، ومعطياته أمامك.
+
+اعتمد على المعطيات الواردة إليك وحدها، ورتّب ما تسرده زمنياً، واذكر التاريخ مع كل حدث. وما لم يرد في المعطيات اتركه ظاهراً بين قوسين هكذا [يُستكمل] ولا تخترعه.
+
+حيث تلزم الإشارة إلى نظام فسمِّ النظام، ولا تذكر رقم مادة إلا إذا ورد نصها في النصوص المرفقة بهذا الوكيل.
+
+ومخرجك مسودة يراجعها محامٍ مرخص، وليست رأياً قانونياً ولا وثيقة جاهزة للتقديم.</field>
+        <field name="available_prompts" eval="[(6, 0, [
+            ref('prompt_record_summary'),
+            ref('prompt_record_next_step'),
+            ref('prompt_record_gaps'),
+            ref('prompt_record_hearing')])]"/>
+    </record>
+
+</odoo>

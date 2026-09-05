@@ -27,4 +27,9 @@
     <record id="agent_case_assistant" model="ai.agent">
         <field name="moj_corpus_target" eval="True"/>
     </record>
+    <!-- The advisor answers about an open file and cites statute in the same
+         breath, so it needs both halves. -->
+    <record id="agent_legal_advisor" model="ai.agent">
+        <field name="moj_corpus_target" eval="True"/>
+    </record>
 </odoo>

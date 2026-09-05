@@ -156,6 +156,9 @@ class MojLaw(models.Model):
         last_scraped = icp.get_param(LAST_SCRAPED_PARAM)
 
         if not force and scraped_at and scraped_at == last_scraped:
+            # Unchanged upstream still leaves one thing to do: an agent flagged
+            # since the last run has none of this, and the text is already here.
+            self._backfill_target_agents()
             _logger.info('era_law_firm_ai: MOJ corpus unchanged (scraped_at=%s), skipping.', scraped_at)
             return 'unchanged'
 
@@ -255,6 +258,51 @@ class MojLaw(models.Model):
             law.source_ids = [(4, sid) for sid in new_source.ids]
             changed = True
         return changed
+
+    def _backfill_target_agents(self):
+        """Give a newly flagged agent the corpus the others already carry.
+
+        Flagging an agent as a corpus target does nothing until the next full
+        resync, and the scheduled one skips a corpus that has not changed —
+        so an agent shipped today would wait until the second of next month
+        for text this database already holds. Copying it across costs no
+        download and no embedding: chunks are keyed by the file's checksum
+        and the embedding model, not by which agent points at the file, so
+        the same text attached again is recognised and indexed at once.
+
+        Returns how many attachments it made, so a caller can say whether
+        anything happened.
+        """
+        agents = self.env['ai.agent'].sudo().search([('moj_corpus_target', '=', True)])
+        if not agents:
+            return 0
+        laws = self or self.sudo().search([])
+        attached = 0
+        for law in laws:
+            sources = law.source_ids
+            if not sources:
+                continue
+            template = sources[0]
+            raw = template.attachment_id.raw
+            if not raw:
+                continue
+            for agent in agents:
+                if sources.filtered(lambda source: source.agent_id == agent):
+                    continue
+                new_source = self.env['ai.agent.source'].sudo().create_from_binary_files(
+                    [{
+                        'name': template.name,
+                        'raw': raw,
+                        'mimetype': 'text/plain',
+                    }],
+                    agent.id,
+                )
+                law.source_ids = [(4, sid) for sid in new_source.ids]
+                attached += 1
+        if attached:
+            _logger.info('era_law_firm_ai: attached %d statute source(s) to newly '
+                         'targeted agent(s) from text already held.', attached)
+        return attached
 
     def _retire_missing_laws(self, current_ids):
         """A statute the Ministry no longer lists is detached and its row dropped,

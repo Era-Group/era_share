@@ -34,18 +34,39 @@ class LegalAIRequestContext(models.Model):
     _ALLOWED_FIELDS = _Base._ALLOWED_FIELDS | COMPOSITE_FIELDS
 
     def _composite_renderers(self):
+        case = self.case_id
         return {
-            'parties_roles': self._render_parties,
-            'hearings_log': self._render_hearings,
-            'deadlines_log': self._render_deadlines,
-            'documents_list': self._render_documents,
-            'stage_timeline': self._render_timeline,
-            'case_log': self._render_case_log,
-            'financial_summary': self._render_financials,
-            'internal_notes': self._render_internal_notes,
+            'parties_roles': case._era_render_parties,
+            'hearings_log': case._era_render_hearings,
+            'deadlines_log': case._era_render_deadlines,
+            'documents_list': case._era_render_documents,
+            'stage_timeline': case._era_render_timeline,
+            'case_log': case._era_render_case_log,
+            'financial_summary': case._era_render_financials,
+            'internal_notes': case._era_render_internal_notes,
         }
 
-    # ---------------------------------------------------------------- helpers
+class LegalAIFieldComposite(models.Model):
+    _inherit = 'legal.ai.field'
+
+    def _value_for(self, request):
+        self.ensure_one()
+        renderer = request._composite_renderers().get(self.technical_name)
+        if renderer and self.source == 'case':
+            return renderer() if request.case_id else ''
+        return super()._value_for(request)
+
+
+class LegalCaseNarrative(models.Model):
+    """How a case reads to a language model, in one place.
+
+    Two callers need the same rendering: the governed request, which puts these
+    into a payload the lawyer consents to, and the chat context, which hands
+    them to an agent opened on the record. Writing them twice would let the two
+    drift, and the one that drifted would be the one nobody was reading.
+    """
+    _inherit = 'legal.case'
+
     def _label(self, record, field_name):
         field = record._fields[field_name]
         return dict(field._description_selection(record.env)).get(record[field_name], '')
@@ -59,18 +80,18 @@ class LegalAIRequestContext(models.Model):
         return re.sub(r'\s+', ' ', html2plaintext(value or '')).strip()
 
     # -------------------------------------------------------------- renderers
-    def _render_parties(self):
+    def _era_render_parties(self):
         lines = []
-        for party in self.case_id.party_ids:
+        for party in self.party_ids:
             line = '- %s: %s' % (self._label(party, 'role'), party.partner_id.display_name)
             if party.representative_id:
                 line += ' (يمثله %s)' % party.representative_id.display_name
             lines.append(line)
         return '\n'.join(lines)
 
-    def _render_hearings(self):
+    def _era_render_hearings(self):
         lines = []
-        for hearing in self.case_id.hearing_ids.sorted('start_datetime'):
+        for hearing in self.hearing_ids.sorted('start_datetime'):
             when = self._date(hearing.start_datetime)
             if hearing.hijri_date:
                 when += ' (%s هـ)' % hearing.hijri_date
@@ -80,15 +101,15 @@ class LegalAIRequestContext(models.Model):
             lines.append(line)
         return '\n'.join(lines)
 
-    def _render_deadlines(self):
+    def _era_render_deadlines(self):
         lines = []
-        for deadline in self.case_id.deadline_ids.sorted('deadline_date'):
+        for deadline in self.deadline_ids.sorted('deadline_date'):
             lines.append('- %s — %s — %s — المصدر: %s' % (
                 self._date(deadline.deadline_date), deadline.name,
                 self._label(deadline, 'state'), deadline.source or ''))
         return '\n'.join(lines)
 
-    def _render_documents(self):
+    def _era_render_documents(self):
         """Titles and states only; the text of a document is its own entry.
 
         A restricted document is listed only to someone allowed to open it,
@@ -97,7 +118,7 @@ class LegalAIRequestContext(models.Model):
         """
         lines = []
         user = self.env.user
-        for document in self.case_id.document_ids.sorted('create_date'):
+        for document in self.document_ids.sorted('create_date'):
             if document.restricted and user not in document.allowed_user_ids \
                     and user != document.owner_id:
                 continue
@@ -109,9 +130,9 @@ class LegalAIRequestContext(models.Model):
             lines.append(line)
         return '\n'.join(lines)
 
-    def _render_timeline(self):
+    def _era_render_timeline(self):
         """The file's own history: opened, each stage and status change, closed."""
-        case = self.case_id
+        case = self
         events = [(case.create_date, 'فتح الملف')]
         tracked = {'stage_id', 'state'}
         # Tracking values are administrator-only by ACL, while the messages
@@ -130,10 +151,10 @@ class LegalAIRequestContext(models.Model):
         events.sort(key=lambda item: item[0] or fields.Datetime.now())
         return '\n'.join('- %s — %s' % (self._date(when), what) for when, what in events)
 
-    def _render_case_log(self):
+    def _era_render_case_log(self):
         """The chatter's own words, newest last, without who wrote them."""
         notes = []
-        for message in self.case_id.message_ids.sorted('date'):
+        for message in self.message_ids.sorted('date'):
             if message.message_type not in ('comment', 'notification'):
                 continue
             if message.tracking_value_ids and not self._text(message.body):
@@ -143,8 +164,8 @@ class LegalAIRequestContext(models.Model):
                 notes.append('- %s — %s' % (self._date(message.date), body[:600]))
         return '\n'.join(notes[-20:])
 
-    def _render_financials(self):
-        case = self.case_id
+    def _era_render_financials(self):
+        case = self
         currency = case.currency_id.name or ''
         rows = [
             ('الساعات القابلة للفوترة', '%.2f' % case.billable_hours),
@@ -158,16 +179,5 @@ class LegalAIRequestContext(models.Model):
                          '%.2f %s' % (case.trust_allocated_amount, currency)))
         return '\n'.join('- %s: %s' % row for row in rows)
 
-    def _render_internal_notes(self):
-        return self._text(self.case_id.internal_notes)
-
-
-class LegalAIFieldComposite(models.Model):
-    _inherit = 'legal.ai.field'
-
-    def _value_for(self, request):
-        self.ensure_one()
-        renderer = request._composite_renderers().get(self.technical_name)
-        if renderer and self.source == 'case':
-            return renderer() if request.case_id else ''
-        return super()._value_for(request)
+    def _era_render_internal_notes(self):
+        return self._text(self.internal_notes)

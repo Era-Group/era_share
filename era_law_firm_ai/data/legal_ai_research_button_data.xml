@@ -26,14 +26,14 @@
     </record>
 
     <record id="composer_legal_research" model="ai.composer">
-        <field name="name">البحث النظامي — Legal Research button</field>
+        <field name="name">المستشار القانوني — the button this module adds</field>
         <field name="interface_key">era_legal_research</field>
-        <field name="ai_agent" ref="agent_research"/>
-        <field name="default_prompt">هذه محادثة بحث نظامي داخل نظام إدارة مكتب المحاماة.
+        <field name="ai_agent" ref="agent_legal_advisor"/>
+        <field name="default_prompt">هذه محادثة مع مستشار المكتب داخل نظام إدارة مكتب المحاماة.
 
-أجب من المصادر النظامية المرفوعة إلى هذا الوكيل وحدها. ابدأ بالجواب المباشر في سطرين، ثم اذكر السند: النظام واسم المادة ورقمها كما وردت في المصدر، ثم ما يقيّد الجواب أو يستثنيه.
+إن وصلك سجل من النظام — قضية أو جلسة أو مهلة أو مستند — فهو موضوع السؤال: اعتمد على معطياته وعلى ملف القضية الذي يتبعه. وإن لم يصلك سجل فالسؤال نظامي عام، فأجب من النصوص المرفوعة إلى هذا الوكيل.
 
-وإن لم يكن في المصادر ما يجيب فقل ذلك صراحةً واقترح ما الذي ينبغي رفعه، ولا تُجب من الذاكرة. ومخرجك بحث تمهيدي يتحقق منه المحامي قبل الاعتماد عليه.</field>
+وفي الحالين: ابدأ بالجواب المباشر، ثم اذكر السند من النصوص المرفقة بنظامه ومادته كما وردت. ولا تذكر رقم مادة لم يرد نصها فيها. ومخرجك مسودة يتحقق منها المحامي قبل الاعتماد عليها.</field>
         <field name="available_prompts" eval="[(6, 0, [
             ref('prompt_research_appeal_period'),
             ref('prompt_research_execution'),

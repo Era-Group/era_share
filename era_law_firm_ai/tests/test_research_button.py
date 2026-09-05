@@ -21,15 +21,18 @@ class TestResearchButton(TransactionCase):
         super().setUpClass()
         cls.composer = cls.env.ref('era_law_firm_ai.composer_legal_research')
 
-    def test_the_button_opens_the_research_agent(self):
+    def test_the_button_opens_an_agent_that_carries_the_corpus(self):
+        """The point of a button of our own: Odoo's shared agent has no legal
+        sources, and giving it ours would put statutes into every other app."""
         self.assertEqual(self.composer.interface_key, RESEARCH_KEY)
         self.assertEqual(self.composer.ai_agent,
-                         self.env.ref('era_law_firm_ai.agent_research'))
+                         self.env.ref('era_law_firm_ai.agent_legal_advisor'))
+        self.assertTrue(self.composer.ai_agent.moj_corpus_target)
 
-    def test_that_agent_still_answers_only_from_the_corpus(self):
-        """The whole point of a separate button: this agent is not a general
-        assistant, and would be a poor one."""
-        self.assertTrue(self.composer.ai_agent.restrict_to_sources)
+    def test_that_agent_is_not_locked_out_of_the_record(self):
+        """It is given the open file as well as the statutes, and an agent
+        restricted to its sources refuses to read what it was handed."""
+        self.assertFalse(self.composer.ai_agent.restrict_to_sources)
 
     def test_the_key_is_a_real_selection_value(self):
         """A composer row whose key is not in the selection would be
@@ -44,7 +47,7 @@ class TestResearchButton(TransactionCase):
             ('focused_models', '=', False)], limit=1)
         self.assertTrue(general, 'precondition: Odoo ships one')
         self.assertNotEqual(general.ai_agent,
-                            self.env.ref('era_law_firm_ai.agent_research'))
+                            self.env.ref('era_law_firm_ai.agent_legal_advisor'))
 
     def test_the_record_button_answers_with_the_case_assistant(self):
         """The two buttons carry different things, so they get different agents.
@@ -155,3 +158,69 @@ class TestAskAIFromRecord(TransactionCase):
         self.assertFalse(consultation.case_id, 'precondition')
         with self.assertRaises(UserError):
             consultation.action_ask_ai()
+
+
+@tagged('post_install', '-at_install')
+class TestAdvisorSeesTheFile(TransactionCase):
+    """The firm's own button carries both halves: the statutes and the file.
+
+    Odoo builds a record's context only for its own interface keys, so a button
+    with a key of its own arrives with the record's id and nothing in it. The
+    server fills that in — and only for this key, so the other buttons keep
+    behaving as Odoo wrote them.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.advisor = cls.env.ref('era_law_firm_ai.agent_legal_advisor')
+        cls.lawyer = cls.env['res.users'].create({
+            'name': 'محامي المستشار', 'login': 'advisor_lawyer',
+            'group_ids': [(6, 0, [
+                cls.env.ref('base.group_user').id,
+                cls.env.ref('era_law_firm.group_legal_lawyer').id,
+                cls.env.ref('era_law_firm_ai.group_legal_ai_user').id])]})
+        client = cls.env['res.partner'].create({'name': 'موكّل المستشار'})
+        wizard = cls.env['legal.intake.wizard'].with_user(cls.lawyer).create({
+            'client_id': client.id, 'case_type': 'litigation',
+            'lawyer_id': cls.lawyer.id, 'engagement_type': 'none'})
+        cls.case = cls.env['legal.case'].browse(wizard.action_open_case()['res_id'])
+        now = fields.Datetime.now()
+        cls.hearing = cls.env['legal.hearing'].create({
+            'name': 'جلسة المستشار', 'case_id': cls.case.id,
+            'lawyer_id': cls.lawyer.id, 'start_datetime': now,
+            'stop_datetime': now + timedelta(hours=1), 'hijri_date': '1447/10/03',
+            'outcome': 'أمهلت المحكمة المدعى عليه أسبوعين',
+            'company_id': cls.env.company.id})
+
+    def test_the_advisor_can_read_both_the_statutes_and_the_record(self):
+        self.assertTrue(self.advisor.moj_corpus_target, 'it needs the corpus')
+        self.assertFalse(self.advisor.restrict_to_sources,
+                         'restricted to its sources, it would refuse the record it was handed')
+        self.assertEqual(
+            self.env.ref('era_law_firm_ai.composer_legal_research').ai_agent,
+            self.advisor, 'and it is what the button opens')
+
+    def test_a_case_hands_over_its_file(self):
+        text = '\n'.join(self.case._ai_initialise_context('era_legal_research'))
+        for block in ('ملف القضية', 'سجل الجلسات', 'مسار الملف'):
+            self.assertIn(block, text)
+        self.assertIn('جلسة المستشار', text)
+        self.assertIn('أمهلت المحكمة', text, 'what happened is the point of the log')
+
+    def test_a_hearing_hands_over_the_file_it_belongs_to(self):
+        text = '\n'.join(self.hearing._ai_initialise_context('era_legal_research'))
+        self.assertIn('ملف القضية', text)
+        self.assertIn(self.case.name, text)
+
+    def test_the_other_buttons_are_left_as_odoo_wrote_them(self):
+        ours = self.case._ai_initialise_context('era_legal_research')
+        theirs = self.case._ai_initialise_context('chatter_ai_button')
+        self.assertNotEqual(ours, theirs)
+        self.assertFalse([line for line in theirs if 'ملف القضية' in line],
+                         'our context belongs to our key alone')
+
+    def test_the_backfill_does_not_run_twice(self):
+        """It is called on every unchanged sync, so a second pass must be a
+        no-op rather than a second copy of the corpus."""
+        self.assertEqual(self.env['moj.law']._backfill_target_agents(), 0)

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 10:09+0000\n"
-"PO-Revision-Date: 2026-09-05 10:09+0000\n"
+"POT-Creation-Date: 2026-09-05 10:34+0000\n"
+"PO-Revision-Date: 2026-09-05 10:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1071,6 +1071,11 @@ msgid "Legal AI User"
 msgstr "مستخدم الذكاء القانوني"
 
 #. module: era_law_firm_ai
+#. odoo-javascript
+#: code:addons/era_law_firm_ai/static/src/js/legal_research_systray.js:0
+msgid "Legal Advisor"
+msgstr "المستشار القانوني"
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_company__legal_ai_enabled
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_config_settings__legal_ai_enabled
 msgid "Legal Ai Enabled"
@@ -1121,12 +1126,6 @@ msgstr "الحوكمة القانونية (نظام حماية البيانات 
 #: model:ir.model,name:era_law_firm_ai.model_legal_hearing
 msgid "Legal Hearing"
 msgstr "جلسة قضائية"
-
-#. module: era_law_firm_ai
-#. odoo-javascript
-#: code:addons/era_law_firm_ai/static/src/js/legal_research_systray.js:0
-msgid "Legal Research"
-msgstr "البحث النظامي"
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__status
@@ -1353,6 +1352,7 @@ msgstr "التقييمات"
 #: model:ir.model,name:era_law_firm_ai.model_legal_ai_askable
 msgid "Record that can open the governed AI wizard"
 msgstr "سجل يفتح معالج الذكاء المحكوم"
+
 #. module: era_law_firm_ai
 #. odoo-python
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
@@ -2032,7 +2032,10 @@ msgstr ""
 msgid ""
 "This record is not linked to a case yet, and every AI task works on a case "
 "file. Link it to one first."
-msgstr "هذا السجل غير مرتبط بقضية بعد، وكل مهام الذكاء تعمل على ملف قضية. اربطه بقضية أولاً."
+msgstr ""
+"هذا السجل غير مرتبط بقضية بعد، وكل مهام الذكاء تعمل على ملف قضية. اربطه "
+"بقضية أولاً."
+
 #. module: era_law_firm_ai
 #. odoo-python
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0

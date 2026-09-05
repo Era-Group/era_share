@@ -1,61 +1,82 @@
-// The house pattern across the top of every screen the module owns.
+// The house lattice in the corner of every screen the module owns.
 //
-// A halftone of green, grey and gold dots drawn for this module — see
-// tools/make_ornament.py. It is NOT the government mark the palette came from:
-// what identifies that mark is the silhouette its dots draw, so only the
-// generic technique is shared. The colours run green, grey, gold, green from
-// edge to edge, and a gradient mask thins them on the way down, so the band
-// dissolves into the page instead of stopping at a line.
+// A mashrabiya drawn for this module — see tools/make_ornament.py. It is NOT
+// the government mark whose palette it shares: what identifies that mark is a
+// silhouette, and none of it is here. Eight-pointed stars tied to their
+// neighbours, thinning along the diagonal so the corner dissolves into the
+// page rather than stopping at a line.
 //
-// It rides as a background image, so page content always paints above it and no
-// pointer ever meets it. The drawing is declared in legal_ornament_art.scss
+// It rides as a background image, so page content always paints above it and
+// no pointer ever meets it. The drawing is declared in legal_ornament_art.scss
 // rather than served from /module/static/...: that path carries a week of
 // max-age and never changes, so a browser went on showing the previous drawing
 // long after it had been replaced. Inside the bundle, whose URL Odoo hashes
 // from its contents, a change invalidates itself.
 //
-// Full width and centred, so nothing here belongs to the reading direction: no
-// mirrored copy, no [dir] rule, no rtl:ignore guards — rtlcss rewrites left and
-// right, and this has neither.
+// Unlike the band this replaces, a corner has a direction. Two things follow.
+// The position is written once, in `left`, and rtlcss turns it into `right`
+// when it compiles the Arabic bundle. The drawing itself cannot be flipped by
+// a stylesheet, so the generator writes a mirrored copy and the rule below
+// swaps to it — inside an rtl:ignore guard, because rtlcss would otherwise
+// flip a rule that is already the flipped one.
 
-@mixin era-band {
+$o-era-ornament-width: 360px;
+
+@mixin era-corner {
   background-image: var(--era-ornament);
-  // One band across the width, drawn once. It is a run of colours, and a run
-  // that started over every few hundred pixels would read as wallpaper.
+  // One lattice in the corner, drawn once at its own size. Stretched to the
+  // width of the screen it would read as wallpaper, and the stars would go
+  // oval on a wide monitor.
   background-repeat: no-repeat;
-  background-position: top center;
-  background-size: 100% auto;
+  background-position: top left;
+  background-size: $o-era-ornament-width auto;
 }
 
 .o_era_legal {
   .o_form_sheet,
   .o_content > .o_kanban_renderer {
-    @include era-band;
+    @include era-corner;
   }
 }
 
-// The dashboard keeps its sheet transparent, which lets the band move one level
-// out — onto the container that holds the button row as well — so it reaches
-// the true top of the screen instead of starting underneath the buttons. On
-// every other form the sheet paints opaque white over that container, so there
-// the band belongs to the sheet and begins at its edge.
+/*rtl:begin:ignore*/
+[dir="rtl"] .o_era_legal {
+  .o_form_sheet,
+  .o_content > .o_kanban_renderer {
+    background-image: var(--era-ornament-rtl);
+  }
+}
+/*rtl:end:ignore*/
+
+// The dashboard keeps its sheet transparent, which lets the lattice move one
+// level out — onto the container that holds the button row as well — so it
+// reaches the true top of the screen instead of starting underneath the
+// buttons. On every other form the sheet paints opaque white over that
+// container, so there the lattice belongs to the sheet and begins at its edge.
 .o_legal_dashboard.o_era_legal {
   .o_form_sheet {
     background-image: none;
   }
 
   .o_form_sheet_bg {
-    @include era-band;
+    @include era-corner;
   }
 
   // The button row sits inside that container but paints the page colour over
   // it and pins itself while the page scrolls (form_controller.scss:301). The
-  // fill is what was hiding the band behind the button; the pin is what makes
-  // an opaque fill necessary, and on a page whose header holds one button it
-  // buys nothing. Both go, and the band runs behind the row as it should.
+  // fill is what was hiding the lattice behind the button; the pin is what
+  // makes an opaque fill necessary, and on a page whose header holds one
+  // button it buys nothing. Both go, and the lattice runs behind the row as it
+  // should.
   .o_form_statusbar {
     background-color: transparent;
     position: relative;
     top: auto;
   }
 }
+
+/*rtl:begin:ignore*/
+[dir="rtl"] .o_legal_dashboard.o_era_legal .o_form_sheet_bg {
+  background-image: var(--era-ornament-rtl);
+}
+/*rtl:end:ignore*/

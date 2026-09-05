@@ -59,10 +59,13 @@ class TestCitationPopup(TransactionCase):
             'source_ids': [(6, 0, self.source.ids)]})
         document = self.env['ai.agent.source'].with_user(self.lawyer)\
             .era_citation_document(self.attachment.id)
-        self.assertIn('المادة الأولى', document['text'])
+        self.assertIn('المادة الأولى', document['html'])
         self.assertEqual(document['name'], 'نظام المرافعات الشرعية')
         values = {row['label']: row['value'] for row in document['reference']}
-        self.assertEqual(values['Instrument'], 'نظام المرافعات الشرعية')
+        self.assertNotIn('Instrument', values,
+                         'the dialog is titled with the name; the card would repeat it')
+        self.assertTrue(document['citation_line'].startswith('نظام المرافعات الشرعية'),
+                        'but a line pasted into a memorandum has no title above it')
         self.assertEqual(values['Status'], 'ساري', 'a repealed statute is the point')
         self.assertNotIn('Ministry reference', values,
                          'an internal identifier means nothing to a reader')

@@ -10,7 +10,7 @@
  * with, and the shape Odoo builds for any of them. The second is what makes
  * conversations that are already on screen behave the same way.
  */
-import { Component } from "@odoo/owl";
+import { Component, markup } from "@odoo/owl";
 import { _t } from "@web/core/l10n/translation";
 import { Dialog } from "@web/core/dialog/dialog";
 import { registry } from "@web/core/registry";
@@ -30,8 +30,14 @@ export class EraCitationDialog extends Component {
         this.notification = useService("notification");
     }
 
+    get body() {
+        // Built on the server from the corpus text, every value escaped on the
+        // way in — see tools/legal_text_html.py.
+        return markup(this.props.document.html || "");
+    }
+
     get hasText() {
-        return Boolean(this.props.document.text);
+        return Boolean(this.props.document.html);
     }
 
     get reference() {

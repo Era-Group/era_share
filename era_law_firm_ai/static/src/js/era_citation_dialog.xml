@@ -13,8 +13,8 @@
                 </div>
             </div>
             <div t-if="hasText" class="o_era_citation_text border rounded p-3 bg-view"
-                 style="white-space: pre-wrap; max-height: 55vh; overflow-y: auto; line-height: 1.9;"
-                 t-esc="props.document.text"/>
+                 style="max-height: 55vh; overflow-y: auto; line-height: 1.9;"
+                 t-out="body"/>
             <div t-else="" class="text-muted">
                 This source is a file rather than text. Open it to read it.
             </div>

@@ -15,6 +15,8 @@ import re
 
 from odoo import _, api, fields, models
 
+from ..tools.legal_text_html import format_legal_text
+
 # Odoo builds the citation itself, in ai/utils/ai_citation.py. Matching what it
 # builds rather than rewriting the builder means a change on their side leaves
 # a link that still opens — in a tab, as before — instead of a broken one.
@@ -53,7 +55,7 @@ class LegalCitationSource(models.Model):
             text = (attachment.raw or b'').decode('utf-8', 'replace')
         return {
             'name': source.name or attachment.name or '',
-            'text': text,
+            'html': format_legal_text(text),
             'reference': law._era_citation_reference() if law else [],
             'citation_line': law._era_citation_line() if law else '',
             'download_url': '/web/content/%s' % attachment.id,
@@ -77,8 +79,9 @@ class LegalCitationLaw(models.Model):
     def _era_citation_reference(self):
         """Label/value pairs, in the order a citation is written."""
         self.ensure_one()
+        # Not the name: the dialog is titled with it, and a card that repeats
+        # its own heading reads as noise.
         rows = [
-            (_('Instrument'), self.name or ''),
             (_('Type'), self.law_type or ''),
             (_('Status'), self.status or ''),
         ]
@@ -89,7 +92,12 @@ class LegalCitationLaw(models.Model):
         return [{'label': label, 'value': value} for label, value in rows if value]
 
     def _era_citation_line(self):
-        """The same thing on one line, for pasting into a memorandum."""
+        """The same thing on one line, for pasting into a memorandum.
+
+        The instrument's name leads it here, where there is no title above to
+        carry it.
+        """
         self.ensure_one()
-        return ' — '.join('%s: %s' % (row['label'], row['value'])
+        rest = ' — '.join('%s: %s' % (row['label'], row['value'])
                           for row in self._era_citation_reference())
+        return ' — '.join(part for part in (self.name, rest) if part)

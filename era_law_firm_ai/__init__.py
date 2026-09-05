@@ -1,6 +1,7 @@
 from odoo import fields
 
 from . import models
+from . import tools
 
 
 def _schedule_first_corpus_sync(env):

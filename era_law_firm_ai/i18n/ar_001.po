@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 14:52+0000\n"
-"PO-Revision-Date: 2026-09-05 14:52+0000\n"
+"POT-Creation-Date: 2026-09-05 14:57+0000\n"
+"PO-Revision-Date: 2026-09-05 14:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1008,12 +1008,6 @@ msgstr "التعليمات"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__instructions_sent
 msgid "Instructions as Sent"
 msgstr "التعليمات كما أُرسلت"
-
-#. module: era_law_firm_ai
-#. odoo-python
-#: code:addons/era_law_firm_ai/models/ai_citation_popup.py:0
-msgid "Instrument"
-msgstr "الأداة النظامية"
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields.selection,name:era_law_firm_ai.selection__ai_agent__legal_max_classification__internal

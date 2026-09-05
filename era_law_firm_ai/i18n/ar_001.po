@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 14:37+0000\n"
-"PO-Revision-Date: 2026-09-05 14:37+0000\n"
+"POT-Creation-Date: 2026-09-05 14:47+0000\n"
+"PO-Revision-Date: 2026-09-05 14:47+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -335,6 +335,12 @@ msgid "Archived"
 msgstr "مؤرشف"
 
 #. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_citation_popup.py:0
+msgid "Article count"
+msgstr "عدد المواد"
+
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__article_count
 msgid "Articles"
 msgstr "المواد"
@@ -572,6 +578,12 @@ msgstr "استشارة"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__content_hash
 msgid "Content Hash"
 msgstr "بصمة المحتوى"
+
+#. module: era_law_firm_ai
+#. odoo-javascript
+#: code:addons/era_law_firm_ai/static/src/js/era_citation_dialog.xml:0
+msgid "Copy the reference"
+msgstr "انسخ المرجع"
 
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
@@ -998,6 +1010,12 @@ msgid "Instructions as Sent"
 msgstr "التعليمات كما أُرسلت"
 
 #. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_citation_popup.py:0
+msgid "Instrument"
+msgstr "الأداة النظامية"
+
+#. module: era_law_firm_ai
 #: model:ir.model.fields.selection,name:era_law_firm_ai.selection__ai_agent__legal_max_classification__internal
 #: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_document__ai_classification__internal
 msgid "Internal"
@@ -1200,6 +1218,12 @@ msgid "Messages"
 msgstr "الرسائل"
 
 #. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_citation_popup.py:0
+msgid "Ministry reference"
+msgstr "معرّف الوزارة"
+
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_playbook__name
@@ -1289,12 +1313,6 @@ msgstr "معطّل افتراضياً. عند الإطفاء لا يمكن إر�
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__source_url
 msgid "Official URL"
 msgstr "الرابط الرسمي"
-
-#. module: era_law_firm_ai
-#. odoo-javascript
-#: code:addons/era_law_firm_ai/static/src/js/era_citation_dialog.xml:0
-msgid "Official source"
-msgstr "المصدر الرسمي"
 
 #. module: era_law_firm_ai
 #: model:ir.model.constraint,message:era_law_firm_ai.constraint_legal_ai_charter_one_active_per_company
@@ -1408,6 +1426,12 @@ msgstr "تنقيح وإرسال"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__redacted_payload
 msgid "Redacted Payload"
 msgstr "الحمولة المنقّحة"
+
+#. module: era_law_firm_ai
+#. odoo-javascript
+#: code:addons/era_law_firm_ai/static/src/js/era_citation_dialog.js:0
+msgid "Reference copied"
+msgstr "نُسخ المرجع"
 
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
@@ -1599,6 +1623,8 @@ msgid "State"
 msgstr "الحالة"
 
 #. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_citation_popup.py:0
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_search
 msgid "Status"
 msgstr "الحالة"
@@ -2059,6 +2085,12 @@ msgstr ""
 
 #. module: era_law_firm_ai
 #. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_citation_popup.py:0
+msgid "This copy taken"
+msgstr "تاريخ نسخة المكتب"
+
+#. module: era_law_firm_ai
+#. odoo-python
 #: code:addons/era_law_firm_ai/models/ai.py:0
 msgid "This document is blocked from AI processing."
 msgstr "هذا المستند محظور من معالجة الذكاء."
@@ -2162,9 +2194,11 @@ msgid "Ticked on every request built from this playbook."
 msgstr "تُؤشَّر في كل طلب مبني على هذا الأمر."
 
 #. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_citation_popup.py:0
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__law_type
 msgid "Type"
-msgstr ""
+msgstr "النوع"
 
 #. module: era_law_firm_ai
 #: model_terms:ir.actions.act_window,help:era_law_firm_ai.action_ai_playbook

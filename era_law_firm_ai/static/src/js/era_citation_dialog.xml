@@ -3,19 +3,24 @@
 
     <t t-name="era_law_firm_ai.CitationDialog">
         <Dialog size="'lg'" title="props.document.name || 'Source'">
-            <div t-if="props.document.status" class="mb-2">
-                <span class="badge text-bg-secondary" t-esc="props.document.status"/>
+            <!-- What a lawyer would type into the Ministry's own search. Not a
+                 link: those addresses are rotated, and a citation that leads to
+                 a dead page is worse than no citation. -->
+            <div t-if="reference.length" class="o_era_citation_ref border rounded p-2 mb-3 small">
+                <div t-foreach="reference" t-as="row" t-key="row.label" class="d-flex gap-2">
+                    <span class="text-muted" style="min-width: 9rem;" t-esc="row.label"/>
+                    <span class="fw-bold" t-esc="row.value"/>
+                </div>
             </div>
             <div t-if="hasText" class="o_era_citation_text border rounded p-3 bg-view"
-                 style="white-space: pre-wrap; max-height: 60vh; overflow-y: auto; line-height: 1.9;"
+                 style="white-space: pre-wrap; max-height: 55vh; overflow-y: auto; line-height: 1.9;"
                  t-esc="props.document.text"/>
             <div t-else="" class="text-muted">
                 This source is a file rather than text. Open it to read it.
             </div>
             <t t-set-slot="footer">
-                <a t-if="props.document.official_url" class="btn btn-link"
-                   t-att-href="props.document.official_url" target="_blank"
-                   rel="noreferrer noopener">Official source</a>
+                <button t-if="props.document.citation_line" class="btn btn-secondary"
+                        t-on-click="onCopyReference">Copy the reference</button>
                 <a t-if="!hasText" class="btn btn-secondary"
                    t-att-href="props.document.download_url" target="_blank"
                    rel="noreferrer noopener">Open the file</a>

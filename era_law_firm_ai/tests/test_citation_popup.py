@@ -48,17 +48,26 @@ class TestCitationPopup(TransactionCase):
         [content] = general._get_llm_response_with_sources([self.answer])
         self.assertNotIn('o_era_citation', content)
 
-    def test_the_dialog_is_given_the_text_and_where_it_came_from(self):
-        law = self.env['moj.law'].create({
+    def test_the_dialog_is_given_the_text_and_what_to_cite(self):
+        """Not a link to the Ministry: those addresses are rotated, and a dead
+        one is worse than none. What survives is what a lawyer would type into
+        the Ministry's own search."""
+        self.env['moj.law'].create({
             'name': 'نظام المرافعات الشرعية', 'law_id': 'citation-test',
+            'law_type': 'نظام', 'status': 'ساري', 'article_count': 245,
             'source_url': 'https://laws.moj.gov.sa/ar/legislation/test',
             'source_ids': [(6, 0, self.source.ids)]})
         document = self.env['ai.agent.source'].with_user(self.lawyer)\
             .era_citation_document(self.attachment.id)
         self.assertIn('المادة الأولى', document['text'])
-        self.assertEqual(document['official_url'], law.source_url,
-                         'a lawyer checking a statute may want the official page')
         self.assertEqual(document['name'], 'نظام المرافعات الشرعية')
+        values = {row['label']: row['value'] for row in document['reference']}
+        self.assertEqual(values['Instrument'], 'نظام المرافعات الشرعية')
+        self.assertEqual(values['Status'], 'ساري', 'a repealed statute is the point')
+        self.assertEqual(values['Ministry reference'], 'citation-test')
+        self.assertIn('245', values['Article count'])
+        self.assertNotIn('http', document['citation_line'],
+                         'a line to paste into a memorandum, not an address')
 
     def test_it_serves_nothing_the_reader_could_not_already_open(self):
         """The dialog reads as the user, so a citation is not a way around the

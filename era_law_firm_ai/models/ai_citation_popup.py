@@ -13,7 +13,7 @@ keeps the behaviour Odoo wrote.
 """
 import re
 
-from odoo import api, models
+from odoo import _, api, fields, models
 
 # Odoo builds the citation itself, in ai/utils/ai_citation.py. Matching what it
 # builds rather than rewriting the builder means a change on their side leaves
@@ -54,7 +54,43 @@ class LegalCitationSource(models.Model):
         return {
             'name': source.name or attachment.name or '',
             'text': text,
-            'status': law.status or '',
-            'official_url': law.source_url or '',
+            'reference': law._era_citation_reference() if law else [],
+            'citation_line': law._era_citation_line() if law else '',
             'download_url': '/web/content/%s' % attachment.id,
         }
+
+
+class LegalCitationLaw(models.Model):
+    """How a statute identifies itself, for someone who will go and look it up.
+
+    The link to the Ministry's page was the obvious thing to offer and the
+    wrong one: those addresses are rotated, and a citation that leads to a dead
+    page is worse than none. What survives a rotation is what the lawyer would
+    type into the Ministry's own search — the title, what kind of instrument it
+    is, whether it is still in force, and the identifier the Ministry itself
+    uses. That, and the date our copy was taken, which is the honest part: the
+    answer was drawn from this text on that day.
+    """
+    _inherit = 'moj.law'
+
+    def _era_citation_reference(self):
+        """Label/value pairs, in the order a citation is written."""
+        self.ensure_one()
+        rows = [
+            (_('Instrument'), self.name or ''),
+            (_('Type'), self.law_type or ''),
+            (_('Status'), self.status or ''),
+        ]
+        if self.article_count:
+            rows.append((_('Article count'), str(self.article_count)))
+        if self.law_id:
+            rows.append((_('Ministry reference'), self.law_id))
+        if self.last_synced:
+            rows.append((_('This copy taken'), fields.Date.to_string(self.last_synced.date())))
+        return [{'label': label, 'value': value} for label, value in rows if value]
+
+    def _era_citation_line(self):
+        """The same thing on one line, for pasting into a memorandum."""
+        self.ensure_one()
+        return ' — '.join('%s: %s' % (row['label'], row['value'])
+                          for row in self._era_citation_reference())

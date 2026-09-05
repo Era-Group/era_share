@@ -11,8 +11,10 @@
  * conversations that are already on screen behave the same way.
  */
 import { Component } from "@odoo/owl";
+import { _t } from "@web/core/l10n/translation";
 import { Dialog } from "@web/core/dialog/dialog";
 import { registry } from "@web/core/registry";
+import { useService } from "@web/core/utils/hooks";
 
 const CITATION_SELECTOR = 'a.o_era_citation, sup > a[href*="/web/content/"]';
 
@@ -24,8 +26,23 @@ export class EraCitationDialog extends Component {
         document: Object,
     };
 
+    setup() {
+        this.notification = useService("notification");
+    }
+
     get hasText() {
         return Boolean(this.props.document.text);
+    }
+
+    get reference() {
+        return this.props.document.reference || [];
+    }
+
+    async onCopyReference() {
+        // What goes into the memorandum: the instrument, its kind, whether it
+        // still stands, and the day our copy of it was taken.
+        await navigator.clipboard.writeText(this.props.document.citation_line);
+        this.notification.add(_t("Reference copied"), { type: "success" });
     }
 }
 

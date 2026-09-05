@@ -64,7 +64,8 @@ class TestCitationPopup(TransactionCase):
         values = {row['label']: row['value'] for row in document['reference']}
         self.assertEqual(values['Instrument'], 'نظام المرافعات الشرعية')
         self.assertEqual(values['Status'], 'ساري', 'a repealed statute is the point')
-        self.assertEqual(values['Ministry reference'], 'citation-test')
+        self.assertNotIn('Ministry reference', values,
+                         'an internal identifier means nothing to a reader')
         self.assertIn('245', values['Article count'])
         self.assertNotIn('http', document['citation_line'],
                          'a line to paste into a memorandum, not an address')

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 14:47+0000\n"
-"PO-Revision-Date: 2026-09-05 14:47+0000\n"
+"POT-Creation-Date: 2026-09-05 14:52+0000\n"
+"PO-Revision-Date: 2026-09-05 14:52+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1216,12 +1216,6 @@ msgstr "خطأ في تسليم الرسالة"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_ids
 msgid "Messages"
 msgstr "الرسائل"
-
-#. module: era_law_firm_ai
-#. odoo-python
-#: code:addons/era_law_firm_ai/models/ai_citation_popup.py:0
-msgid "Ministry reference"
-msgstr "معرّف الوزارة"
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__name

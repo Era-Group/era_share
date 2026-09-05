@@ -67,8 +67,9 @@ class LegalCitationLaw(models.Model):
     wrong one: those addresses are rotated, and a citation that leads to a dead
     page is worse than none. What survives a rotation is what the lawyer would
     type into the Ministry's own search — the title, what kind of instrument it
-    is, whether it is still in force, and the identifier the Ministry itself
-    uses. That, and the date our copy was taken, which is the honest part: the
+    is, whether it is still in force, how long it runs. Not the Ministry's
+    internal identifier: it means nothing to a reader and nothing in a
+    memorandum. And the date our copy was taken, which is the honest part: the
     answer was drawn from this text on that day.
     """
     _inherit = 'moj.law'
@@ -83,8 +84,6 @@ class LegalCitationLaw(models.Model):
         ]
         if self.article_count:
             rows.append((_('Article count'), str(self.article_count)))
-        if self.law_id:
-            rows.append((_('Ministry reference'), self.law_id))
         if self.last_synced:
             rows.append((_('This copy taken'), fields.Date.to_string(self.last_synced.date())))
         return [{'label': label, 'value': value} for label, value in rows if value]

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="era_law_firm_ai.CitationDialog">
+        <Dialog size="'lg'" title="props.document.name || 'Source'">
+            <div t-if="props.document.status" class="mb-2">
+                <span class="badge text-bg-secondary" t-esc="props.document.status"/>
+            </div>
+            <div t-if="hasText" class="o_era_citation_text border rounded p-3 bg-view"
+                 style="white-space: pre-wrap; max-height: 60vh; overflow-y: auto; line-height: 1.9;"
+                 t-esc="props.document.text"/>
+            <div t-else="" class="text-muted">
+                This source is a file rather than text. Open it to read it.
+            </div>
+            <t t-set-slot="footer">
+                <a t-if="props.document.official_url" class="btn btn-link"
+                   t-att-href="props.document.official_url" target="_blank"
+                   rel="noreferrer noopener">Official source</a>
+                <a t-if="!hasText" class="btn btn-secondary"
+                   t-att-href="props.document.download_url" target="_blank"
+                   rel="noreferrer noopener">Open the file</a>
+                <button class="btn btn-primary" t-on-click="() => props.close()">Close</button>
+            </t>
+        </Dialog>
+    </t>
+
+</templates>

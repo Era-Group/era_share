@@ -9,3 +9,4 @@ from . import test_citation_audit
 from . import test_lawyer_can_work
 from . import test_ai_playbooks
 from . import test_research_button
+from . import test_citation_popup

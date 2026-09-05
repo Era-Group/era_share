@@ -24,7 +24,7 @@
         <field name="sequence">30</field>
     </record>
     <record id="prompt_research_commercial" model="ai.prompt.button">
-        <field name="name">ما اختصاص المحكمة التجارية في هذا النزاع؟</field>
+        <field name="name">ما الدعاوى التي تختص بها المحكمة التجارية؟</field>
         <field name="sequence">40</field>
     </record>
     <record id="prompt_research_service" model="ai.prompt.button">

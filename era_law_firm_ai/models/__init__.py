@@ -17,3 +17,4 @@ from . import ai_research_button
 from . import ai_ask_from_record
 from . import ai_chat_record_context
 from . import ai_chat_prompts
+from . import ai_citation_popup

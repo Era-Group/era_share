@@ -16,3 +16,5 @@ moj_law_manager,moj law manager,model_moj_law,era_law_firm.group_legal_manager,1
 ai_playbook_user,ai playbook user,model_legal_ai_playbook,group_legal_ai_user,1,0,0,0
 ai_playbook_manager,ai playbook manager,model_legal_ai_playbook,era_law_firm.group_legal_manager,1,1,1,1
 ai_playbook_wizard_user,ai playbook wizard user,model_legal_ai_playbook_wizard,group_legal_ai_user,1,1,1,1
+ai_composer_legal_manager,ai composer legal manager,ai.model_ai_composer,era_law_firm.group_legal_manager,1,1,1,1
+ai_prompt_button_legal_manager,ai prompt button legal manager,ai.model_ai_prompt_button,era_law_firm.group_legal_manager,1,1,1,1

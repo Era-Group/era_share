@@ -2,4 +2,22 @@
  <record id="privilege_legal_ai" model="res.groups.privilege"><field name="name">Legal AI</field><field name="category_id" ref="era_law_firm.module_category_legal"/><field name="sequence">30</field><field name="description">Permission to raise governed AI requests on legal material.</field></record>
  <record id="group_legal_ai_user" model="res.groups"><field name="name">Legal AI User</field><field name="privilege_id" ref="privilege_legal_ai"/><field name="sequence">10</field><field name="implied_ids" eval="[(4,ref('era_law_firm.group_legal_lawyer'))]"/></record>
  <record id="rule_ai_request_company" model="ir.rule"><field name="name">AI requests: company</field><field name="model_id" ref="model_legal_ai_request"/><field name="groups" eval="[(4,ref('group_legal_ai_user'))]"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+ <!-- The suggested questions are the firm's own words, so the legal manager
+      edits them without an administrator. Only ours: the rules below carry
+      perm_read="0", so a manager still sees every composer in the list and can
+      only change the ones this module ships — Odoo's belong to the database. -->
+ <record id="rule_ai_composer_firm_own" model="ir.rule">
+  <field name="name">AI composers: the firm edits its own</field>
+  <field name="model_id" ref="ai.model_ai_composer"/>
+  <field name="groups" eval="[(4,ref('era_law_firm.group_legal_manager'))]"/>
+  <field name="perm_read" eval="False"/>
+  <field name="domain_force">[('interface_key','=like','era_%')]</field>
+ </record>
+ <record id="rule_ai_prompt_firm_own" model="ir.rule">
+  <field name="name">AI prompts: the firm edits its own</field>
+  <field name="model_id" ref="ai.model_ai_prompt_button"/>
+  <field name="groups" eval="[(4,ref('era_law_firm.group_legal_manager'))]"/>
+  <field name="perm_read" eval="False"/>
+  <field name="domain_force">[('composer_id.interface_key','=like','era_%')]</field>
+ </record>
 </odoo>
